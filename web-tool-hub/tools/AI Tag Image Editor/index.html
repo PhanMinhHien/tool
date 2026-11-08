@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Tag Image Editor</title>
+<style>
+:root{
+  --bg:#f4f5f7;--panel:#fff;--text:#16181d;--muted:#6b7280;
+  --line:#e5e7eb;--accent:#111827;--blue:#2563eb;--danger:#dc2626;
+  --shadow:0 8px 30px rgba(15,23,42,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh}
+.topbar{
+  height:64px;background:#111827;color:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20
+}
+.brand{font-weight:800;letter-spacing:-.02em}.brand span{opacity:.55;font-weight:500}
+.top-actions{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;color:#111827;border-radius:9px;padding:9px 13px;font-weight:700}
+.btn:hover{filter:brightness(.97)}.btn.blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.dark{background:#111827;color:#fff;border-color:#111827}
+.btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.2)}
+.btn.danger{color:#b91c1c}
+.small{padding:7px 10px;font-size:12px}
+.layout{
+  display:grid;grid-template-columns:310px minmax(420px,1fr) 320px;gap:14px;
+  padding:14px;max-width:1800px;margin:auto
+}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.panel-body{padding:14px 16px}
+.section{margin-bottom:18px}.section:last-child{margin-bottom:0}
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:9px}
+.drop{
+  border:2px dashed #cbd5e1;border-radius:10px;padding:17px;text-align:center;
+  transition:.15s
+}
+.drop.drag{border-color:var(--blue);background:#eff6ff}
+.drop input{display:none}
+.hint{font-size:11px;color:var(--muted);line-height:1.45}
+.file-name{font-size:12px;font-weight:700;margin-top:8px;word-break:break-word}
+.tag-preview{
+  margin-top:10px;border:1px solid var(--line);border-radius:9px;padding:8px;
+  background:repeating-conic-gradient(#f1f3f5 0 25%,#fff 0 50%) 50%/14px 14px;
+  display:none;text-align:center
+}
+.tag-preview img{max-width:100%;max-height:90px;object-fit:contain}
+.control{margin:12px 0}
+.control-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px;font-size:12px;font-weight:700}
+.value{color:var(--muted);font-variant-numeric:tabular-nums}
+.range{width:100%}input[type=range]{accent-color:var(--blue)}
+.number{width:78px;padding:7px 8px;border:1px solid var(--line);border-radius:7px}
+.select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.align-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.align-btn{
+  padding:7px 4px;border:1px solid var(--line);background:#fff;border-radius:7px;
+  font-size:11px
+}
+.align-btn.active{background:#eff6ff;border-color:var(--blue);color:#1d4ed8;font-weight:800}
+.divider{height:1px;background:var(--line);margin:15px 0}
+.canvas-area{min-height:calc(100vh - 92px);display:flex;flex-direction:column}
+.stage{
+  flex:1;min-height:520px;background:#20242b;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+  position:relative;overflow:hidden
+}
+.stage.empty{border:1px dashed #555d6a}
+.empty-state{text-align:center;color:#cbd5e1}.empty-state .big{font-size:44px;margin-bottom:8px}
+.canvas-wrap{
+  position:relative;max-width:100%;max-height:calc(100vh - 180px);
+  display:none;box-shadow:0 10px 35px rgba(0,0,0,.3)
+}
+#preview{display:block;max-width:100%;max-height:calc(100vh - 180px);width:auto;height:auto}
+.overlay{
+  position:absolute;pointer-events:none;display:none;transform-origin:center
+}
+.overlay img{display:block;width:100%;height:100%;object-fit:contain}
+.stage-bar{display:flex;align-items:center;justify-content:space-between;padding:11px 2px 0}
+.file-info{font-size:12px;color:var(--muted)}
+.queue{max-height:calc(100vh - 350px);overflow:auto}
+.thumb{
+  display:grid;grid-template-columns:58px 1fr auto;gap:9px;align-items:center;
+  padding:8px 0;border-bottom:1px solid #f0f1f3
+}
+.thumb img{width:58px;height:58px;object-fit:cover;border-radius:7px;background:#f1f3f5}
+.thumb-name{font-size:11px;font-weight:700;word-break:break-word}
+.thumb-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.remove{border:0;background:transparent;color:#9ca3af;font-size:18px}.remove:hover{color:var(--danger)}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{border:1px solid var(--line);border-radius:9px;padding:10px}
+.stat-label{font-size:10px;color:var(--muted)}.stat-value{font-size:17px;font-weight:800;margin-top:3px}
+.actions{display:grid;gap:8px}
+.note{
+  background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:10px;
+  font-size:11px;color:#64748b;line-height:1.5
+}
+@media(max-width:1150px){
+  .layout{grid-template-columns:280px 1fr}.right{grid-column:1/-1}
+  .queue{max-height:none}.canvas-area{min-height:600px}
+}
+@media(max-width:780px){
+  .layout{grid-template-columns:1fr}.right{grid-column:auto}
+  .canvas-area{min-height:450px}.stage{min-height:400px}
+  .topbar{height:auto;padding:12px;gap:8px;align-items:flex-start}.top-actions{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">AI Tag Image Editor <span>· local image processor</span></div>
+  <div class="top-actions">
+    <button class="btn ghost small" id="clearBtn">Clear all</button>
+    <button class="btn blue" id="exportBtn">Export all</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="panel">
+    <div class="panel-head">Tag / Label</div>
+    <div class="panel-body">
+
+      <div class="section">
+        <div class="section-title">Choose tag / logo</div>
+        <select class="select" id="tagSelect">
+          <option value="">Select a tag...</option>
+        </select>
+        <div class="hint" style="margin-top:7px">Tags are loaded from local files in <b>assets/tags/</b>.</div>
+        <div class="tag-preview" id="tagPreview"><img id="tagPreviewImg"></div>
+        <div class="file-name" id="tagName"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Horizontal position</div>
+        <div class="align-grid">
+          <button class="align-btn" data-h="left">← Left</button>
+          <button class="align-btn active" data-h="center">＋ Center</button>
+          <button class="align-btn" data-h="right">→ Right</button>
+        </div>
+        <div class="control">
+          <div class="control-row"><span>Horizontal offset</span><span class="value" id="xVal">0%</span></div>
+          <div class="control-inline"><input class="range" id="x" type="range" min="-50" max="50" value="0"><input class="control-number" id="xNumber" type="number" min="-50" max="50" step="1" value="0" aria-label="Horizontal offset value"></div>
+        </div>
+        <div class="hint">Only changes the left/right position. 0% keeps the selected alignment.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Vertical position</div>
+        <div class="align-grid">
+          <button class="align-btn" data-v="top">↑ Top</button>
+          <button class="align-btn active" data-v="center">＋ Center</button>
+          <button class="align-btn" data-v="bottom">↓ Bottom</button>
+        </div>
+        <div class="control">
+          <div class="control-row"><span>Vertical offset</span><span class="value" id="yVal">0%</span></div>
+          <div class="control-inline"><input class="range" id="y" type="range" min="-50" max="50" value="0"><input class="control-number" id="yNumber" type="number" min="-50" max="50" step="1" value="0" aria-label="Vertical offset value"></div>
+        </div>
+        <div class="hint">Only changes the top/bottom position. The two axes work independently.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Tag appearance</div>
+
+        <div class="control">
+          <div class="control-row"><span>Tag width</span><span class="value" id="sizeVal">13%</span></div>
+          <div class="control-inline"><input class="range" id="size" type="range" min="2" max="70" value="13"><input class="control-number" id="sizeNumber" type="number" min="2" max="70" step="1" value="18" aria-label="Tag width value"></div>
+        </div>
+
+        <div class="control">
+          <div class="control-row"><span>Opacity</span><span class="value" id="opacityVal">100%</span></div>
+          <div class="control-inline"><input class="range" id="opacity" type="range" min="5" max="100" value="100"><input class="control-number" id="opacityNumber" type="number" min="5" max="100" step="1" value="85" aria-label="Opacity value"></div>
+        </div>
+
+        <div class="control">
+          <div class="control-row"><span>Rotation</span><span class="value" id="rotationVal">0°</span></div>
+          <div class="control-inline"><input class="range" id="rotation" type="range" min="-180" max="180" value="0"><input class="control-number" id="rotationNumber" type="number" min="-180" max="180" step="1" value="0" aria-label="Rotation value"></div>
+        </div>
+
+        <div class="control">
+          <div class="control-row"><span>Edge margin</span><span class="value" id="marginVal">3%</span></div>
+          <input class="range" id="margin" type="range" min="0" max="20" value="3">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Output</div>
+        <div class="control">
+          <div class="control-row"><span>Format</span></div>
+          <select class="select" id="format">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPEG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+        </div>
+        <div class="control">
+          <div class="control-row"><span>Quality</span><span class="value" id="qualityVal">90%</span></div>
+          <input class="range" id="quality" type="range" min="10" max="100" value="90">
+        </div>
+      </div>
+
+      <div class="note">
+        Everything runs locally in your browser. The tag is loaded from an image file, not from a Base64 string.
+      </div>
+    </div>
+  </aside>
+
+  <main class="canvas-area">
+    <div class="stage empty" id="stage">
+      <div class="empty-state" id="emptyState">
+        <div class="big">＋</div>
+        <div style="font-weight:800">Drop images here</div>
+        <div style="font-size:12px;margin-top:4px">or use “Add images” below</div>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="preview"></canvas>
+        <div class="overlay" id="overlay"><img id="overlayImg"></div>
+      </div>
+    </div>
+
+    <div class="stage-bar">
+      <div class="file-info" id="fileInfo">No images selected</div>
+      <div style="display:flex;gap:7px">
+        <button class="btn small" id="addBtn">＋ Add images</button>
+        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml,.svg" multiple hidden>
+        <button class="btn small" id="applyBtn">Apply settings to all</button>
+      </div>
+    </div>
+    <div style="text-align:center;color:#94a3b8;font-size:10px;padding:12px">
+      Images are processed locally. No server upload is required.
+    </div>
+  </main>
+
+  <aside class="panel right">
+    <div class="panel-head">
+      <span>Image queue</span><span class="thumb-meta" id="countBadge">0 images</span>
+    </div>
+    <div class="panel-body">
+      <div class="drop" id="imageDrop">
+        <button class="btn dark small" id="dropBtn">Choose images</button>
+        <div class="hint" style="margin-top:7px">JPG, PNG, WebP · multiple files supported</div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="queue" id="queue"></div>
+
+      <div class="divider"></div>
+      <div class="stat">
+        <div class="stat-box"><div class="stat-label">Original</div><div class="stat-value" id="totalBefore">—</div></div>
+        <div class="stat-box"><div class="stat-label">Images</div><div class="stat-value" id="totalCount">0</div></div>
+      </div>
+
+      <div class="actions" style="margin-top:12px">
+        <button class="btn blue" id="exportZipBtn">Export all</button>
+      </div>
+      <div class="hint" id="status" style="margin-top:8px">Ready</div>
+    </div>
+  </aside>
+</div>
+</div>
+
+<script>
+const state = {
+  files: [],
+  selected: 0,
+  tag: null,
+  hAlign: 'right',
+  vAlign: 'bottom',
+  x: 0,
+  y: 0,
+  size: 13,
+  opacity: 100,
+  rotation: 0,
+  margin: 3,
+  format: 'image/png',
+  quality: 100
+};
+
+/*
+  LOCAL TAG / LOGO LIBRARY
+  Put the actual image files in:
+      assets/tags/
+
+  Example:
+      assets/tags/also.png
+      assets/tags/microsoft.png
+
+  Then register them below.
+*/
+const TAG_LIBRARY = [
+  { name: 'LABEL_AI GENERATED_black.png', file: './assets/tags/LABEL_AI GENERATED_black.png' },
+  { name: 'LABEL_AI GENERATED_black.svg', file: './assets/tags/LABEL_AI GENERATED_black.svg' },
+  { name: 'LABEL_AI GENERATED_white.png', file: './assets/tags/LABEL_AI GENERATED_white.png' },
+  { name: 'LABEL_AI GENERATED_white.svg', file: './assets/tags/LABEL_AI GENERATED_white.svg' },
+  { name: 'LABEL_AI MODIFIED_black.png', file: './assets/tags/LABEL_AI MODIFIED_black.png' },
+  { name: 'LABEL_AI MODIFIED_black.svg', file: './assets/tags/LABEL_AI MODIFIED_black.svg' },
+  { name: 'LABEL_AI MODIFIED_white.png', file: './assets/tags/LABEL_AI MODIFIED_white.png' },
+  { name: 'LABEL_AI MODIFIED_white.svg', file: './assets/tags/LABEL_AI MODIFIED_white.svg' },
+  { name: 'LABEL_AI_black.png', file: './assets/tags/LABEL_AI_black.png' },
+  { name: 'LABEL_AI_black.svg', file: './assets/tags/LABEL_AI_black.svg' },
+  { name: 'LABEL_AI_white.png', file: './assets/tags/LABEL_AI_white.png' },
+  { name: 'LABEL_AI_white.svg', file: './assets/tags/LABEL_AI_white.svg' }
+];
+
+const $ = id => document.getElementById(id);
+const stage = $('stage');
+const canvasWrap = $('canvasWrap');
+const preview = $('preview');
+const ctx = preview.getContext('2d');
+const overlay = $('overlay');
+const overlayImg = $('overlayImg');
+const fileInput = $('fileInput');
+const tagSelect = $('tagSelect');
+const queue = $('queue');
+
+function fmtBytes(n){
+  if(!n) return '0 B';
+  const u=['B','KB','MB','GB'];
+  let i=Math.floor(Math.log(n)/Math.log(1024));
+  return (n/Math.pow(1024,i)).toFixed(i?1:0)+' '+u[i];
+}
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+function readImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Could not load image'))};
+    img.src=url;
+  });
+}
+
+
+async function cropTransparentPadding(sourceImg) {
+  const sw = sourceImg.naturalWidth || sourceImg.width;
+  const sh = sourceImg.naturalHeight || sourceImg.height;
+
+  if (!sw || !sh) return sourceImg;
+
+  const temp = document.createElement('canvas');
+  temp.width = sw;
+  temp.height = sh;
+
+  const ctx = temp.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(sourceImg, 0, 0, sw, sh);
+
+  const pixels = ctx.getImageData(0, 0, sw, sh).data;
+
+  let minX = sw, minY = sh, maxX = -1, maxY = -1;
+
+  for (let y = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++) {
+      const alpha = pixels[(y * sw + x) * 4 + 3];
+
+      if (alpha > 2) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  if (maxX < minX || maxY < minY) return sourceImg;
+
+  // Keep a tiny transparent breathing room around the visible badge.
+  const padX = Math.round(sw * 0.002);
+  const padY = Math.round(sh * 0.002);
+
+  minX = Math.max(0, minX - padX);
+  minY = Math.max(0, minY - padY);
+  maxX = Math.min(sw - 1, maxX + padX);
+  maxY = Math.min(sh - 1, maxY + padY);
+
+  const cw = maxX - minX + 1;
+  const ch = maxY - minY + 1;
+
+  // Don't create a cropped copy if the image is already tightly packed.
+  if (cw > sw * 0.98 && ch > sh * 0.98) return sourceImg;
+
+  const cropped = document.createElement('canvas');
+  cropped.width = cw;
+  cropped.height = ch;
+
+  const cctx = cropped.getContext('2d');
+  cctx.imageSmoothingEnabled = true;
+  cctx.imageSmoothingQuality = 'high';
+  cctx.drawImage(sourceImg, minX, minY, cw, ch, 0, 0, cw, ch);
+
+  const result = new Image();
+  result.src = cropped.toDataURL('image/png');
+
+  if (result.decode) {
+    try { await result.decode(); } catch (e) {}
+  }
+
+  return result;
+}
+
+function setTag(tag){
+  if(!tag) return;
+
+  const img = new Image();
+  img.onload = async () => {
+    if (img.decode) {
+      try { await img.decode(); } catch (e) {}
+    }
+
+    // SVGs should not go through the alpha-bound cropper.
+    // SVG filters, masks, strokes and viewBox content can extend beyond
+    // the simple raster alpha bounds and may otherwise get clipped.
+    const isSvg = /\.svg(?:[?#].*)?$/i.test(tag.file);
+    const processedTag = isSvg ? img : await cropTransparentPadding(img);
+
+    state.tag = { name: tag.name, file: tag.file, img: processedTag };
+
+    // Preview and export use the exact same bitmap.
+    $('tagPreviewImg').src = isSvg ? tag.file : processedTag.src;
+    $('tagPreview').style.display = 'block';
+    $('tagName').textContent = tag.name;
+    renderOverlay();
+    $('status').textContent = `Tag selected · ${tag.name}`;
+  };
+  img.onerror = () => {
+    state.tag = null;
+    $('tagPreview').style.display = 'none';
+    $('tagName').textContent = '';
+    renderOverlay();
+    $('status').textContent = `Could not load local tag: ${tag.file}`;
+  };
+  img.src = tag.file;
+}
+
+function populateTagLibrary(){
+  tagSelect.innerHTML = '<option value="">Select a tag...</option>';
+
+  TAG_LIBRARY.forEach((tag, index) => {
+    const option = document.createElement('option');
+    option.value = String(index);
+    option.textContent = tag.name;
+    tagSelect.appendChild(option);
+  });
+}
+
+tagSelect.onchange = e => {
+  const index = e.target.value;
+
+  if(index === ''){
+    state.tag = null;
+    $('tagPreview').style.display = 'none';
+    $('tagName').textContent = '';
+    renderOverlay();
+    $('status').textContent = 'No tag selected';
+    return;
+  }
+
+  setTag(TAG_LIBRARY[Number(index)]);
+};
+
+function addFiles(list){
+  [...list].filter(f=>/^image\/(jpeg|png|webp|svg\+xml)$/.test(f.type) || /\.svg$/i.test(f.name)).forEach(f=>{
+    const item={file:f,url:URL.createObjectURL(f),img:null};
+    state.files.push(item);
+    readImage(f).then(img=>{item.img=img;if(state.files[state.selected]===item) drawPreview();renderQueue();});
+  });
+  if(state.files.length && state.selected>=state.files.length) state.selected=0;
+  renderQueue();
+  loadSelected();
+}
+
+fileInput.onchange=e=>{
+  if(e.target.files?.length) addFiles(e.target.files);
+  e.target.value='';
+};
+$('addBtn').onclick=()=>fileInput.click();
+$('dropBtn').onclick=()=>fileInput.click();
+
+['dragenter','dragover'].forEach(ev=>$('imageDrop').addEventListener(ev,e=>{
+  e.preventDefault();$('imageDrop').classList.add('drag');
+}));
+['dragleave','drop'].forEach(ev=>$('imageDrop').addEventListener(ev,e=>{
+  e.preventDefault();$('imageDrop').classList.remove('drag');
+}));
+$('imageDrop').addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+
+stage.addEventListener('dragover',e=>e.preventDefault());
+stage.addEventListener('drop',e=>{
+  e.preventDefault();
+  if(e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+});
+
+function renderQueue(){
+  $('countBadge').textContent=state.files.length+' image'+(state.files.length===1?'':'s');
+  $('totalCount').textContent=state.files.length;
+  $('totalBefore').textContent=fmtBytes(state.files.reduce((s,x)=>s+x.file.size,0));
+  $('fileInfo').textContent=state.files.length
+    ? `${state.selected+1} / ${state.files.length} · ${state.files[state.selected]?.file.name||''}`
+    : 'No images selected';
+
+  queue.innerHTML=state.files.map((x,i)=>`
+    <div class="thumb" data-i="${i}" style="cursor:pointer;${i===state.selected?'background:#f8fafc':''}">
+      <img src="${x.url}">
+      <div>
+        <div class="thumb-name">${escapeHtml(x.file.name)}</div>
+        <div class="thumb-meta">${fmtBytes(x.file.size)} · ${x.file.type.split('/')[1].toUpperCase()}</div>
+        <div class="thumb-meta" style="color:#2563eb;font-weight:700">
+          ${state.hAlign}/${state.vAlign}
+        </div>
+      </div>
+      <button class="remove" title="Remove" data-remove="${i}">×</button>
+    </div>
+  `).join('');
+
+  queue.querySelectorAll('.thumb').forEach(el=>{
+    el.onclick=e=>{
+      if(e.target.dataset.remove!==undefined) return;
+      state.selected=+el.dataset.i;
+      loadSelected();
+      renderQueue();
+    };
+  });
+  queue.querySelectorAll('[data-remove]').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    removeFile(+b.dataset.remove);
+  });
+}
+
+function removeFile(i){
+  URL.revokeObjectURL(state.files[i].url);
+  state.files.splice(i,1);
+  state.selected=Math.max(0,Math.min(state.selected,state.files.length-1));
+  renderQueue();
+  loadSelected();
+}
+
+function clearAll(){
+  state.files.forEach(x=>URL.revokeObjectURL(x.url));
+  state.files=[];
+  state.selected=0;
+  renderQueue();
+  stage.classList.add('empty');
+  $('emptyState').style.display='block';
+  canvasWrap.style.display='none';
+  overlay.style.display='none';
+}
+$('clearBtn').onclick=clearAll;
+
+function loadSelected(){
+  if(!state.files.length){
+    stage.classList.add('empty');
+    $('emptyState').style.display='block';
+    canvasWrap.style.display='none';
+    overlay.style.display='none';
+    return;
+  }
+  stage.classList.remove('empty');
+  $('emptyState').style.display='none';
+  canvasWrap.style.display='block';
+  const item=state.files[state.selected];
+  $('fileInfo').textContent=`${state.selected+1} / ${state.files.length} · ${item.file.name}`;
+  if(item.img) drawPreview();
+}
+
+
+function bindRangeNumber(rangeId, numberId) {
+  const range = $(rangeId);
+  const number = $(numberId);
+  if (!range || !number) return;
+
+  const syncNumber = () => {
+    number.value = range.value;
+  };
+
+  const syncRange = () => {
+    let value = Number(number.value);
+    if (!Number.isFinite(value)) value = Number(range.value) || 0;
+
+    const min = Number(range.min);
+    const max = Number(range.max);
+    if (Number.isFinite(min)) value = Math.max(min, value);
+    if (Number.isFinite(max)) value = Math.min(max, value);
+
+    range.value = value;
+    number.value = value;
+
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+    range.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+
+  range.addEventListener('input', syncNumber);
+  range.addEventListener('change', syncNumber);
+
+  number.addEventListener('input', () => {
+    let value = Number(number.value);
+    if (!Number.isFinite(value)) return;
+
+    const min = Number(range.min);
+    const max = Number(range.max);
+    if (Number.isFinite(min)) value = Math.max(min, value);
+    if (Number.isFinite(max)) value = Math.min(max, value);
+
+    range.value = value;
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  number.addEventListener('change', syncRange);
+
+  number.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      syncRange();
+      number.blur();
+    }
+  });
+
+  number.addEventListener('wheel', (event) => {
+    if (document.activeElement !== number) return;
+    event.preventDefault();
+
+    const step = Number(number.step) || 1;
+    const current = Number(number.value) || 0;
+    number.value = current + (event.deltaY < 0 ? step : -step);
+    syncRange();
+  }, { passive: false });
+
+  syncNumber();
+}
+
+function updateControls(){
+  $('x').value=state.x;$('xVal').textContent=(state.x>0?'+':'')+state.x+'%';
+  $('y').value=state.y;$('yVal').textContent=(state.y>0?'+':'')+state.y+'%';
+  $('size').value=state.size;$('sizeVal').textContent=state.size+'%';
+  $('opacity').value=state.opacity;$('opacityVal').textContent=state.opacity+'%';
+  $('rotation').value=state.rotation;$('rotationVal').textContent=state.rotation+'°';
+  $('margin').value=state.margin;$('marginVal').textContent=state.margin+'%';
+  $('quality').value=state.quality;$('qualityVal').textContent=state.quality+'%';
+  $('format').value=state.format;
+
+  document.querySelectorAll('[data-h]').forEach(b=>b.classList.toggle('active',b.dataset.h===state.hAlign));
+  document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('active',b.dataset.v===state.vAlign));
+}
+
+function targetPosition(w,h,iw,ih){
+  const m=Math.min(w,h)*(state.margin/100);
+  let x,y;
+
+  if(state.hAlign==='left') x=m;
+  else if(state.hAlign==='right') x=w-iw-m;
+  else x=(w-iw)/2;
+
+  if(state.vAlign==='top') y=m;
+  else if(state.vAlign==='bottom') y=h-ih-m;
+  else y=(h-ih)/2;
+
+  x += (state.x/100)*w;
+  y += (state.y/100)*h;
+
+  return {
+    x:Math.max(0,Math.min(w-iw,x)),
+    y:Math.max(0,Math.min(h-ih,y))
+  };
+}
+
+function getGeometry(w,h){
+  if(!state.tag?.img) return null;
+  const ratio=(state.tag.img.naturalWidth||state.tag.img.width)/
+              (state.tag.img.naturalHeight||state.tag.img.height);
+  const iw=w*(state.size/100);
+  const ih=iw/ratio;
+  const p=targetPosition(w,h,iw,ih);
+  return {...p,iw,ih,w,h};
+}
+
+function drawPreview(){
+  const item=state.files[state.selected];
+  if(!item?.img) return;
+  preview.width=item.img.naturalWidth;
+  preview.height=item.img.naturalHeight;
+  ctx.clearRect(0,0,preview.width,preview.height);
+  ctx.drawImage(item.img,0,0,preview.width,preview.height);
+  renderOverlay();
+}
+
+function renderOverlay(){
+  if(!state.files.length || !state.tag?.img){
+    overlay.style.display='none';
+    return;
+  }
+  overlayImg.src=$('tagPreviewImg').src;
+  const g=getGeometry(preview.width,preview.height);
+  const sx=preview.clientWidth/preview.width;
+  const sy=preview.clientHeight/preview.height;
+
+  overlay.style.display='block';
+  overlay.style.opacity=state.opacity/100;
+  overlay.style.width=(g.iw*sx)+'px';
+  overlay.style.height=(g.ih*sy)+'px';
+  overlay.style.left=(g.x*sx)+'px';
+  overlay.style.top=(g.y*sy)+'px';
+  overlay.style.transform=`rotate(${state.rotation}deg)`;
+}
+
+['x','y','size','opacity','rotation','margin','quality'].forEach(id=>{
+  $(id).addEventListener('input',e=>{
+    state[id]=+e.target.value;
+    updateControls();
+    renderOverlay();
+  });
+});
+
+document.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{
+  state.hAlign=b.dataset.h;
+  updateControls();renderOverlay();renderQueue();
+});
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{
+  state.vAlign=b.dataset.v;
+  updateControls();renderOverlay();renderQueue();
+});
+$('format').onchange=e=>state.format=e.target.value;
+
+new ResizeObserver(()=>renderOverlay()).observe(canvasWrap);
+
+async function drawProcessed(img){
+  const w=img.naturalWidth||img.width;
+  const h=img.naturalHeight||img.height;
+  const c=document.createElement('canvas');
+  c.width=w;
+  c.height=h;
+  const cctx=c.getContext('2d');
+
+  // Use the highest quality interpolation available for the final export.
+  cctx.imageSmoothingEnabled=true;
+  cctx.imageSmoothingQuality='high';
+  cctx.drawImage(img,0,0,w,h);
+
+  if(!state.tag?.img) return c;
+
+  const tagImg=state.tag.img;
+  const ratio=(tagImg.naturalWidth||tagImg.width)/
+              (tagImg.naturalHeight||tagImg.height);
+  const iw=Math.max(1,Math.round(w*(state.size/100)));
+  const ih=Math.max(1,Math.round(iw/ratio));
+  const p=targetPosition(w,h,iw,ih);
+
+  cctx.save();
+  cctx.globalAlpha=state.opacity/100;
+  cctx.imageSmoothingEnabled=true;
+  cctx.imageSmoothingQuality='high';
+  cctx.translate(p.x+iw/2,p.y+ih/2);
+  cctx.rotate(state.rotation*Math.PI/180);
+
+  // Pre-resize the tag with the browser's high-quality bitmap scaler.
+  // This is more consistent than relying only on drawImage interpolation
+  // when a large source tag is reduced to a small badge.
+  let tagBitmap=null;
+  try {
+    if (window.createImageBitmap) {
+      tagBitmap=await createImageBitmap(tagImg, {
+        resizeWidth: iw,
+        resizeHeight: ih,
+        resizeQuality: 'high'
+      });
+    }
+  } catch (e) {
+    tagBitmap=null;
+  }
+
+  if(tagBitmap){
+    cctx.drawImage(tagBitmap,-iw/2,-ih/2,iw,ih);
+    tagBitmap.close();
+  }else{
+    cctx.drawImage(tagImg,-iw/2,-ih/2,iw,ih);
+  }
+
+  cctx.restore();
+  return c;
+}
+
+function canvasBlob(c,type,q){
+  return new Promise(resolve=>c.toBlob(resolve,type,q));
+}
+
+async function downloadOne(index){
+  const item=state.files[index];
+  if(!item?.img) return;
+  $('status').textContent=`Processing ${index+1}/${state.files.length}…`;
+  const c=await drawProcessed(item.img);
+  const ext=state.format==='image/jpeg'?'jpg':state.format==='image/webp'?'webp':'png';
+  const blob=await canvasBlob(c,state.format,state.quality/100);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=item.file.name.replace(/\.[^.]+$/,'')+'_tagged.'+ext;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+async function exportAll(){
+  if(!state.files.length){alert('Please add at least one image.');return;}
+  if(!state.tag?.img){alert('Please choose a tag first.');return;}
+  for(let i=0;i<state.files.length;i++){
+    await downloadOne(i);
+  }
+  $('status').textContent=`Done · ${state.files.length} image${state.files.length===1?'':'s'} exported`;
+}
+
+$('exportBtn').onclick=exportAll;
+$('exportZipBtn').onclick=exportAll;
+
+$('applyBtn').onclick=()=>{
+  renderOverlay();
+  renderQueue();
+  $('status').textContent='Current tag settings applied to all images.';
+};
+
+populateTagLibrary();
+bindRangeNumber('x', 'xNumber');
+bindRangeNumber('y', 'yNumber');
+bindRangeNumber('size', 'sizeNumber');
+bindRangeNumber('opacity', 'opacityNumber');
+bindRangeNumber('rotation', 'rotationNumber');
+
+updateControls();
+</script>
+</body>
+</html>
