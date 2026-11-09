@@ -41,18 +41,7 @@
           BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
-        background:
-          radial-gradient(
-            ellipse at 12% -10%,
-            rgba(99, 102, 241, 0.17),
-            transparent 34%
-          ),
-          radial-gradient(
-            ellipse at 95% 0%,
-            rgba(20, 184, 166, 0.09),
-            transparent 28%
-          ),
-          var(--bg);
+        background: radial-gradient(ellipse at 12% -10%, rgba(99, 102, 241, 0.17), transparent 34%), radial-gradient(ellipse at 95% 0%, rgba(20, 184, 166, 0.09), transparent 28%), var(--bg);
         color: var(--text);
         font-size: 14px;
         transition:
@@ -72,13 +61,7 @@
         --accent-2: #0f9f91;
         --accent-soft: rgba(98, 92, 240, 0.1);
         --shadow: 0 18px 50px rgba(32, 45, 80, 0.08);
-        background:
-          radial-gradient(
-            ellipse at 12% -10%,
-            rgba(99, 102, 241, 0.1),
-            transparent 34%
-          ),
-          var(--bg);
+        background: radial-gradient(ellipse at 12% -10%, rgba(99, 102, 241, 0.1), transparent 34%), var(--bg);
       }
       button,
       input {
@@ -281,12 +264,7 @@
         min-height: 205px;
         border: 1px solid rgba(159, 151, 255, 0.22);
         border-radius: 25px;
-        background: linear-gradient(
-          115deg,
-          rgba(68, 65, 145, 0.38),
-          rgba(22, 48, 72, 0.78) 58%,
-          rgba(20, 83, 80, 0.36)
-        );
+        background: linear-gradient(115deg, rgba(68, 65, 145, 0.38), rgba(22, 48, 72, 0.78) 58%, rgba(20, 83, 80, 0.36));
         box-shadow: var(--shadow);
       }
       body:not(.dark) .welcome {
@@ -359,11 +337,7 @@
         transform: rotate(-12deg);
         display: grid;
         place-items: center;
-        background: linear-gradient(
-          145deg,
-          rgba(139, 131, 255, 0.22),
-          rgba(94, 234, 212, 0.08)
-        );
+        background: linear-gradient(145deg, rgba(139, 131, 255, 0.22), rgba(94, 234, 212, 0.08));
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
       }
       .orbit span {
@@ -411,11 +385,7 @@
         color: var(--text);
         border: 1px solid var(--border);
         border-radius: 19px;
-        background: linear-gradient(
-          145deg,
-          var(--surface),
-          rgba(24, 35, 59, 0.82)
-        );
+        background: linear-gradient(145deg, var(--surface), rgba(24, 35, 59, 0.82));
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         transition:
           transform 0.2s,
@@ -455,11 +425,7 @@
         place-items: center;
         font-size: 23px;
         margin-bottom: 18px;
-        background: linear-gradient(
-          145deg,
-          rgba(139, 131, 255, 0.2),
-          rgba(94, 234, 212, 0.12)
-        );
+        background: linear-gradient(145deg, rgba(139, 131, 255, 0.2), rgba(94, 234, 212, 0.12));
         border: 1px solid rgba(139, 131, 255, 0.16);
       }
       .tool-card-name {
@@ -810,26 +776,17 @@
             <div class="brand-mark">✦</div>
             <div>
               <div class="page-heading" id="pageHeading">Web Tool Hub</div>
-              <div class="breadcrumb" id="breadcrumb">
-                Your personal workspace
-              </div>
+              <div class="breadcrumb" id="breadcrumb">Your personal workspace</div>
             </div>
           </div>
           <div class="topbar-actions">
             <div class="search-wrap">
               <span class="search-icon">⌕</span>
 
-              <input
-                class="search-input"
-                id="searchInput"
-                type="search"
-                placeholder="Search tools..."
-              />
+              <input class="search-input" id="searchInput" type="search" placeholder="Search tools..." />
             </div>
 
-            <button class="icon-btn" id="themeButton" title="Toggle theme">
-              ◐
-            </button>
+            <button class="icon-btn" id="themeButton" title="Toggle theme">◐</button>
           </div>
         </header>
 
@@ -837,12 +794,7 @@
 
         <!-- GLOBAL OPEN TABS -->
 
-        <div
-          class="workspace-tabs"
-          id="workspaceTabs"
-          role="tablist"
-          aria-label="Open tools"
-        ></div>
+        <div class="workspace-tabs" id="workspaceTabs" role="tablist" aria-label="Open tools"></div>
 
         <!-- HOME -->
 
@@ -851,10 +803,7 @@
             <div class="welcome-copy">
               <div class="welcome-kicker">PERSONAL TOOL WORKSPACE</div>
               <h1>Everything you need.<br />One focused workspace.</h1>
-              <p>
-                Your everyday web tools, neatly organized and ready when you
-                need them. Open a tool to start working.
-              </p>
+              <p>Your everyday web tools, neatly organized and ready when you need them. Open a tool to start working.</p>
             </div>
             <div class="welcome-art" aria-hidden="true">
               <div class="orbit"><span>✦</span></div>
@@ -863,9 +812,7 @@
           <div class="section-heading">
             <div>
               <div class="section-title" id="sectionTitle">Your tools</div>
-              <div class="section-subtitle">
-                Pick up where you left off or launch something new.
-              </div>
+              <div class="section-subtitle">Pick up where you left off or launch something new.</div>
             </div>
 
             <span class="section-meta" id="toolCount"> 0 tools </span>
@@ -905,13 +852,9 @@
             </div>
 
             <div class="workspace-actions">
-              <button class="icon-btn" id="refreshButton" title="Refresh tool">
-                ↻
-              </button>
+              <button class="icon-btn" id="refreshButton" title="Refresh tool">↻</button>
 
-              <button class="icon-btn" id="fullscreenButton" title="Fullscreen">
-                ⛶
-              </button>
+              <button class="icon-btn" id="fullscreenButton" title="Fullscreen">⛶</button>
             </div>
           </div>
 
@@ -957,9 +900,9 @@
 
       const TOOL_REGISTRY = [
         {
-          id: "marketo",
+          id: "Marketo",
 
-          name: "marketo",
+          name: "Marketo",
 
           // description: "Find and process vendor information.",
 
@@ -978,6 +921,18 @@
           icon: "🔍",
 
           path: "./tools/AI Tag Image Editor/index.html",
+        },
+
+         {
+          id: "AI Tag Image Editor",
+
+          name: "AI Tag Image Editor",
+
+          // description: "Find and process vendor information.",
+
+          icon: "🔍",
+
+          path: "./tools/OFT export/index.html",
         },
       ];
 
@@ -1003,13 +958,7 @@
         grid.innerHTML = "";
 
         const filtered = TOOL_REGISTRY.filter((tool) => {
-          const searchableText = [
-            tool.name || "",
-            tool.description || "",
-            tool.id || "",
-          ]
-            .join(" ")
-            .toLowerCase();
+          const searchableText = [tool.name || "", tool.description || "", tool.id || ""].join(" ").toLowerCase();
 
           return searchableText.includes(query);
         });
@@ -1056,9 +1005,7 @@
         });
 
         $("toolCount").textContent = `${filtered.length} tools`;
-        $("sectionTitle").textContent = query
-          ? "Search Results"
-          : "Available Tools";
+        $("sectionTitle").textContent = query ? "Search Results" : "Available Tools";
       }
 
       /* =====================================
@@ -1103,9 +1050,7 @@
         let saved;
 
         try {
-          saved = JSON.parse(
-            localStorage.getItem(HUB_TABS_STORAGE_KEY) || "null",
-          );
+          saved = JSON.parse(localStorage.getItem(HUB_TABS_STORAGE_KEY) || "null");
         } catch (error) {
           console.warn("Could not read saved tabs:", error);
 
@@ -1147,13 +1092,10 @@
 
           const match = /^tab-(\d+)$/.exec(item.id || "");
 
-          if (match)
-            nextTabNumber = Math.max(nextTabNumber, Number(match[1]) + 1);
+          if (match) nextTabNumber = Math.max(nextTabNumber, Number(match[1]) + 1);
         });
 
-        activeTabId = openTabs.some((tab) => tab.id === saved.activeTabId)
-          ? saved.activeTabId
-          : null;
+        activeTabId = openTabs.some((tab) => tab.id === saved.activeTabId) ? saved.activeTabId : null;
 
         restoringTabs = false;
 
@@ -1212,8 +1154,7 @@
 
           button.type = "button";
 
-          button.className =
-            "workspace-tab" + (tab.id === activeTabId ? " active" : "");
+          button.className = "workspace-tab" + (tab.id === activeTabId ? " active" : "");
 
           button.setAttribute("role", "tab");
 
@@ -1285,13 +1226,9 @@
         const toolbarButton = document.createElement("button");
         toolbarButton.type = "button";
         toolbarButton.className = "tabs-utility-btn";
-        const isToolbarHidden = document.body.classList.contains(
-          "hide-workspace-toolbar",
-        );
+        const isToolbarHidden = document.body.classList.contains("hide-workspace-toolbar");
         toolbarButton.textContent = isToolbarHidden ? "▤" : "▱";
-        toolbarButton.title = isToolbarHidden
-          ? "Show workspace toolbar"
-          : "Hide workspace toolbar";
+        toolbarButton.title = isToolbarHidden ? "Show workspace toolbar" : "Hide workspace toolbar";
         toolbarButton.setAttribute("aria-label", toolbarButton.title);
         toolbarButton.addEventListener("click", toggleWorkspaceToolbar);
         utility.appendChild(toolbarButton);
@@ -1530,16 +1467,12 @@
       }
 
       function toggleWorkspaceToolbar() {
-        applyWorkspaceToolbarMode(
-          !document.body.classList.contains("hide-workspace-toolbar"),
-        );
+        applyWorkspaceToolbarMode(!document.body.classList.contains("hide-workspace-toolbar"));
       }
 
       function loadWorkspaceToolbarMode() {
         try {
-          applyWorkspaceToolbarMode(
-            localStorage.getItem(WORKSPACE_TOOLBAR_KEY) === "1",
-          );
+          applyWorkspaceToolbarMode(localStorage.getItem(WORKSPACE_TOOLBAR_KEY) === "1");
         } catch (error) {
           applyWorkspaceToolbarMode(false);
         }

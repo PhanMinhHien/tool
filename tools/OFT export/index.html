@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Marketo → Outlook HTML Converter</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <div>
+          <div class="eyebrow">EMAIL DEVELOPMENT TOOL</div>
+          <h1>Marketo → Outlook HTML Converter</h1>
+          <p>
+            Upload a Marketo HTML export, apply the email-safe transformations,
+            review the changes, and download the converted HTML.
+          </p>
+        </div>
+      </header>
+
+      <section class="card upload-card">
+        <label class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept=".html,.htm,text/html" />
+          <div class="upload-icon">↥</div>
+          <strong>Drop your HTML file here</strong>
+          <span>or click to choose a file</span>
+          <small id="fileName">No file selected</small>
+        </label>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div>
+            <h2>Transformations</h2>
+            <p>
+              These are enabled by default for your current Marketo → Outlook
+              workflow.
+            </p>
+          </div>
+          <button class="secondary" id="resetRules" type="button">Reset</button>
+        </div>
+
+        <div class="configuration">
+  <div class="field">
+    <div class="field-label">
+      <label for="salutationInput">Salutation</label>
+      <span>Optional</span>
+    </div>
+    <input
+      id="salutationInput"
+      type="text"
+      value="Dear ALSO Partner,"
+      placeholder="Dear ALSO Partner,"
+    >
+    <small>
+      Replace the default Marketo salutation with your preferred greeting.
+    </small>
+  </div>
+
+  <div class="rules">
+    <label class="rule">
+      <input type="checkbox" id="ruleEmToPx" checked>
+      <span>
+        <b>Convert em → px</b>
+        <small>Convert CSS em values using a fixed 12px base.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="ruleSalutation" checked>
+      <span>
+        <b>Update salutation</b>
+        <small>Replace <code>Dear ALSO Partner,</code> with the value above.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="ruleImages" checked>
+      <span>
+        <b>Update image links</b>
+        <small>Use the filename after the final <code>/</code> with the ALSO image host.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="ruleBody" checked>
+      <span>
+        <b>Fix BodyBGColor</b>
+        <small>Replace <code>${BodyBGColor}</code> with <code>#f3f3eb</code>.</small>
+      </span>
+    </label>
+<label class="rule">
+  <input type="checkbox" id="ruleTemplateContainer" checked>
+  <span>
+    <b>Add template container</b>
+    <small>
+      Wrap the converted email content in a new
+      <code>#template-container</code> with 620px width and
+      <code>#f3f3eb</code> background.
+    </small>
+  </span>
+</label>
+    <label class="rule">
+      <input type="checkbox" id="ruleFooter" checked>
+      <span>
+        <b>Remove Footer module</b>
+        <small>Remove the complete <code>#Footer</code> module.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="rulePreHeader" checked>
+      <span>
+        <b>Remove emailPreHeader</b>
+        <small>Remove the associated <code>table.full-wrap</code>.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="ruleWidths" checked>
+      <span>
+        <b>Update Outlook widths</b>
+        <small>Apply the 550px / 560px → 620px Outlook rules.</small>
+      </span>
+    </label>
+
+    <label class="rule">
+      <input type="checkbox" id="ruleSpacer" checked>
+      <span>
+        <b>Convert spacer rows</b>
+        <small>Move NBSP spacer heights into top/bottom padding.</small>
+      </span>
+    </label>
+  </div>
+</div>
+
+        <button class="primary" id="convertBtn" type="button" disabled>
+          Convert HTML
+        </button>
+      </section>
+
+      <section class="card results" id="results" hidden>
+        <div class="section-head">
+          <div>
+            <h2>Conversion result</h2>
+            <p id="resultSummary">Ready.</p>
+          </div>
+          <div class="actions">
+  <button class="secondary" id="copyBtn" type="button">
+    Copy HTML
+  </button>
+
+  <button class="secondary" id="downloadBtn" type="button">
+    Download HTML
+  </button>
+</div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="change-log">
+          <h3>Change log</h3>
+          <div id="log"></div>
+        </div>
+
+        <div class="preview-grid">
+          <div>
+            <div class="panel-title">Original</div>
+            <pre id="originalPreview"></pre>
+          </div>
+          <div>
+            <div class="panel-title">Converted</div>
+            <pre id="convertedPreview"></pre>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        All processing happens locally in your browser. The uploaded HTML is not
+        sent to a server.
+      </footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
