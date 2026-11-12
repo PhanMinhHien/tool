@@ -1221,140 +1221,205 @@ function sortReadingOrder(lines) {
     const ah = getLineHeight(a) || 20;
     const bh = getLineHeight(b) || 20;
 
-    const tolerance = Math.max(
-      8,
-      Math.min(ah, bh) * 0.45
-    );
+    // Hai dòng nằm gần cùng một hàng thì ưu tiên trái sang phải.
+    const rowTolerance = Math.min(ah, bh) * 0.55;
 
-    if (Math.abs(ay - by) > tolerance) {
-      return ay - by;
+    if (Math.abs(ay - by) <= rowTolerance) {
+      return (a.bbox?.x0 ?? 0) - (b.bbox?.x0 ?? 0);
     }
 
-    return (
-      (a.bbox?.x0 ?? 0) -
-      (b.bbox?.x0 ?? 0)
-    );
+    return ay - by;
   });
 }
-  
+  function classifyOcrBlock(block, image) {
+  const text = (block.text || "").trim();
+  const words = text.split(/\s+/u).filter(Boolean);
+
+  const imageWidth = image?.width || 1;
+  const imageHeight = image?.height || 1;
+
+  const box = block.bbox || {};
+
+  const x = (box.x0 || 0) / imageWidth;
+  const y = (box.y0 || 0) / imageHeight;
+  const width = ((box.x1 || 0) - (box.x0 || 0)) / imageWidth;
+
+  const fontSize = block.style?.fontSize || "medium";
+  const weight = block.style?.weight || "normal";
+
+  const shortText = words.length <= 7;
+  const upperRatio = (() => {
+    const letters = text.match(/\p{L}/gu) || [];
+    if (!letters.length) return 0;
+
+    const upper = letters.filter(char =>
+      char === char.toLocaleUpperCase() &&
+      char !== char.toLocaleLowerCase()
+    ).length;
+
+    return upper / letters.length;
+  })();
+
+  // Những dòng rất ngắn nằm sát đầu trang thường là menu.
+  if (
+    y < 0.12 &&
+    shortText &&
+    width < 0.35
+  ) {
+    return "navigation";
+  }
+
+  // Footer: vùng cuối ảnh, thường chứa các dòng ngắn.
+  if (
+    y > 0.91 &&
+    shortText
+  ) {
+    return "footer";
+  }
+
+  // CTA thường là dòng ngắn, có tính hành động.
+  if (
+    shortText &&
+    /\b(read more|learn more|watch now|register|sign up|buy now|contact us|se mer|les mer|registrer|meld deg på|kontakt oss)\b/i.test(text)
+  ) {
+    return "cta";
+  }
+
+  // Tiêu đề.
+  if (
+    fontSize === "large" ||
+    (weight === "bold" && words.length <= 12) ||
+    (upperRatio > 0.65 && words.length <= 12)
+  ) {
+    return "heading";
+  }
+
+  // Dòng ngắn có thể là nhãn hoặc thành phần giao diện.
+  if (
+    shortText &&
+    width < 0.22 &&
+    fontSize === "small"
+  ) {
+    return "label";
+  }
+
+  return "body";
+}
   // =====================================
 // GROUP OCR LINES INTO CONTENT BLOCKS
 // =====================================
-
 function groupOcrBlocks(lines, image) {
   const usefulLines = lines
     .filter(isUsefulOcrLine)
-    .filter(line => line.bbox);
+    .filter(line => line.bbox)
+    .map(line => ({
+      ...line,
+      style: line.style || {}
+    }));
 
-  // Phân tích kiểu chữ.
-  const styledLines = analyzeTextStyles(
-    usefulLines,
-    image
-  );
+  const styledLines = analyzeTextStyles(usefulLines, image);
 
-  // Sắp xếp sơ bộ theo tọa độ.
   const sortedLines = sortReadingOrder(styledLines);
-
   const blocks = [];
 
   for (const line of sortedLines) {
-    const lineBox = line.bbox;
-    const lineHeight = getLineHeight(line);
+    const box = line.bbox;
+    const height = getLineHeight(line);
 
     let bestBlock = null;
     let bestScore = Infinity;
 
     for (const block of blocks) {
-      const previous = block.lines[
-        block.lines.length - 1
-      ];
-
+      const previous = block.lines[block.lines.length - 1];
       if (!previous?.bbox) continue;
 
-      const previousBox = previous.bbox;
-      const previousHeight = getLineHeight(previous);
+      const prevBox = previous.bbox;
+      const prevHeight = getLineHeight(previous);
 
-      const verticalGap =
-        lineBox.y0 - previousBox.y1;
+      const verticalGap = box.y0 - prevBox.y1;
 
-      // Không ghép những dòng nằm cùng hàng
-      // hoặc chồng lấn quá nhiều theo chiều dọc.
-      if (
-        verticalGap <
-        -Math.max(lineHeight, previousHeight) * 0.35
-      ) {
+      // Dòng phải nằm bên dưới dòng trước.
+      if (verticalGap < -Math.max(height, prevHeight) * 0.3) {
         continue;
       }
 
-      // Khoảng cách tối đa giữa hai dòng cùng block.
       const maxGap = Math.max(
-        previousHeight * 1.65,
-        lineHeight * 1.45,
-        28
+        height * 1.25,
+        prevHeight * 1.25,
+        22
       );
 
       if (verticalGap > maxGap) continue;
 
-      // Kiểm tra kích thước font.
+      // So sánh kích thước chữ.
       const heightRatio =
-        Math.min(lineHeight, previousHeight) /
-        Math.max(lineHeight, previousHeight);
+        Math.min(height, prevHeight) /
+        Math.max(height, prevHeight);
 
-      if (heightRatio < 0.58) continue;
+      if (heightRatio < 0.62) continue;
 
-      // Kiểm tra độ đậm.
-      if (
-        line.style.weight !==
-        previous.style.weight
-      ) {
-        continue;
-      }
-
-      // Kiểm tra vị trí ngang.
+      // So sánh vị trí ngang.
       const overlapX = Math.max(
         0,
-        Math.min(lineBox.x1, previousBox.x1) -
-        Math.max(lineBox.x0, previousBox.x0)
+        Math.min(box.x1, prevBox.x1) -
+        Math.max(box.x0, prevBox.x0)
       );
 
-      const widthA = Math.max(
-        1,
-        lineBox.x1 - lineBox.x0
-      );
-
-      const widthB = Math.max(
-        1,
-        previousBox.x1 - previousBox.x0
-      );
+      const widthA = Math.max(1, box.x1 - box.x0);
+      const widthB = Math.max(1, prevBox.x1 - prevBox.x0);
 
       const horizontalOverlap =
         overlapX / Math.min(widthA, widthB);
 
-      const leftDifference = Math.abs(
-        lineBox.x0 - previousBox.x0
+      const leftDifference = Math.abs(box.x0 - prevBox.x0);
+
+      const alignmentTolerance = Math.max(
+        18,
+        Math.min(height, prevHeight) * 1.4
       );
 
       const sameAlignment =
-        leftDifference <=
-        Math.max(30, Math.min(lineHeight, previousHeight) * 1.8);
+        leftDifference <= alignmentTolerance;
 
-      // Hai dòng phải có liên hệ về bố cục.
+      // Không ghép hai dòng ở hai cột khác nhau.
       if (
-        horizontalOverlap < 0.12 &&
+        horizontalOverlap < 0.18 &&
         !sameAlignment
       ) {
         continue;
       }
 
-      const gapScore =
-        Math.max(0, verticalGap) / maxGap;
+      // Kiểm tra block có đang quá rộng so với dòng mới không.
+      const blockBox = block.bbox;
 
-      const alignmentScore =
-        1 - Math.min(1, horizontalOverlap);
+      if (blockBox) {
+        const blockCenter =
+          (blockBox.x0 + blockBox.x1) / 2;
+
+        const lineCenter =
+          (box.x0 + box.x1) / 2;
+
+        const centerDifference = Math.abs(
+          blockCenter - lineCenter
+        );
+
+        const maxCenterDifference = Math.max(
+          widthA,
+          widthB,
+          80
+        );
+
+        if (centerDifference > maxCenterDifference * 1.5) {
+          continue;
+        }
+      }
+
+      const gapScore = Math.max(0, verticalGap) / maxGap;
+      const alignmentScore = 1 - horizontalOverlap;
 
       const score =
         gapScore +
-        alignmentScore * 0.5 +
+        alignmentScore * 0.6 +
         (1 - heightRatio);
 
       if (score < bestScore) {
@@ -1365,34 +1430,26 @@ function groupOcrBlocks(lines, image) {
 
     if (bestBlock) {
       bestBlock.lines.push(line);
+
+      const boxes = bestBlock.lines.map(item => item.bbox);
+
+      bestBlock.bbox = {
+        x0: Math.min(...boxes.map(item => item.x0)),
+        y0: Math.min(...boxes.map(item => item.y0)),
+        x1: Math.max(...boxes.map(item => item.x1)),
+        y1: Math.max(...boxes.map(item => item.y1))
+      };
     } else {
       blocks.push({
         lines: [line],
+        bbox: { ...box }
       });
     }
   }
 
-  // =====================================
-  // BUILD FINAL BLOCK DATA
-  // =====================================
-
   const result = blocks.map((block, index) => {
     const blockLines = sortReadingOrder(block.lines);
 
-    const boxes = blockLines
-      .map(line => line.bbox)
-      .filter(Boolean);
-
-    const bbox = boxes.length
-      ? {
-          x0: Math.min(...boxes.map(box => box.x0)),
-          y0: Math.min(...boxes.map(box => box.y0)),
-          x1: Math.max(...boxes.map(box => box.x1)),
-          y1: Math.max(...boxes.map(box => box.y1)),
-        }
-      : null;
-
-    // Ghép các dòng trong cùng một vùng thành câu.
     const text = blockLines
       .map(line => line.text.trim())
       .filter(Boolean)
@@ -1400,64 +1457,53 @@ function groupOcrBlocks(lines, image) {
       .replace(/\s+/gu, " ")
       .trim();
 
-    const fontSizes = blockLines.map(
-      line => line.style.fontSizePx
-    );
-
-    const averageFontSize = fontSizes.length
-      ? fontSizes.reduce((sum, value) => sum + value, 0) /
-        fontSizes.length
-      : 0;
+    const heights = blockLines.map(getLineHeight);
+    const averageFontSize = getMedian(heights);
 
     const boldCount = blockLines.filter(
-      line => line.style.weight === "bold"
+      line => line.style?.weight === "bold"
     ).length;
 
-    const weight =
-      boldCount > blockLines.length / 2
-        ? "bold"
-        : "normal";
+    const confidence = blockLines.reduce(
+      (sum, line) => sum + Number(line.confidence || 0),
+      0
+    ) / Math.max(1, blockLines.length);
 
-    const averageConfidence = blockLines.length
-      ? blockLines.reduce(
-          (sum, line) => sum + Number(line.confidence || 0),
-          0
-        ) / blockLines.length
-      : 0;
+    const medianHeight = getMedian(
+      styledLines.map(getLineHeight)
+    ) || 1;
 
-    const medianLineHeight = getMedian(fontSizes);
+    const relativeSize = averageFontSize / medianHeight;
 
     let fontSize = "medium";
 
-    if (medianLineHeight / (getMedian(
-      styledLines.map(getLineHeight)
-    ) || 1) >= 1.45) {
+    if (relativeSize >= 1.45) {
       fontSize = "large";
-    } else if (
-      medianLineHeight / (getMedian(
-        styledLines.map(getLineHeight)
-      ) || 1) <= 0.70
-    ) {
+    } else if (relativeSize <= 0.7) {
       fontSize = "small";
     }
 
-    return {
+    const blockResult = {
       id: index + 1,
-
       text,
-
-      confidence: averageConfidence,
-
-      bbox,
+      confidence,
+      bbox: block.bbox,
 
       style: {
         fontSize,
         fontSizePx: Math.round(averageFontSize),
-        weight,
+        weight:
+          boldCount > blockLines.length / 2
+            ? "bold"
+            : "normal"
       },
 
-      lines: blockLines,
+      lines: blockLines
     };
+
+    blockResult.type = classifyOcrBlock(blockResult, image);
+
+    return blockResult;
   });
 
   return sortBlocksReadingOrder(result);
@@ -1467,34 +1513,54 @@ function groupOcrBlocks(lines, image) {
 // =====================================
 // SORT CONTENT BLOCKS
 // =====================================
-
 function sortBlocksReadingOrder(blocks) {
   return [...blocks].sort((a, b) => {
     const ay = a.bbox?.y0 ?? 0;
     const by = b.bbox?.y0 ?? 0;
 
-    const ah = a.bbox
-      ? a.bbox.y1 - a.bbox.y0
-      : 20;
-
-    const bh = b.bbox
-      ? b.bbox.y1 - b.bbox.y0
-      : 20;
+    const ah = (a.bbox?.y1 ?? 0) - ay;
+    const bh = (b.bbox?.y1 ?? 0) - by;
 
     const tolerance = Math.max(
       12,
-      Math.min(ah, bh) * 0.45
+      Math.min(ah || 20, bh || 20) * 0.5
     );
 
-    if (Math.abs(ay - by) > tolerance) {
-      return ay - by;
+    if (Math.abs(ay - by) <= tolerance) {
+      return (a.bbox?.x0 ?? 0) - (b.bbox?.x0 ?? 0);
     }
 
-    return (
-      (a.bbox?.x0 ?? 0) -
-      (b.bbox?.x0 ?? 0)
-    );
+    return ay - by;
   });
+}
+  
+  function extractMainContent(blocks, image) {
+  const imageHeight = image?.height || 1;
+
+  const mainBlocks = blocks.filter(block => {
+    const type = block.type;
+    const y = (block.bbox?.y0 ?? 0) / imageHeight;
+
+    // Bỏ menu và footer.
+    if (type === "navigation" || type === "footer") {
+      return false;
+    }
+
+    // Loại một số dòng rất ngắn ở sát mép trên.
+    if (
+      y < 0.08 &&
+      block.text.split(/\s+/u).length <= 3
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return mainBlocks
+    .map(block => block.text)
+    .filter(Boolean)
+    .join("\n\n");
 }
   async function recognize(
     imageVariants,
@@ -1689,12 +1755,16 @@ const orderedLines = finalBlocks.flatMap(
   block => block.lines
 );
 
-// Mỗi block là một đoạn nội dung riêng.
 const finalText = finalBlocks
   .map(block => block.text)
   .filter(Boolean)
   .join("\n\n");
 
+// Nội dung chính, đã loại một số thành phần giao diện.
+const mainText = extractMainContent(
+  finalBlocks,
+  original
+);
 const finalConfidence = orderedLines.length
   ? orderedLines.reduce(
       (sum, line) => sum + Number(line.confidence || 0),
@@ -1729,72 +1799,53 @@ onProgress("OCR completed", 1);
 // =====================================
 // 8. RETURN RESULT
 // =====================================
-
 return {
   text: finalText,
+  mainText,
 
   confidence: Math.round(finalConfidence),
 
   language,
-
   languageLabel: languageLabel(language),
-
   script: languageInfo.script || "Unknown",
 
   mode: best?.mode || "Multi-tile",
-
   variant: best?.variant || "Enhanced",
 
-  // Số vùng nội dung, thay vì số dòng OCR.
   regionsDetected: finalBlocks.length,
 
-  // Giữ lines để tương thích với giao diện hiện tại.
   lines: orderedLines.map(line => ({
     text: line.text,
-
     confidence: Math.round(line.confidence),
-
     bbox: line.bbox,
-
-    style: line.style,
+    style: line.style
   })),
 
-  // Dữ liệu bố cục mới.
   blocks: finalBlocks.map(block => ({
     id: block.id,
-
     text: block.text,
-
+    type: block.type,
     confidence: Math.round(block.confidence),
-
     bbox: block.bbox,
-
     style: block.style,
 
     lines: block.lines.map(line => ({
       text: line.text,
-
       confidence: Math.round(line.confidence),
-
       bbox: line.bbox,
-
-      style: line.style,
-    })),
+      style: line.style
+    }))
   })),
 
-  // Giữ nguyên các kết quả OCR thay thế.
   alternatives: candidates
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
     .map(item => ({
       text: item.text,
-
       confidence: Math.round(item.confidence),
-
       mode: item.mode,
-
-      variant: item.variant,
-    })),
+      variant: item.variant
+    }))
 };
   }
 
