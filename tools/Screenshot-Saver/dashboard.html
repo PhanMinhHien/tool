@@ -1,864 +1,2219 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Screenshot Dashboard</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Screenshot Dashboard</title>
 
-<style>
-:root {
-  color-scheme: dark;
-  --bg: #101216;
-  --surface: #1b2028;
-  --border: #343b47;
-  --text: #f0f1f5;
-  --muted: #929baa;
-  --accent: #aaa5f5;
-  --danger: #f08b91;
-}
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101216;
+        --surface: #1b2028;
+        --surface-2: #202630;
+        --border: #343b47;
+        --text: #f0f1f5;
+        --muted: #929baa;
+        --accent: #aaa5f5;
+        --danger: #f08b91;
+      }
 
-* {
-  box-sizing: border-box;
-  font-family: Inter, "Segoe UI", sans-serif;
-}
+      * {
+        box-sizing: border-box;
+        font-family: Inter, "Segoe UI", sans-serif;
+      }
 
-body {
-  margin: 0;
-  padding: 28px;
-  background: var(--bg);
-  color: var(--text);
-}
+      body {
+        margin: 0;
+        padding: 28px;
+        background: var(--bg);
+        color: var(--text);
+      }
 
-.container {
-  max-width: 1450px;
-  margin: auto;
-}
+      button,
+      input {
+        font: inherit;
+      }
 
-.panel {
-  padding: 22px;
-  margin: 20px 0;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
-}
+      button {
+        padding: 9px 13px;
+        color: #e9e7ff;
+        background: #34334d;
+        border: 1px solid #514e75;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
 
-input, select, button {
-  font: inherit;
-}
+      button:hover:not(:disabled) {
+        filter: brightness(1.2);
+      }
 
-input, select {
-  width: 100%;
-  min-height: 42px;
-  padding: 9px 12px;
-  color: var(--text);
-  background: #14181f;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
 
-button {
-  padding: 10px 14px;
-  color: #e9e7ff;
-  background: #34334d;
-  border: 1px solid #514e75;
-  border-radius: 8px;
-  cursor: pointer;
-}
+      input {
+        color: var(--text);
+      }
 
-button:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
 
-label {
-  display: block;
-  margin: 12px 0 6px;
-  color: #c1c7d2;
-  font-size: 12px;
-}
+      a:hover {
+        text-decoration: underline;
+      }
 
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
+      .container {
+        max-width: 1450px;
+        margin: auto;
+      }
 
-.auth {
-  max-width: 420px;
-  margin: 10vh auto;
-}
+      .panel {
+        padding: 22px;
+        margin: 20px 0;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+      }
 
-.auth button {
-  width: 100%;
-  margin-top: 16px;
-}
+      .auth {
+        max-width: 420px;
+        margin: 10vh auto;
+      }
 
-.error {
-  color: var(--danger);
-  overflow-wrap: anywhere;
-}
+      label {
+        display: block;
+        margin: 12px 0 6px;
+        color: #c1c7d2;
+        font-size: 12px;
+      }
 
-.topbar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin: 20px 0;
-}
+      .auth input {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 12px;
+        background: #14181f;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
 
-.email {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 12px;
-}
+      .auth button {
+        width: 100%;
+        margin-top: 16px;
+      }
 
-.filters {
-  display: grid;
-  grid-template-columns: 2fr repeat(4, 1fr);
-  gap: 12px;
-  align-items: end;
-}
+      .error {
+        color: var(--danger);
+        overflow-wrap: anywhere;
+      }
 
-.stats {
-  margin: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-}
+      .topbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 20px 0;
+      }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 15px;
-}
+      .email {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 12px;
+      }
 
-.file-card {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: #171b22;
-}
+      .stats {
+        margin-bottom: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
 
-.file-placeholder {
-  height: 145px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #10141b;
-  color: var(--muted);
-  font-size: 42px;
-}
+      /* SELECTION BAR */
 
-.file-info {
-  padding: 13px;
-}
+      .selection-bar {
+        display: none;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 13px 15px;
+        margin-bottom: 18px;
+        background: #292536;
+        border: 1px solid #514e75;
+        border-radius: 10px;
+      }
 
-.file-name {
-  font-size: 13px;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
+      .selection-bar.visible {
+        display: flex;
+      }
 
-.meta {
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 11px;
-  overflow-wrap: anywhere;
-}
+      .selection-count {
+        color: #d9d5ff;
+        font-weight: 700;
+        font-size: 13px;
+      }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 13px;
-}
+      .selection-spacer {
+        flex: 1;
+      }
 
-.actions button {
-  flex: 1;
-  font-size: 12px;
-}
+      .delete {
+        color: #ffdfe2;
+        background: #452b31;
+        border-color: #704047;
+      }
 
-.delete {
-  color: #ffdfe2;
-  background: #452b31;
-  border-color: #704047;
-}
+      .delete:hover:not(:disabled) {
+        background: #63343d;
+      }
 
-.empty {
-  grid-column: 1 / -1;
-  padding: 35px;
-  text-align: center;
-  color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-}
+      /* UPLOAD TYPE */
 
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: #000c;
-}
+      .type-section {
+        margin-bottom: 18px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #171b22;
+      }
 
-.modal.open {
-  display: flex;
-}
+      .type-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 17px;
+        cursor: pointer;
+        list-style: none;
+        background: #202630;
+      }
 
-.modal-box {
-  width: min(1100px, 96vw);
-  max-height: 94vh;
-  padding: 15px;
-  overflow: auto;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-}
+      .type-header::-webkit-details-marker {
+        display: none;
+      }
 
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
+      .type-header::before {
+        content: "▸";
+        color: var(--muted);
+        transition: transform 0.15s;
+      }
 
-.modal img {
-  display: block;
-  max-width: 100%;
-  max-height: 78vh;
-  margin: auto;
-  object-fit: contain;
-}
+      .type-section[open] > .type-header::before {
+        transform: rotate(90deg);
+      }
 
-@media(max-width: 900px) {
-  .filters {
-    grid-template-columns: 1fr 1fr;
-  }
-}
+      .type-title {
+        font-size: 15px;
+        font-weight: 700;
+      }
 
-@media(max-width: 550px) {
-  body {
-    padding: 14px;
-  }
+      .count {
+        padding: 4px 8px;
+        color: var(--muted);
+        background: #303743;
+        border-radius: 20px;
+        font-size: 11px;
+      }
 
-  .filters {
-    grid-template-columns: 1fr;
-  }
+      .type-content {
+        padding: 15px;
+      }
 
-  .email {
-    margin-left: 0;
-  }
-}
-</style>
-</head>
+      /* WEEK */
 
-<body>
+      .week-section {
+        margin-bottom: 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
 
-<section id="loginGate" class="panel auth">
-  <h2>🔐 Screenshot Dashboard</h2>
-  <p>Sign in with your admin account.</p>
+      .week-section:last-child {
+        margin-bottom: 0;
+      }
 
-  <form id="loginForm">
-    <label>Email</label>
-    <input id="loginEmail" type="email"
-      autocomplete="username" required>
+      .week-header {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 13px;
+        background: #202630;
+      }
 
-    <label>Password</label>
-    <input id="loginPassword" type="password"
-      autocomplete="current-password" required>
+      .week-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
 
-    <button id="loginButton" type="submit">Sign in</button>
-  </form>
+      .week-count {
+        color: var(--muted);
+        font-size: 11px;
+      }
 
-  <p id="loginError" class="error"></p>
-</section>
+      .week-spacer {
+        flex: 1;
+      }
 
+      .week-content {
+        padding: 12px;
+      }
 
-<main id="dashboard" class="container" style="display:none">
+      /* COUNTRY AND FOLDER */
 
-  <h1>Screenshot Dashboard</h1>
-  <p style="color:var(--muted)">
-    Browse, preview, download and manage your screenshots.
-  </p>
+      .country-section {
+        margin-bottom: 12px;
+      }
 
-  <div class="topbar">
-    <a href="index.html">← Back to Upload</a>
-    <span id="signedInEmail" class="email"></span>
-    <button id="logoutButton">Sign out</button>
-  </div>
+      .country-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 5px 0 10px;
+        color: #d5d8e0;
+        font-size: 13px;
+        font-weight: 700;
+      }
 
-  <section class="panel">
+      .folder-section {
+        margin: 8px 0;
+        border: 1px solid #303743;
+        border-radius: 9px;
+        overflow: hidden;
+      }
 
-    <div class="filters">
+      .folder-header {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 12px;
+        cursor: pointer;
+        list-style: none;
+        background: #1e242d;
+      }
 
-      <div>
-        <label>Search</label>
-        <input id="searchInput" type="search"
-          placeholder="File, folder, campaign...">
+      .folder-header::-webkit-details-marker {
+        display: none;
+      }
+
+      .folder-header::before {
+        content: "▸";
+        color: var(--muted);
+      }
+
+      .folder-section[open] > .folder-header::before {
+        content: "▾";
+      }
+
+      .folder-name {
+        overflow-wrap: anywhere;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .folder-files {
+        padding: 12px;
+      }
+
+      /* COMPACT GALLERY */
+
+      .file-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+        gap: 12px;
+      }
+
+      .file-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #171b22;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+
+      .file-card:hover {
+        border-color: #68638f;
+      }
+
+      .file-card.selected {
+        border-color: var(--accent);
+        background: #242333;
+      }
+
+      .file-preview-placeholder {
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        background: #10141b;
+        font-size: 30px;
+      }
+
+      .file-info {
+        padding: 9px;
+      }
+
+      .file-select {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 7px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .file-select input {
+        width: 14px;
+        height: 14px;
+        accent-color: #aaa5f5;
+        cursor: pointer;
+      }
+
+      .file-name {
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 31px;
+      }
+
+      .meta {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+      }
+
+      .download-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 7px;
+        color: #8bcba5;
+        font-size: 10px;
+      }
+
+      .download-status.not-downloaded {
+        color: var(--muted);
+      }
+
+      .actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 9px;
+      }
+
+      .actions button {
+        flex: 1;
+        min-width: 0;
+        padding: 7px 3px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+
+      .actions .downloaded-button {
+        color: #c5e8d1;
+        background: #263b32;
+        border-color: #3d6550;
+      }
+
+      @media (max-width: 550px) {
+        .file-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .file-preview-placeholder {
+          height: 78px;
+        }
+      }
+
+      /* PREVIEW MODAL */
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #000c;
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-box {
+        width: min(1100px, 96vw);
+        max-height: 94vh;
+        padding: 15px;
+        overflow: auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .modal img {
+        display: block;
+        max-width: 100%;
+        max-height: 78vh;
+        margin: auto;
+        object-fit: contain;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 12px;
+        }
+
+        .panel {
+          padding: 14px;
+        }
+
+        .email {
+          margin-left: 0;
+        }
+
+        .file-grid {
+          grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        }
+
+        .week-header {
+          gap: 8px;
+        }
+      }
+
+      /* ===== COMPACT DASHBOARD OVERRIDES ===== */
+
+      .type-content {
+        padding: 10px 12px;
+      }
+
+      .type-section {
+        margin-bottom: 12px;
+        border-radius: 10px;
+      }
+
+      .type-header {
+        padding: 13px 15px;
+      }
+
+      .week-section {
+        margin-bottom: 10px;
+        border-radius: 9px;
+      }
+
+      .week-header {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .week-content {
+        padding: 10px 12px;
+      }
+
+      .country-section {
+        margin-bottom: 12px;
+      }
+
+      .country-title {
+        margin: 4px 0 8px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .folder-section {
+        margin: 7px 0;
+        border: 0;
+        border-radius: 0;
+        border-bottom: 1px solid var(--border);
+        overflow: visible;
+      }
+
+      .folder-header {
+        padding: 8px 4px;
+        background: transparent;
+      }
+
+      .folder-files {
+        padding: 8px 0 12px;
+      }
+
+      .file-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 9px;
+      }
+
+      .file-card {
+        border-radius: 8px;
+      }
+
+      .file-preview-placeholder {
+        height: 72px;
+        font-size: 24px;
+      }
+
+      .file-info {
+        padding: 8px;
+      }
+
+      .file-name {
+        min-height: 30px;
+        font-size: 11px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .meta {
+        display: none;
+      }
+
+      .file-select {
+        display: none;
+      }
+
+      /* Checkbox chỉ hiện trong Select mode */
+
+      body.selection-mode .file-select {
+        display: flex;
+      }
+
+      body.selection-mode .file-card {
+        cursor: pointer;
+      }
+
+      .file-card.selected {
+        border-color: var(--accent);
+        background: #242333;
+      }
+
+      .download-status {
+        margin-top: 6px;
+        font-size: 9px;
+      }
+
+      .actions {
+        margin-top: 7px;
+        gap: 5px;
+      }
+
+      .actions button {
+        padding: 7px 2px;
+        font-size: 10px;
+      }
+
+      .folder-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 8px;
+      }
+
+      .week-actions,
+      .folder-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .week-actions button,
+      .folder-actions button {
+        font-size: 10px;
+        padding: 7px 9px;
+      }
+
+      .download-zip-button {
+        color: #d8d4ff;
+        background: #302f49;
+        border-color: #514e75;
+      }
+
+      .selection-bar {
+        padding: 11px 13px;
+        gap: 9px;
+      }
+
+      .selection-bar.visible {
+        display: flex;
+      }
+
+      .selection-mode-button.active {
+        color: #d8d4ff;
+        border-color: var(--accent);
+        background: #302f49;
+      }
+
+      .zip-progress {
+        display: none;
+        margin: 12px 0;
+        padding: 12px;
+        border-radius: 8px;
+        background: #202630;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .zip-progress.visible {
+        display: block;
+      }
+
+      @media (max-width: 550px) {
+        .file-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .file-preview-placeholder {
+          height: 65px;
+        }
+      }
+
+      .week-select {
+        display: none;
+      }
+
+      body.selection-mode .week-select {
+        display: flex;
+      }
+
+      /* APP MESSAGE MODAL */
+      .app-dialog {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      .app-dialog.open {
+        display: flex;
+      }
+
+      .app-dialog-box {
+        width: min(440px, 94vw);
+        padding: 22px;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 18px 60px #0005;
+      }
+
+      .app-dialog-title {
+        margin: 0 0 12px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .app-dialog-message {
+        margin: 0;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        color: var(--text);
+      }
+
+      .app-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .app-dialog-actions button {
+        min-width: 88px;
+      }
+
+      .app-dialog-cancel {
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      .app-dialog-confirm {
+        color: white;
+        background: var(--accent, #3978d6);
+        border: 1px solid transparent;
+      }
+
+      .app-dialog-confirm.danger {
+        background: #c43d3d;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- LOGIN -->
+
+    <section id="loginGate" class="panel auth">
+      <h2>🔐 Screenshot Dashboard</h2>
+      <p>Sign in with your admin account.</p>
+
+      <form id="loginForm">
+        <label>Email</label>
+        <input id="loginEmail" type="email" autocomplete="username" required />
+
+        <label>Password</label>
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+
+        <button id="loginButton" type="submit">Sign in</button>
+      </form>
+
+      <p id="loginError" class="error"></p>
+    </section>
+
+    <!-- DASHBOARD -->
+
+    <main id="dashboard" class="container" style="display: none">
+      <h1>Screenshot Dashboard</h1>
+
+      <p style="color: var(--muted)">
+        Browse and manage your screenshots by upload type and week.
+      </p>
+
+      <div class="topbar">
+        <a href="index.html">← Back to Upload</a>
+        <span id="signedInEmail" class="email"></span>
+        <button id="logoutButton">Sign out</button>
       </div>
 
-      <div>
-        <label>Upload Type</label>
-        <select id="typeFilter">
-          <option value="">All types</option>
-          <option value="newsletter">Newsletter</option>
-          <option value="banners">Banners Upload</option>
-        </select>
-      </div>
+      <section class="panel">
+        <!-- BULK ACTIONS -->
 
-      <div>
-        <label>Week</label>
-        <select id="weekFilter">
-          <option value="">All weeks</option>
-        </select>
-      </div>
+        <div class="topbar" style="margin-top: 0">
+          <button id="selectionModeButton" class="selection-mode-button">
+            Select
+          </button>
+        </div>
 
-      <div>
-        <label>Country</label>
-        <select id="countryFilter">
-          <option value="">All countries</option>
-        </select>
-      </div>
+        <div id="selectionBar" class="selection-bar">
+          <span id="selectionCount" class="selection-count"> 0 selected </span>
 
-      <div>
-        <label>Campaign</label>
-        <select id="campaignFilter">
-          <option value="">All campaigns</option>
-        </select>
-      </div>
+          <span class="selection-spacer"></span>
 
+          <button id="clearSelectionButton" class="small-button">Clear</button>
+
+          <button
+            id="downloadSelectedButton"
+            class="download-zip-button small-button"
+            disabled
+          >
+            Download ZIP
+          </button>
+
+          <button
+            id="downloadNewSelectedButton"
+            class="download-zip-button small-button"
+            disabled
+          >
+            New Only
+          </button>
+
+          <button
+            id="deleteSelectedButton"
+            class="delete small-button"
+            disabled
+          >
+            Delete
+          </button>
+        </div>
+
+        <div id="zipProgress" class="zip-progress"></div>
+
+        <div id="fileStats" class="stats">Loading...</div>
+
+        <div id="fileTree" class="loading">Loading screenshots...</div>
+      </section>
+    </main>
+
+    <!-- PREVIEW MODAL -->
+
+    <div id="previewModal" class="modal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <strong id="previewTitle">Preview</strong>
+          <button id="closePreview">Close</button>
+        </div>
+
+        <img id="previewImage" alt="Screenshot preview" />
+      </div>
     </div>
 
-    <div id="fileStats" class="stats">Loading...</div>
-    <div id="fileGrid" class="grid"></div>
+    <!-- APP MESSAGE / CONFIRM MODAL -->
+    <div
+      id="appDialog"
+      class="app-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="appDialogTitle"
+    >
+      <div class="app-dialog-box">
+        <h2 id="appDialogTitle" class="app-dialog-title">Notification</h2>
 
-  </section>
-</main>
+        <p id="appDialogMessage" class="app-dialog-message"></p>
 
+        <div class="app-dialog-actions">
+          <button id="appDialogCancel" class="app-dialog-cancel" type="button">
+            Cancel
+          </button>
 
-<div id="previewModal" class="modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <strong id="previewTitle">Preview</strong>
-      <button id="closePreview">Close</button>
+          <button
+            id="appDialogConfirm"
+            class="app-dialog-confirm"
+            type="button"
+          >
+            OK
+          </button>
+        </div>
+      </div>
     </div>
-    <img id="previewImage" alt="Screenshot preview">
-  </div>
-</div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script type="module">
+      import { auth, db, ADMIN_UID } from "./firebase-config.js";
+
+      import {
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+      import {
+        ref,
+        get,
+        update,
+      } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+
+      // =====================================
+      // APP MESSAGE MODAL
+      // =====================================
+
+      const appDialog = document.getElementById("appDialog");
+      const appDialogTitle = document.getElementById("appDialogTitle");
+      const appDialogMessage = document.getElementById("appDialogMessage");
+      const appDialogCancel = document.getElementById("appDialogCancel");
+      const appDialogConfirm = document.getElementById("appDialogConfirm");
+
+      let appDialogResolver = null;
+
+      function closeAppDialog(result) {
+        appDialog.classList.remove("open");
+
+        if (appDialogResolver) {
+          const resolve = appDialogResolver;
+          appDialogResolver = null;
+          resolve(result);
+        }
+      }
+
+      function showAppModal(message, title = "Notification") {
+        appDialogTitle.textContent = title;
+        appDialogMessage.textContent = String(message ?? "");
 
-<script type="module">
+        appDialogCancel.style.display = "none";
+        appDialogConfirm.textContent = "OK";
+        appDialogConfirm.classList.remove("danger");
 
-import {
-  auth,
-  db,
-  ADMIN_UID
-} from "./firebase-config.js";
+        appDialog.classList.add("open");
+
+        return new Promise((resolve) => {
+          appDialogResolver = resolve;
+        });
+      }
+
+      function showAppConfirm(message, title = "Please confirm") {
+        appDialogTitle.textContent = title;
+        appDialogMessage.textContent = String(message ?? "");
 
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+        appDialogCancel.style.display = "inline-flex";
+        appDialogConfirm.textContent = "Confirm";
+        appDialogConfirm.classList.add("danger");
 
-import {
-  ref,
-  get,
-  remove
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+        appDialog.classList.add("open");
 
+        return new Promise((resolve) => {
+          appDialogResolver = resolve;
+        });
+      }
+
+      appDialogConfirm.addEventListener("click", () => {
+        closeAppDialog(true);
+      });
+
+      appDialogCancel.addEventListener("click", () => {
+        closeAppDialog(false);
+      });
+
+      appDialog.addEventListener("click", (event) => {
+        if (event.target === appDialog) {
+          closeAppDialog(false);
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && appDialog.classList.contains("open")) {
+          closeAppDialog(false);
+        }
+      });
+
+      // =====================================
+      // ELEMENTS
+      // =====================================
+      const downloadSelectedButton = document.getElementById(
+        "downloadSelectedButton",
+      );
+
+      const selectionModeButton = document.getElementById(
+        "selectionModeButton",
+      );
+
+      const zipProgress = document.getElementById("zipProgress");
+      const loginGate = document.getElementById("loginGate");
+      const dashboard = document.getElementById("dashboard");
+      const loginError = document.getElementById("loginError");
 
-const loginGate = document.getElementById("loginGate");
-const dashboard = document.getElementById("dashboard");
-const loginError = document.getElementById("loginError");
-const grid = document.getElementById("fileGrid");
-const stats = document.getElementById("fileStats");
+      const fileTree = document.getElementById("fileTree");
+      const stats = document.getElementById("fileStats");
 
-let allFiles = [];
-let cachedImageId = null;
-let cachedImageData = null;
+      const selectionBar = document.getElementById("selectionBar");
+      const selectionCount = document.getElementById("selectionCount");
+      const deleteSelectedButton = document.getElementById(
+        "deleteSelectedButton",
+      );
 
+      selectionModeButton.addEventListener("click", () => {
+        selectionMode = !selectionMode;
 
-// =====================================
-// LOGIN
-// =====================================
+        document.body.classList.toggle("selection-mode", selectionMode);
 
-document.getElementById("loginForm")
-.addEventListener("submit", async (event) => {
+        selectionModeButton.classList.toggle("active", selectionMode);
 
-  event.preventDefault();
+        selectionModeButton.textContent = selectionMode
+          ? "Done selecting"
+          : "Select";
 
-  loginError.textContent = "";
+        if (!selectionMode) {
+          selectedFiles.clear();
+        }
 
-  const button = document.getElementById("loginButton");
-  button.disabled = true;
+        renderFiles();
+      });
+      // =====================================
+      // STATE
+      // =====================================
 
-  try {
+      let allFiles = [];
 
-    await signInWithEmailAndPassword(
-      auth,
-      document.getElementById("loginEmail").value.trim(),
-      document.getElementById("loginPassword").value
-    );
+      let selectedFiles = new Set();
 
-  } catch (error) {
+      let cachedImageId = null;
+      let cachedImageData = null;
 
-    console.error(error);
-    loginError.textContent =
-      "Login failed. Check your email and password.";
+      let deleting = false;
+      let selectionMode = false;
+      let downloadingZip = false;
 
-  } finally {
-    button.disabled = false;
-  }
-});
+      // =====================================
+      // LOGIN
+      // =====================================
 
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-document.getElementById("logoutButton")
-.addEventListener("click", () => signOut(auth));
+          loginError.textContent = "";
 
+          const button = document.getElementById("loginButton");
 
-onAuthStateChanged(auth, async (user) => {
+          button.disabled = true;
+          button.textContent = "Signing in...";
 
-  if (
-    !user ||
-    ADMIN_UID === "PASTE_ADMIN_UID_HERE" ||
-    user.uid !== ADMIN_UID
-  ) {
+          try {
+            await signInWithEmailAndPassword(
+              auth,
+              document.getElementById("loginEmail").value.trim(),
+              document.getElementById("loginPassword").value,
+            );
+          } catch (error) {
+            console.error(error);
 
-    dashboard.style.display = "none";
-    loginGate.style.display = "block";
+            loginError.textContent =
+              "Login failed. Check your email and password.";
+          } finally {
+            button.disabled = false;
+            button.textContent = "Sign in";
+          }
+        });
 
-    if (user && user.uid !== ADMIN_UID) {
-      loginError.textContent = "This account is not authorized.";
-      await signOut(auth);
-    }
+      document
+        .getElementById("logoutButton")
+        .addEventListener("click", async () => {
+          selectedFiles.clear();
 
-    if (ADMIN_UID === "PASTE_ADMIN_UID_HERE") {
-      loginError.textContent =
-        "Please configure ADMIN_UID first.";
-    }
+          await signOut(auth);
+        });
 
-    return;
-  }
+      onAuthStateChanged(auth, async (user) => {
+        if (!user || user.uid !== ADMIN_UID) {
+          dashboard.style.display = "none";
+          loginGate.style.display = "block";
 
-  loginGate.style.display = "none";
-  dashboard.style.display = "block";
+          if (user && user.uid !== ADMIN_UID) {
+            loginError.textContent = "This account is not authorized.";
 
-  document.getElementById("signedInEmail").textContent =
-    user.email || "Admin";
+            await signOut(auth);
+          }
 
-  await loadFiles();
-});
+          return;
+        }
 
+        loginGate.style.display = "none";
+        dashboard.style.display = "block";
 
-// =====================================
-// LOAD METADATA ONLY
-// =====================================
+        document.getElementById("signedInEmail").textContent =
+          user.email || "Admin";
 
-async function loadFiles() {
+        await loadFiles();
+      });
 
-  stats.textContent = "Loading file information...";
-  grid.innerHTML = "";
+      // =====================================
+      // LOAD METADATA
+      // =====================================
 
-  try {
+      async function loadFiles() {
+        stats.textContent = "Loading file information...";
+        fileTree.innerHTML =
+          '<div class="loading">Loading screenshots...</div>';
 
-    const snapshot = await get(
-      ref(db, "screenshotMetadata")
-    );
+        try {
+          const snapshot = await get(ref(db, "screenshotMetadata"));
 
-    const data = snapshot.val() || {};
+          const data = snapshot.val() || {};
 
-    allFiles = Object.entries(data).map(([id, item]) => ({
-      id,
-      ...item
-    }));
+          allFiles = Object.entries(data).map(([id, item]) => ({
+            id,
+            ...item,
+          }));
 
-    allFiles.sort(
-      (a, b) => (b.createdAt || 0) - (a.createdAt || 0)
-    );
+          allFiles.sort((a, b) => {
+            const weekA = Number(a.week) || 0;
+            const weekB = Number(b.week) || 0;
 
-    populateFilters();
-    renderFiles();
+            if (weekA !== weekB) {
+              return weekB - weekA;
+            }
 
-  } catch (error) {
+            return (b.createdAt || 0) - (a.createdAt || 0);
+          });
 
-    console.error(error);
-    stats.textContent =
-      "Could not load metadata. Check Realtime Database Rules.";
-  }
-}
+          // Remove selections for files that no longer exist.
 
+          const existingIds = new Set(allFiles.map((file) => file.id));
 
-// =====================================
-// FILTERS
-// =====================================
+          selectedFiles = new Set(
+            [...selectedFiles].filter((id) => existingIds.has(id)),
+          );
 
-function populateSelect(id, values) {
+          renderFiles();
+        } catch (error) {
+          console.error(error);
 
-  const select = document.getElementById(id);
-  const previous = select.value;
+          stats.textContent =
+            "Could not load metadata. Check Realtime Database Rules.";
 
-  const firstOption = select.options[0].outerHTML;
-  select.innerHTML = firstOption;
+          fileTree.innerHTML =
+            '<div class="empty">Unable to load screenshots.</div>';
+        }
+      }
 
-  values.forEach(value => {
+      // =====================================
+      // HELPERS
+      // =====================================
 
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = value;
+      function createElement(tag, className, text) {
+        const element = document.createElement(tag);
 
-    select.appendChild(option);
-  });
+        if (className) {
+          element.className = className;
+        }
 
-  select.value = previous;
-}
+        if (text !== undefined) {
+          element.textContent = text;
+        }
 
+        return element;
+      }
 
-function populateFilters() {
+      function getUploadType(file) {
+        const type = String(file.uploadType || "").toLowerCase();
 
-  const weeks = [
-    ...new Set(allFiles.map(f => f.week).filter(v => v != null))
-  ].sort((a, b) => Number(b) - Number(a));
+        if (type === "newsletter") {
+          return "newsletter";
+        }
 
-  const countries = [
-    ...new Set(allFiles.map(f => f.country).filter(Boolean))
-  ].sort();
+        if (
+          type === "banners" ||
+          type === "banner" ||
+          type === "banners upload"
+        ) {
+          return "banners";
+        }
 
-  const campaigns = [
-    ...new Set(allFiles.map(f => f.campaign).filter(Boolean))
-  ].sort();
+        return "other";
+      }
 
-  populateSelect("weekFilter", weeks);
-  populateSelect("countryFilter", countries);
-  populateSelect("campaignFilter", campaigns);
-}
+      function getTypeLabel(type) {
+        if (type === "newsletter") {
+          return "Newsletter";
+        }
 
+        if (type === "banners") {
+          return "Banners Upload";
+        }
 
-// =====================================
-// RENDER
-// =====================================
+        return "Other uploads";
+      }
 
-function renderFiles() {
+      function getWeekLabel(file) {
+        return file.week !== undefined && file.week !== null
+          ? `Week ${file.week}`
+          : "Unknown week";
+      }
 
-  const term =
-    document.getElementById("searchInput").value
-      .trim().toLowerCase();
+      function getFolderName(file) {
+        return file.folderName || "Uncategorized";
+      }
 
-  const type = document.getElementById("typeFilter").value;
-  const week = document.getElementById("weekFilter").value;
-  const country = document.getElementById("countryFilter").value;
-  const campaign = document.getElementById("campaignFilter").value;
+      function getCountryName(file) {
+        return file.country || "Other countries";
+      }
 
-  const filtered = allFiles.filter(file => {
+      function sortWeeks(a, b) {
+        const numberA = Number(a);
+        const numberB = Number(b);
 
-    const searchable = [
-      file.fileName,
-      file.originalFileName,
-      file.folderName,
-      file.campaign,
-      file.country,
-      file.storagePath,
-      file.idTicket,
-      file.salesOrg,
-      file.langCode
-    ].join(" ").toLowerCase();
+        if (!Number.isNaN(numberA) && !Number.isNaN(numberB)) {
+          return numberB - numberA;
+        }
 
-    return (
-      (!term || searchable.includes(term)) &&
-      (!type || file.uploadType === type) &&
-      (!week || String(file.week) === week) &&
-      (!country || file.country === country) &&
-      (!campaign || file.campaign === campaign)
-    );
-  });
+        return String(b).localeCompare(String(a));
+      }
 
-  stats.textContent =
-    `${filtered.length} file(s) shown · ${allFiles.length} total`;
+      // =====================================
+      // GROUP FILES
+      // =====================================
 
-  grid.innerHTML = "";
+      function groupFiles(files) {
+        const result = {
+          newsletter: {},
+          banners: {},
+          other: {},
+        };
 
-  if (!filtered.length) {
+        files.forEach((file) => {
+          const type = getUploadType(file);
 
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No screenshots found.";
+          const weekKey =
+            file.week !== undefined && file.week !== null
+              ? String(file.week)
+              : "unknown";
 
-    grid.appendChild(empty);
-    return;
-  }
+          if (!result[type][weekKey]) {
+            result[type][weekKey] = [];
+          }
 
-  filtered.forEach(createFileCard);
-}
+          result[type][weekKey].push(file);
+        });
 
+        return result;
+      }
 
-// =====================================
-// FILE CARD
-// =====================================
+      // =====================================
+      // RENDER DASHBOARD
+      // =====================================
 
-function createFileCard(file) {
+      function renderFiles() {
+        fileTree.innerHTML = "";
 
-  const card = document.createElement("article");
-  card.className = "file-card";
+        const grouped = groupFiles(allFiles);
 
-  const placeholder = document.createElement("div");
-  placeholder.className = "file-placeholder";
-  placeholder.textContent = "▧";
+        stats.textContent =
+          `${allFiles.length} screenshot(s) · ` +
+          `${selectedFiles.size} selected`;
 
-  const info = document.createElement("div");
-  info.className = "file-info";
+        if (!allFiles.length) {
+          fileTree.appendChild(
+            createElement("div", "empty", "No screenshots uploaded yet."),
+          );
 
-  const name = document.createElement("div");
-  name.className = "file-name";
-  name.textContent = file.fileName || "Unnamed file";
+          updateSelectionBar();
+          return;
+        }
 
-  const meta = document.createElement("div");
-  meta.className = "meta";
+        const typeOrder = ["newsletter", "banners", "other"];
 
-  meta.textContent =
-    `${file.uploadType || ""} · Week ${file.week || ""}` +
-    (file.country ? ` · ${file.country}` : "");
+        typeOrder.forEach((type) => {
+          const weeks = grouped[type];
 
-  const campaign = document.createElement("div");
-  campaign.className = "meta";
-  campaign.textContent = file.campaign || "";
+          const weekKeys = Object.keys(weeks);
 
-  const folder = document.createElement("div");
-  folder.className = "meta";
-  folder.textContent = file.storagePath || "";
+          if (!weekKeys.length) return;
 
-  const actions = document.createElement("div");
-  actions.className = "actions";
+          const typeTotal = weekKeys.reduce(
+            (sum, key) => sum + weeks[key].length,
+            0,
+          );
 
-  const previewButton = document.createElement("button");
-  previewButton.textContent = "Preview";
+          const typeSection = document.createElement("details");
+          typeSection.className = "type-section";
+          typeSection.open = true;
 
-  previewButton.addEventListener("click", () => {
-    previewFile(file, previewButton);
-  });
+          const typeHeader = createElement("summary", "type-header");
 
-  const downloadButton = document.createElement("button");
-  downloadButton.textContent = "Download";
+          typeHeader.appendChild(
+            createElement("span", "type-title", getTypeLabel(type)),
+          );
 
-  downloadButton.addEventListener("click", () => {
-    downloadFile(file, downloadButton);
-  });
+          typeHeader.appendChild(
+            createElement("span", "count", `${typeTotal} files`),
+          );
 
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Delete";
-  deleteButton.className = "delete";
+          const typeContent = createElement("div", "type-content");
 
-  deleteButton.addEventListener("click", () => {
-    deleteFile(file, deleteButton);
-  });
+          typeSection.append(typeHeader, typeContent);
 
-  actions.append(
-    previewButton,
-    downloadButton,
-    deleteButton
-  );
+          weekKeys.sort(sortWeeks);
 
-  info.append(name, meta, campaign, folder, actions);
-  card.append(placeholder, info);
+          weekKeys.forEach((weekKey) => {
+            const weekFiles = weeks[weekKey];
 
-  grid.appendChild(card);
-}
+            const weekSection = createWeekSection(type, weekKey, weekFiles);
 
+            typeContent.appendChild(weekSection);
+          });
 
-// =====================================
-// GET IMAGE ON DEMAND
-// =====================================
+          fileTree.appendChild(typeSection);
+        });
 
-async function getImageData(file) {
+        updateSelectionBar();
+      }
 
-  if (
-    cachedImageId === file.id &&
-    cachedImageData
-  ) {
-    return cachedImageData;
-  }
+      // =====================================
+      // WEEK SECTION
+      // =====================================
 
-  const snapshot = await get(
-    ref(db, `screenshotImages/${file.id}`)
-  );
+      function createWeekSection(type, weekKey, files) {
+        const section = createElement("section", "week-section");
 
-  if (!snapshot.exists()) {
-    throw new Error("Image data was not found.");
-  }
+        const header = createElement("div", "week-header");
 
-  cachedImageId = file.id;
-  cachedImageData = snapshot.val();
+        // Select all files in this upload type + week.
 
-  return cachedImageData;
-}
+        const selectLabel = createElement("label", "week-select");
 
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
 
-// =====================================
-// PREVIEW
-// =====================================
+        const selectedInWeek = files.filter((file) =>
+          selectedFiles.has(file.id),
+        ).length;
 
-async function previewFile(file, button) {
+        checkbox.checked = selectedInWeek === files.length;
+        checkbox.indeterminate =
+          selectedInWeek > 0 && selectedInWeek < files.length;
 
-  button.disabled = true;
-  button.textContent = "Loading...";
+        checkbox.addEventListener("change", () => {
+          files.forEach((file) => {
+            if (checkbox.checked) {
+              selectedFiles.add(file.id);
+            } else {
+              selectedFiles.delete(file.id);
+            }
+          });
 
-  try {
+          renderFiles();
+        });
 
-    const imageData = await getImageData(file);
+        selectLabel.append(checkbox, createElement("span", "", "Select week"));
 
-    document.getElementById("previewTitle").textContent =
-      file.fileName || "Screenshot";
+        header.appendChild(selectLabel);
 
-    document.getElementById("previewImage").src = imageData;
+        header.appendChild(
+          createElement(
+            "span",
+            "week-title",
+            weekKey === "unknown" ? "Unknown week" : `Week ${weekKey}`,
+          ),
+        );
 
-    document.getElementById("previewModal")
-      .classList.add("open");
+        header.appendChild(
+          createElement("span", "week-count", `${files.length} screenshot(s)`),
+        );
 
-  } catch (error) {
+        const spacer = createElement("span", "week-spacer");
 
-    console.error(error);
-    alert(error.message || "Could not load image.");
+        const weekActions = createElement("div", "week-actions");
 
-  } finally {
+        const downloadWeekButton = createElement(
+          "button",
+          "download-zip-button",
+          "↓ Download ZIP",
+        );
 
-    button.disabled = false;
-    button.textContent = "Preview";
-  }
-}
+        downloadWeekButton.addEventListener("click", () => {
+          const weekName =
+            weekKey === "unknown" ? "Unknown_Week" : `Week_${weekKey}`;
 
+          downloadFilesAsZip(
+            files,
+            `${getTypeLabel(type).replaceAll(" ", "_")}_${weekName}.zip`,
+          );
+        });
 
-function closePreview() {
+        const deleteWeekButton = createElement(
+          "button",
+          "delete small-button",
+          "Delete week",
+        );
 
-  document.getElementById("previewModal")
-    .classList.remove("open");
+        deleteWeekButton.addEventListener("click", () => {
+          deleteFiles(
+            files,
+            `Delete ${getTypeLabel(type)} / ` +
+              `${weekKey === "unknown" ? "Unknown week" : "Week " + weekKey}`,
+          );
+        });
 
-  document.getElementById("previewImage").src = "";
-}
+        const downloadNewWeekButton = createElement(
+          "button",
+          "download-zip-button",
+          "↓ New Only",
+        );
 
+        downloadNewWeekButton.addEventListener("click", () => {
+          const weekName =
+            weekKey === "unknown" ? "Unknown_Week" : `Week_${weekKey}`;
 
-document.getElementById("closePreview")
-.addEventListener("click", closePreview);
+          downloadUndownloadedAsZip(
+            files,
+            `${getTypeLabel(type).replaceAll(" ", "_")}_${weekName}_New.zip`,
+          );
+        });
 
+        weekActions.append(
+          downloadWeekButton,
+          downloadNewWeekButton,
+          deleteWeekButton,
+        );
 
-document.getElementById("previewModal")
-.addEventListener("click", event => {
+        header.appendChild(weekActions);
 
-  if (event.target.id === "previewModal") {
-    closePreview();
-  }
-});
+        deleteWeekButton.addEventListener("click", () => {
+          deleteFiles(
+            files,
+            `Delete ${getTypeLabel(type)} / ` +
+              `${weekKey === "unknown" ? "Unknown week" : "Week " + weekKey}`,
+          );
+        });
 
+        header.append(spacer, deleteWeekButton);
 
-// =====================================
-// DOWNLOAD
-// =====================================
+        const content = createElement("div", "week-content");
 
-async function downloadFile(file, button) {
+        // Newsletter: Country -> Folder -> Screenshot
+        // Banners: Folder -> Screenshot
 
-  button.disabled = true;
-  button.textContent = "Loading...";
+        if (type === "newsletter") {
+          const countryGroups = {};
 
-  try {
+          files.forEach((file) => {
+            const country = getCountryName(file);
 
-    const imageData = await getImageData(file);
+            if (!countryGroups[country]) {
+              countryGroups[country] = {};
+            }
 
-    const link = document.createElement("a");
+            const folder = getFolderName(file);
 
-    link.href = imageData;
-    link.download = file.fileName || "screenshot";
+            if (!countryGroups[country][folder]) {
+              countryGroups[country][folder] = [];
+            }
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+            countryGroups[country][folder].push(file);
+          });
 
-  } catch (error) {
+          Object.keys(countryGroups)
+            .sort()
+            .forEach((country) => {
+              const countrySection = createElement("div", "country-section");
 
-    console.error(error);
-    alert(error.message || "Download failed.");
+              const countryTitle = createElement(
+                "div",
+                "country-title",
+                `🌍 ${country}`,
+              );
 
-  } finally {
+              countrySection.appendChild(countryTitle);
 
-    button.disabled = false;
-    button.textContent = "Download";
-  }
-}
+              Object.keys(countryGroups[country])
+                .sort()
+                .forEach((folder) => {
+                  const folderFiles = countryGroups[country][folder];
 
+                  countrySection.appendChild(
+                    createFolderSection(folder, folderFiles),
+                  );
+                });
 
-// =====================================
-// DELETE IMAGE + METADATA
-// =====================================
+              content.appendChild(countrySection);
+            });
+        } else {
+          const folderGroups = {};
 
-async function deleteFile(file, button) {
+          files.forEach((file) => {
+            const folder = getFolderName(file);
 
-  const confirmed = confirm(
-    "Delete this screenshot permanently?\n\n" +
-    file.storagePath +
-    "\n\nThis cannot be undone."
-  );
+            if (!folderGroups[folder]) {
+              folderGroups[folder] = [];
+            }
 
-  if (!confirmed) return;
+            folderGroups[folder].push(file);
+          });
 
-  button.disabled = true;
-  button.textContent = "Deleting...";
+          Object.keys(folderGroups)
+            .sort()
+            .forEach((folder) => {
+              content.appendChild(
+                createFolderSection(folder, folderGroups[folder]),
+              );
+            });
+        }
 
-  try {
+        section.append(header, content);
 
-    await remove(
-      ref(db, `screenshotImages/${file.id}`)
-    );
+        return section;
+      }
 
-    await remove(
-      ref(db, `screenshotMetadata/${file.id}`)
-    );
+      // =====================================
+      // FOLDER SECTION
+      // =====================================
 
-    if (cachedImageId === file.id) {
-      cachedImageId = null;
-      cachedImageData = null;
-    }
+      function createFolderSection(folderName, files) {
+        const section = document.createElement("details");
+        section.className = "folder-section";
+        section.open = true;
 
-    allFiles = allFiles.filter(
-      item => item.id !== file.id
-    );
+        const header = createElement("summary", "folder-header");
 
-    populateFilters();
-    renderFiles();
+        header.appendChild(
+          createElement("span", "folder-name", `📁 ${folderName}`),
+        );
 
-  } catch (error) {
+        header.appendChild(createElement("span", "count", `${files.length}`));
 
-    console.error(error);
+        const content = createElement("div", "folder-files");
 
-    alert(
-      "Delete could not be fully completed. " +
-      "Refresh the dashboard and check the record."
-    );
+        const toolbar = createElement("div", "folder-toolbar");
 
-    button.disabled = false;
-    button.textContent = "Delete";
-  }
-}
+        const folderActions = createElement("div", "folder-actions");
 
+        const downloadFolderButton = createElement(
+          "button",
+          "download-zip-button",
+          "↓ Download Folder ZIP",
+        );
 
-// =====================================
-// FILTER EVENTS
-// =====================================
+        downloadFolderButton.addEventListener("click", () => {
+          downloadFilesAsZip(files, `${safeFileName(folderName)}.zip`);
+        });
 
-[
-  "searchInput",
-  "typeFilter",
-  "weekFilter",
-  "countryFilter",
-  "campaignFilter"
-].forEach(id => {
+        const downloadNewFolderButton = createElement(
+          "button",
+          "download-zip-button",
+          "↓ New Only",
+        );
 
-  const element = document.getElementById(id);
+        downloadNewFolderButton.addEventListener("click", () => {
+          downloadUndownloadedAsZip(
+            files,
+            `${safeFileName(folderName)}_New.zip`,
+          );
+        });
 
-  element.addEventListener(
-    id === "searchInput" ? "input" : "change",
-    renderFiles
-  );
-});
+        folderActions.append(downloadFolderButton, downloadNewFolderButton);
+        toolbar.appendChild(folderActions);
 
-</script>
+        const grid = createElement("div", "file-grid");
 
-</body>
+        content.append(toolbar, grid);
+
+        files.forEach((file) => {
+          grid.appendChild(createFileCard(file));
+        });
+
+        content.appendChild(grid);
+
+        section.append(header, content);
+
+        return section;
+      }
+
+      // =====================================
+      // FILE CARD
+      // =====================================
+
+      function createFileCard(file) {
+        const card = createElement("article", "file-card");
+
+        if (selectedFiles.has(file.id)) {
+          card.classList.add("selected");
+        }
+
+        const placeholder = createElement(
+          "div",
+          "file-preview-placeholder",
+          "▧",
+        );
+
+        const info = createElement("div", "file-info");
+
+        const selectLabel = createElement("label", "file-select");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = selectedFiles.has(file.id);
+
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) {
+            selectedFiles.add(file.id);
+          } else {
+            selectedFiles.delete(file.id);
+          }
+
+          renderFiles();
+        });
+
+        selectLabel.append(checkbox, createElement("span", "", "Select"));
+
+        const name = createElement(
+          "div",
+          "file-name",
+          file.fileName || "Unnamed file",
+        );
+
+        name.title = file.fileName || "Unnamed file";
+
+        const downloadStatus = createElement(
+          "div",
+          file.downloadedAt
+            ? "download-status"
+            : "download-status not-downloaded",
+          file.downloadedAt
+            ? `✓ Downloaded${file.downloadCount > 1 ? ` · ${file.downloadCount}x` : ""}`
+            : "Not downloaded",
+        );
+
+        const actions = createElement("div", "actions");
+
+        const previewButton = createElement("button", "", "Preview");
+
+        previewButton.addEventListener("click", () => {
+          previewFile(file, previewButton);
+        });
+
+        const downloadButton = createElement(
+          "button",
+          file.downloadedAt ? "downloaded-button" : "",
+          file.downloadedAt ? "Re-download" : "Download",
+        );
+
+        downloadButton.addEventListener("click", () => {
+          downloadFile(file, downloadButton);
+        });
+
+        actions.append(previewButton, downloadButton);
+
+        info.append(selectLabel, name, downloadStatus, actions);
+
+        card.append(placeholder, info);
+
+        return card;
+      }
+
+      // =====================================
+      // SELECTION BAR
+      // =====================================
+
+      function updateSelectionBar() {
+        const count = selectedFiles.size;
+
+        selectionCount.textContent = `${count} selected`;
+
+        selectionBar.classList.toggle("visible", count > 0);
+
+        deleteSelectedButton.disabled = count === 0 || deleting;
+
+        downloadSelectedButton.disabled = count === 0 || downloadingZip;
+
+        downloadNewSelectedButton.disabled = count === 0 || downloadingZip;
+
+        stats.textContent = `${allFiles.length} screenshot(s) · ${count} selected`;
+      }
+
+      document
+        .getElementById("clearSelectionButton")
+        .addEventListener("click", () => {
+          selectedFiles.clear();
+
+          renderFiles();
+        });
+
+      deleteSelectedButton.addEventListener("click", () => {
+        const files = allFiles.filter((file) => selectedFiles.has(file.id));
+
+        deleteFiles(files, "Delete selected screenshots");
+      });
+
+      downloadSelectedButton.addEventListener("click", () => {
+        const files = allFiles.filter((file) => selectedFiles.has(file.id));
+
+        if (!files.length) return;
+
+        downloadFilesAsZip(files, "Selected_Screenshots.zip");
+      });
+
+      const downloadNewSelectedButton = document.getElementById(
+        "downloadNewSelectedButton",
+      );
+
+      downloadNewSelectedButton.addEventListener("click", () => {
+        const files = allFiles.filter((file) => selectedFiles.has(file.id));
+
+        downloadUndownloadedAsZip(files, "Selected_New_Screenshots.zip");
+      });
+
+      // =====================================
+      // GET IMAGE ON DEMAND
+      // =====================================
+
+      async function getImageData(file) {
+        if (cachedImageId === file.id && cachedImageData) {
+          return cachedImageData;
+        }
+
+        const snapshot = await get(ref(db, `screenshotImages/${file.id}`));
+
+        if (!snapshot.exists()) {
+          throw new Error("Image data was not found.");
+        }
+
+        cachedImageId = file.id;
+        cachedImageData = snapshot.val();
+
+        return cachedImageData;
+      }
+
+      // =====================================
+      // PREVIEW
+      // =====================================
+
+      async function previewFile(file, button) {
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        try {
+          const imageData = await getImageData(file);
+
+          document.getElementById("previewTitle").textContent =
+            file.fileName || "Screenshot";
+
+          document.getElementById("previewImage").src = imageData;
+
+          document.getElementById("previewModal").classList.add("open");
+        } catch (error) {
+          console.error(error);
+
+          showAppModal(error.message || "Could not load image.");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Preview";
+        }
+      }
+
+      function closePreview() {
+        document.getElementById("previewModal").classList.remove("open");
+
+        document.getElementById("previewImage").src = "";
+      }
+
+      document
+        .getElementById("closePreview")
+        .addEventListener("click", closePreview);
+
+      document
+        .getElementById("previewModal")
+        .addEventListener("click", (event) => {
+          if (event.target.id === "previewModal") {
+            closePreview();
+          }
+        });
+
+      // =====================================
+      // DOWNLOAD
+      // =====================================
+
+      async function downloadFile(file, button) {
+        const originalText = file.downloadedAt ? "Re-download" : "Download";
+
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        try {
+          // Get image from Firebase only when requested.
+
+          const imageData = await getImageData(file);
+
+          // Trigger browser download.
+
+          const link = document.createElement("a");
+
+          link.href = imageData;
+          link.download = file.fileName || "screenshot";
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          // Update local state immediately.
+
+          const downloadedAt = Date.now();
+
+          const downloadCount = (Number(file.downloadCount) || 0) + 1;
+
+          file.downloadedAt = downloadedAt;
+          file.downloadCount = downloadCount;
+
+          button.textContent = "Re-download";
+          button.classList.add("downloaded-button");
+
+          // Persist download status in Firebase.
+
+          try {
+            await update(ref(db, `screenshotMetadata/${file.id}`), {
+              downloadedAt,
+              downloadCount,
+            });
+
+            renderFiles();
+          } catch (saveError) {
+            console.error("Could not save download status:", saveError);
+
+            showAppModal(
+              "The download was started, but its download status " +
+                "could not be saved to Firebase. Please check your database rules.",
+            );
+          }
+        } catch (error) {
+          console.error(error);
+
+          showAppModal(error.message || "Download failed.");
+        } finally {
+          button.disabled = false;
+
+          button.textContent = file.downloadedAt ? "Re-download" : originalText;
+        }
+      }
+
+      // =====================================
+      // ZIP DOWNLOAD
+      // =====================================
+
+      function safeFileName(value) {
+        return (
+          String(value || "Screenshot")
+            .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+            .replace(/\s+/g, "_")
+            .replace(/^\.+|\.+$/g, "")
+            .slice(0, 150) || "Screenshot"
+        );
+      }
+
+      // Preserve the original Firebase folder structure
+      // using each file's storagePath.
+
+      function getZipPath(file) {
+        let path = String(file.storagePath || "").trim();
+
+        // Remove leading slash and prevent unsafe path segments.
+
+        path = path.replace(/\\/g, "/").replace(/^\/+/, "");
+
+        if (path) {
+          const segments = path
+            .split("/")
+            .filter(
+              (segment) => segment && segment !== "." && segment !== "..",
+            );
+
+          if (segments.length) {
+            return segments.join("/");
+          }
+        }
+
+        // Fallback if storagePath is missing.
+
+        const type = getTypeLabel(getUploadType(file));
+        const week = file.week != null ? `Week ${file.week}` : "Unknown Week";
+
+        const folder = safeFileName(file.folderName);
+
+        const country = file.country ? `${safeFileName(file.country)}/` : "";
+
+        const fileName = safeFileName(file.fileName || `${file.id}.png`);
+
+        return [type, week, country + folder, fileName]
+          .filter(Boolean)
+          .join("/");
+      }
+
+      // Convert Firebase image data URL into ZIP binary data.
+
+      function getBase64Content(imageData) {
+        if (typeof imageData !== "string") {
+          throw new Error("Invalid image data.");
+        }
+
+        const commaIndex = imageData.indexOf(",");
+
+        if (imageData.startsWith("data:") && commaIndex !== -1) {
+          return imageData.slice(commaIndex + 1);
+        }
+
+        // Support raw Base64 data too.
+
+        return imageData;
+      }
+
+      function getUndownloadedFiles(files) {
+        return files.filter((file) => !file.downloadedAt);
+      }
+
+      function downloadUndownloadedAsZip(files, zipName) {
+        const undownloadedFiles = getUndownloadedFiles(files);
+
+        if (!undownloadedFiles.length) {
+          showAppModal(
+            "All screenshots in this group have already been downloaded.",
+            "Nothing to download",
+          );
+          return;
+        }
+
+        downloadFilesAsZip(undownloadedFiles, zipName);
+      }
+
+      // Download several images as one ZIP file.
+
+      async function downloadFilesAsZip(files, zipName) {
+        if (downloadingZip || !files.length) return;
+
+        if (typeof window.JSZip === "undefined") {
+          showAppModal(
+            "JSZip could not be loaded. Please check your internet connection and refresh the page.",
+          );
+
+          return;
+        }
+
+        const uniqueFiles = [
+          ...new Map(files.map((file) => [file.id, file])).values(),
+        ];
+
+        downloadingZip = true;
+
+        downloadSelectedButton.disabled = true;
+
+        zipProgress.classList.add("visible");
+
+        const zip = new JSZip();
+
+        const successfulFiles = [];
+        const failedFiles = [];
+
+        try {
+          for (let index = 0; index < uniqueFiles.length; index++) {
+            const file = uniqueFiles[index];
+
+            zipProgress.textContent =
+              `Preparing ZIP: ${index + 1}/${uniqueFiles.length} — ` +
+              `${file.fileName || "Screenshot"}`;
+
+            stats.textContent = `Preparing ZIP: ${index + 1}/${uniqueFiles.length}`;
+
+            try {
+              // Fetch only when the user requests ZIP download.
+
+              const imageData = await getImageData(file);
+
+              const zipPath = getZipPath(file);
+
+              // Avoid overwriting if two files have the same path.
+
+              let finalPath = zipPath;
+              let duplicateIndex = 1;
+
+              while (zip.file(finalPath)) {
+                const dotIndex = zipPath.lastIndexOf(".");
+
+                if (dotIndex > zipPath.lastIndexOf("/")) {
+                  finalPath =
+                    zipPath.slice(0, dotIndex) +
+                    `_${duplicateIndex}` +
+                    zipPath.slice(dotIndex);
+                } else {
+                  finalPath = `${zipPath}_${duplicateIndex}`;
+                }
+
+                duplicateIndex++;
+              }
+
+              zip.file(finalPath, getBase64Content(imageData), {
+                base64: true,
+                binary: true,
+                compression: "STORE",
+              });
+
+              successfulFiles.push(file);
+            } catch (error) {
+              console.error(`Could not add ${file.fileName} to ZIP:`, error);
+
+              failedFiles.push(file);
+            }
+          }
+
+          if (!successfulFiles.length) {
+            throw new Error("No images could be added to the ZIP file.");
+          }
+
+          zipProgress.textContent = `Creating ZIP file (${successfulFiles.length} images)...`;
+
+          const blob = await zip.generateAsync(
+            {
+              type: "blob",
+              compression: "STORE",
+            },
+            (metadata) => {
+              zipProgress.textContent = `Creating ZIP: ${Math.round(metadata.percent)}%`;
+            },
+          );
+
+          // Start one browser download.
+
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+
+          link.href = url;
+          link.download = safeFileName(zipName.replace(/\.zip$/i, "")) + ".zip";
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 60000);
+
+          // Update download status for files included in the ZIP.
+
+          const downloadedAt = Date.now();
+
+          const updates = {};
+
+          successfulFiles.forEach((file) => {
+            const nextCount = (Number(file.downloadCount) || 0) + 1;
+
+            file.downloadedAt = downloadedAt;
+            file.downloadCount = nextCount;
+
+            updates[`screenshotMetadata/${file.id}/downloadedAt`] =
+              downloadedAt;
+
+            updates[`screenshotMetadata/${file.id}/downloadCount`] = nextCount;
+          });
+
+          try {
+            await update(ref(db), updates);
+          } catch (saveError) {
+            console.error("Could not save ZIP download status:", saveError);
+
+            showAppModal(
+              "The ZIP was created, but Firebase could not save the download status.",
+            );
+          }
+
+          renderFiles();
+
+          if (failedFiles.length) {
+            const failedNames = failedFiles
+              .map((file) => file.fileName || file.id)
+              .join("\n");
+
+            showAppModal(
+              `ZIP created with ${successfulFiles.length} file(s).\n\n` +
+                `${failedFiles.length} file(s) could not be added:\n\n` +
+                failedNames,
+            );
+          } else {
+            zipProgress.textContent = `✓ ZIP ready — ${successfulFiles.length} file(s)`;
+          }
+        } catch (error) {
+          console.error("ZIP download failed:", error);
+
+          showAppModal(error.message || "Could not create ZIP file.");
+        } finally {
+          downloadingZip = false;
+
+          downloadSelectedButton.disabled = selectedFiles.size === 0;
+
+          stats.textContent =
+            `${allFiles.length} screenshot(s) · ` +
+            `${selectedFiles.size} selected`;
+
+          if (!zipProgress.textContent.startsWith("✓")) {
+            zipProgress.classList.remove("visible");
+          }
+
+          updateSelectionBar();
+        }
+      }
+
+      // =====================================
+      // BULK DELETE
+      // =====================================
+
+      async function deleteFiles(files, description) {
+        if (deleting || !files.length) return;
+
+        const uniqueFiles = [
+          ...new Map(files.map((file) => [file.id, file])).values(),
+        ];
+
+        const fileCount = uniqueFiles.length;
+
+        const confirmed = await showAppConfirm(
+          `${description}\n\n` +
+            `This will permanently delete ${fileCount} screenshot(s).\n\n` +
+            `Both image data and metadata will be deleted.\n\n` +
+            `This action cannot be undone. Continue?`,
+        );
+
+        if (!confirmed) return;
+
+        deleting = true;
+
+        deleteSelectedButton.disabled = true;
+
+        try {
+          /*
+      Firebase Realtime Database multi-location update.
+
+      Each image and its metadata are deleted together.
+
+      Example:
+      screenshotImages/IMAGE_ID = null
+      screenshotMetadata/IMAGE_ID = null
+
+      This avoids deleting only one side of the record
+      when the update succeeds.
+    */
+
+          const updates = {};
+
+          uniqueFiles.forEach((file) => {
+            updates[`screenshotImages/${file.id}`] = null;
+
+            updates[`screenshotMetadata/${file.id}`] = null;
+          });
+
+          await update(ref(db), updates);
+
+          // Clear cached image if it was deleted.
+
+          if (
+            cachedImageId &&
+            uniqueFiles.some((file) => file.id === cachedImageId)
+          ) {
+            cachedImageId = null;
+            cachedImageData = null;
+          }
+
+          // Remove deleted IDs from selection.
+
+          uniqueFiles.forEach((file) => {
+            selectedFiles.delete(file.id);
+          });
+
+          // Update local data.
+
+          const deletedIds = new Set(uniqueFiles.map((file) => file.id));
+
+          allFiles = allFiles.filter((file) => !deletedIds.has(file.id));
+
+          renderFiles();
+
+          showAppModal(`Successfully deleted ${fileCount} screenshot(s).`);
+        } catch (error) {
+          console.error("Bulk delete failed:", error);
+
+          showAppModal(
+            "Delete could not be completed.\n\n" +
+              "Please check your Realtime Database Rules and refresh the dashboard.",
+          );
+
+          // Reload Firebase data to avoid stale UI.
+
+          await loadFiles();
+        } finally {
+          deleting = false;
+
+          updateSelectionBar();
+        }
+      }
+    </script>
+  </body>
 </html>
