@@ -1,0 +1,2899 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>📷 Screenshot Saver</title>
+    <style>
+      /* =========================================================
+   SCREENSHOT SAVER
+   Complete UI Theme — Graphite & Soft Lavender
+   CSS replacement only
+========================================================= */
+
+      /* ---------------------------------------------------------
+   01. DESIGN TOKENS
+--------------------------------------------------------- */
+
+      :root {
+        color-scheme: dark;
+
+        --bg: #101216;
+        --surface: #191d24;
+        --surface-2: #202630;
+        --surface-3: #272e39;
+        --surface-hover: #2d3441;
+
+        --border: #303743;
+        --border-hover: #485164;
+
+        --text: #f0f1f5;
+        --text-secondary: #c1c7d2;
+        --muted: #929baa;
+        --placeholder: #707b8c;
+
+        --accent: #aaa5f5;
+        --accent-hover: #bbb7ff;
+        --accent-soft: rgba(170, 165, 245, 0.12);
+        --accent-border: rgba(170, 165, 245, 0.35);
+
+        --success: #8dd5a8;
+        --success-bg: rgba(82, 180, 120, 0.12);
+
+        --danger: #f08b91;
+        --danger-bg: rgba(220, 90, 100, 0.12);
+
+        --warning: #e7c78b;
+
+        --radius-sm: 8px;
+        --radius-md: 11px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+
+        --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.16);
+        --shadow-dropdown: 0 14px 35px rgba(0, 0, 0, 0.35);
+
+        --transition: 0.2s ease;
+      }
+
+      /* ---------------------------------------------------------
+   02. GLOBAL RESET
+--------------------------------------------------------- */
+
+      * {
+        box-sizing: border-box;
+        font-family: Inter, "Segoe UI", Tahoma, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 40px;
+
+        color: var(--text);
+        background: var(--bg);
+
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 0;
+      }
+
+      /* ---------------------------------------------------------
+   03. TYPOGRAPHY
+--------------------------------------------------------- */
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: var(--text);
+        line-height: 1.35;
+      }
+
+      h1 {
+        font-size: 30px;
+        font-weight: 750;
+        letter-spacing: -0.8px;
+      }
+
+      h2 {
+        margin: 0 0 20px;
+        padding-bottom: 14px;
+
+        border-bottom: 1px solid var(--border);
+
+        font-size: 19px;
+        font-weight: 720;
+        letter-spacing: -0.35px;
+        text-align: left;
+      }
+
+      h3 {
+        margin: 26px 0 18px;
+        padding-bottom: 12px;
+
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      p {
+        color: var(--text-secondary);
+      }
+
+      small {
+        color: var(--muted);
+      }
+
+      label {
+        display: block;
+        margin: 14px 0 7px;
+
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      /* ---------------------------------------------------------
+   04. MAIN LAYOUT
+--------------------------------------------------------- */
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+      }
+
+      .workspace-layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.8fr);
+        align-items: start;
+        gap: 22px;
+      }
+
+      .col-md-6 {
+        width: 50%;
+        min-width: 0;
+        flex: 0 0 auto;
+      }
+
+      .workspace-layout > .col-md-6 {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        padding: 0;
+      }
+
+      /* ---------------------------------------------------------
+   05. MAIN CARDS
+--------------------------------------------------------- */
+
+      .section {
+        min-width: 0;
+        margin: 0 0 22px;
+        padding: 26px;
+
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+
+        box-shadow: var(--shadow-card);
+      }
+
+      .section h2 {
+        margin-top: 0;
+      }
+
+      #Naming,
+      #TableEmail,
+      #Unicode {
+        margin-bottom: 22px;
+      }
+
+      /* ---------------------------------------------------------
+   06. FORM ELEMENTS
+--------------------------------------------------------- */
+
+      .form-group {
+        min-width: 0;
+        margin-bottom: 18px;
+      }
+
+      input,
+      select,
+      textarea {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+
+        padding: 10px 13px;
+
+        color: var(--text);
+        background: #14181f;
+
+        border: 1px solid #343b47;
+        border-radius: var(--radius-md);
+
+        font-size: 13px;
+        line-height: 1.5;
+
+        outline: none;
+        transition:
+          border-color var(--transition),
+          box-shadow var(--transition),
+          background var(--transition);
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--placeholder);
+        opacity: 1;
+      }
+
+      input:hover,
+      select:hover,
+      textarea:hover {
+        border-color: var(--border-hover);
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+        outline: none;
+      }
+
+      input:disabled,
+      select:disabled,
+      textarea:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #1b2028;
+      }
+
+      input:read-only {
+        color: var(--text-secondary);
+        background: #1d222b;
+        border-color: var(--border);
+        cursor: not-allowed;
+      }
+
+      /* Text inputs */
+
+      input[type="text"],
+      input[type="date"],
+      input[type="number"],
+      input[type="email"],
+      input[type="search"],
+      input[type="password"] {
+        width: 100%;
+      }
+
+      /* Select */
+
+      select {
+        cursor: pointer;
+        padding-right: 36px;
+        color-scheme: dark;
+      }
+
+      select option {
+        color: var(--text);
+        background: var(--surface-2);
+      }
+
+      /* Date */
+
+      input[type="date"] {
+        color-scheme: dark;
+      }
+
+      /* Checkbox and radio */
+
+      input[type="checkbox"],
+      input[type="radio"] {
+        display: inline-block;
+        width: auto;
+        min-height: auto;
+        margin-right: 8px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      /* File input */
+
+      input[type="file"] {
+        width: 100%;
+        min-height: auto;
+        padding: 9px;
+
+        color: var(--text-secondary);
+        background: #14181f;
+
+        border: 1px dashed #454d5c;
+        border-radius: var(--radius-md);
+
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      input[type="file"]::file-selector-button {
+        margin-right: 12px;
+        padding: 8px 13px;
+
+        color: #e9e7ff;
+        background: #34334d;
+
+        border: 1px solid #4d4a70;
+        border-radius: 8px;
+
+        font-size: 12px;
+        font-weight: 650;
+
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      input[type="file"]::file-selector-button:hover {
+        background: #454263;
+      }
+
+      /* Textarea */
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+        font-family: "Courier New", monospace;
+      }
+
+      /* Specific fields */
+
+      #vendor,
+      #campaignName,
+      #campaignID {
+        padding: 11px 13px;
+      }
+
+      #languageInput {
+        width: 100%;
+        padding: 11px 13px;
+      }
+
+      /* ---------------------------------------------------------
+   07. BUTTONS
+--------------------------------------------------------- */
+
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 40px;
+        padding: 10px 16px;
+
+        color: #e9e7ff;
+        background: #34334d;
+
+        border: 1px solid #4d4a70;
+        border-radius: var(--radius-md);
+
+        font-size: 13px;
+        font-weight: 650;
+
+        cursor: pointer;
+        transition:
+          background var(--transition),
+          border-color var(--transition),
+          transform var(--transition);
+      }
+
+      button:hover {
+        background: #454263;
+        border-color: #625e8b;
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Main upload button */
+
+      #uploadForm button[type="submit"] {
+        display: flex;
+        width: 100%;
+        min-height: 46px;
+        margin-top: 20px;
+        padding: 12px 18px;
+
+        color: #171624;
+        background: var(--accent);
+        border: 1px solid var(--accent);
+
+        border-radius: var(--radius-md);
+
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      #uploadForm button[type="submit"]:hover {
+        color: #171624;
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        box-shadow: 0 5px 16px rgba(170, 165, 245, 0.15);
+      }
+
+      /* Copy button */
+
+      .copy-btn {
+        min-height: 30px;
+        padding: 5px 11px;
+
+        color: #e9e7ff;
+        background: #34334d;
+        border: 1px solid #4d4a70;
+        border-radius: 7px;
+
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .copy-btn:hover {
+        background: #454263;
+      }
+
+      /* ---------------------------------------------------------
+   08. UPLOAD SECTION
+--------------------------------------------------------- */
+
+      .upload-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .upload-panel h2 {
+        margin-bottom: 14px;
+      }
+
+      .upload-panel .upload-description {
+        margin: -4px 0 22px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      #uploadForm {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      #uploadForm label {
+        margin-top: 14px;
+      }
+
+      #bannerNameContainer {
+        margin-top: 4px;
+      }
+
+      #status {
+        margin-top: 15px;
+        padding: 0;
+
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.6;
+
+        text-align: left;
+        overflow-wrap: anywhere;
+      }
+
+      /* ---------------------------------------------------------
+   09. NAMING CONVENTION
+--------------------------------------------------------- */
+
+      #Naming {
+        min-width: 0;
+      }
+
+      #Naming h2 {
+        margin-bottom: 14px;
+      }
+
+      .naming-intro {
+        margin: -4px 0 24px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      #Naming .form-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        margin-bottom: 16px;
+      }
+
+      #Naming .form-layout {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      #Naming .form-layout-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .naming-main-fields {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px;
+      }
+
+      .naming-main-fields > div {
+        min-width: 0;
+      }
+
+      /* ---------------------------------------------------------
+   10. BANNER FIELDS
+--------------------------------------------------------- */
+
+      .naming-banner-panel {
+        margin-top: 24px;
+        padding: 22px;
+
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+      }
+
+      .naming-banner-panel h3 {
+        margin: 0 0 18px;
+        padding-bottom: 13px;
+
+        color: #e5e4f5;
+        border-bottom: 1px solid #3b4050;
+
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .naming-banner-panel .form-1 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .naming-banner-panel .form-1 h3 {
+        grid-column: 1 / -1;
+      }
+
+      .naming-banner-panel .form-group {
+        min-width: 0;
+        margin: 0;
+      }
+
+      /* Original Naming heading compatibility */
+
+      #Naming h3 {
+        color: var(--text);
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* ---------------------------------------------------------
+   11. GENERATED RESULTS
+--------------------------------------------------------- */
+
+      #output {
+        margin-top: 20px;
+        padding: 15px;
+
+        color: var(--text);
+        background: var(--surface-2);
+
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      #proofNameResult,
+      #bannerPositionResult {
+        padding: 15px;
+
+        color: var(--text);
+        background: #14181f;
+
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+
+        overflow-wrap: anywhere;
+      }
+
+      #bannerProofSection,
+      #bannerPositonSection {
+        margin-top: 24px;
+      }
+
+      #bannerProofSection h2,
+      #bannerPositonSection h2 {
+        margin-bottom: 14px;
+        text-align: left;
+      }
+
+      #resultTable td,
+      #tableBodyName td,
+      #outputHTML td,
+      #proofNameResult td,
+      #bannerPositionResult td {
+        position: relative;
+        cursor: copy;
+      }
+
+      /* ---------------------------------------------------------
+   12. GENERATED ITEM
+--------------------------------------------------------- */
+
+      .generated-item {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        margin-bottom: 12px;
+        padding: 13px 15px;
+
+        color: var(--text);
+        background: var(--surface-2);
+
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+
+        font-family: monospace;
+        font-size: 13px;
+      }
+
+      .generated-item .generated-text {
+        flex: 1;
+        min-width: 0;
+        padding-right: 10px;
+        word-break: break-all;
+      }
+
+      /* ---------------------------------------------------------
+   13. TABLES
+--------------------------------------------------------- */
+
+      table {
+        width: 100%;
+        margin-top: 20px;
+
+        color: var(--text);
+        background: var(--surface);
+
+        border: 1px solid var(--border);
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: var(--radius-md);
+
+        overflow: hidden;
+        font-size: 13px;
+      }
+
+      table th,
+      table td {
+        padding: 12px 14px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      table th {
+        color: #e5e4f5;
+        background: #252a35;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      table td {
+        color: var(--text-secondary);
+      }
+
+      table tr:last-child td {
+        border-bottom: none;
+      }
+
+      table tr:nth-child(even) {
+        background: #1d222b;
+      }
+
+      table tr:hover {
+        background: #282d39;
+      }
+
+      #tableBodyName tr td:first-of-type,
+      #resultTable tr td:first-of-type {
+        color: #e9e7ff;
+        background: #34334d;
+        font-weight: 700;
+      }
+
+      /* ---------------------------------------------------------
+   14. AUTOCOMPLETE
+--------------------------------------------------------- */
+
+      .autocomplete-wrapper {
+        position: relative;
+      }
+
+      .autocomplete-list {
+        position: absolute;
+        z-index: 999;
+
+        top: 100%;
+        left: 0;
+        right: 0;
+
+        display: none;
+        max-height: 220px;
+        overflow-y: auto;
+
+        color: var(--text);
+        background: var(--surface-2);
+
+        border: 1px solid var(--border-hover);
+        border-radius: var(--radius-md);
+
+        box-shadow: var(--shadow-dropdown);
+      }
+
+      .autocomplete-list .autocomplete-item {
+        padding: 10px 12px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: background var(--transition);
+      }
+
+      .autocomplete-list .autocomplete-item:hover {
+        color: var(--text);
+        background: var(--surface-hover);
+      }
+
+      .autocomplete-list .autocomplete-item.active {
+        color: #e9e7ff;
+        background: #34334d;
+      }
+
+      #languageInputWrapper.disabled {
+        display: block;
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      /* ---------------------------------------------------------
+   15. COPY TOOLTIP
+--------------------------------------------------------- */
+
+      .copy-tooltip {
+        position: absolute;
+        z-index: 1000;
+
+        top: -25px;
+        left: 50%;
+
+        padding: 5px 9px;
+
+        color: #fff;
+        background: #347d58;
+
+        border-radius: 6px;
+
+        font-size: 11px;
+        white-space: nowrap;
+
+        opacity: 0;
+        pointer-events: none;
+
+        transform: translateX(-50%);
+        transition:
+          opacity var(--transition),
+          transform var(--transition);
+      }
+
+      .copy-tooltip.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-5px);
+      }
+
+      .copy-text {
+        position: relative;
+        display: inline-block;
+      }
+
+      .center-copy {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      /* ---------------------------------------------------------
+   16. IMAGE PREVIEW
+--------------------------------------------------------- */
+
+      #imgPreview {
+        display: block;
+
+        max-width: 100%;
+        max-height: 360px;
+
+        margin: 20px auto 0;
+
+        object-fit: contain;
+
+        background: #14181f;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+
+        box-shadow: var(--shadow-card);
+      }
+
+      /* ---------------------------------------------------------
+   17. SCROLLBARS
+--------------------------------------------------------- */
+
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #424958 transparent;
+      }
+
+      *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background: #424958;
+        border-radius: 20px;
+      }
+
+      *::-webkit-scrollbar-thumb:hover {
+        background: #5a6374;
+      }
+
+      /* ---------------------------------------------------------
+   18. SELECTION
+--------------------------------------------------------- */
+
+      ::selection {
+        color: #171624;
+        background: var(--accent);
+      }
+
+      /* ---------------------------------------------------------
+   19. RESPONSIVE — TABLET
+--------------------------------------------------------- */
+
+      @media (max-width: 1000px) {
+        body {
+          padding: 28px 22px;
+        }
+
+        .workspace-layout {
+          grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.4fr);
+          gap: 16px;
+        }
+
+        .section {
+          padding: 21px;
+        }
+
+        #Naming .form-layout {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      /* ---------------------------------------------------------
+   20. RESPONSIVE — MOBILE
+--------------------------------------------------------- */
+
+      @media (max-width: 768px) {
+        body {
+          padding: 22px 16px;
+        }
+
+        .workspace-layout {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 16px;
+        }
+
+        .workspace-layout > .col-md-6 {
+          width: 100%;
+        }
+
+        .section {
+          padding: 20px;
+        }
+
+        #Naming .form-layout,
+        #Naming .form-layout-2 {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 10px;
+        }
+
+        .naming-banner-panel .form-1 {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 12px;
+        }
+
+        .naming-banner-panel .form-1 h3 {
+          grid-column: auto;
+        }
+
+        h1 {
+          font-size: 25px;
+        }
+
+        h2 {
+          font-size: 18px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 16px 11px;
+        }
+
+        .section {
+          padding: 17px;
+          border-radius: 14px;
+        }
+
+        .naming-banner-panel {
+          padding: 15px;
+        }
+
+        input,
+        select,
+        textarea {
+          font-size: 13px;
+        }
+
+        table {
+          display: block;
+          max-width: 100%;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+
+        .generated-item {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .copy-btn {
+          align-self: flex-end;
+        }
+      }
+
+      /* ---------------------------------------------------------
+   21. ACCESSIBILITY
+--------------------------------------------------------- */
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+
+/* Firebase Admin Login */
+.firebase-auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 12, 18, 0.96);
+}
+
+.firebase-auth-card {
+  width: min(420px, 100%);
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.firebase-auth-card h2 {
+  margin-top: 0;
+}
+
+.firebase-auth-card p {
+  color: var(--muted);
+}
+
+.firebase-auth-card label {
+  display: block;
+  margin: 14px 0 6px;
+}
+
+.firebase-auth-card input {
+  width: 100%;
+}
+
+.firebase-auth-card button {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.firebase-auth-error {
+  color: var(--danger) !important;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.firebase-workspace-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.firebase-workspace-actions a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.firebase-user-email {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+    </style>
+  </head>
+
+  <body>
+
+<div id="rtdbLoginGate" style="
+  position:fixed; inset:0; z-index:99999;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(10,12,18,.97);
+">
+  <div style="
+    width:min(420px,100%); padding:28px;
+    border-radius:16px; background:#20232b;
+    color:#fff; border:1px solid #454957;
+  ">
+    <h2>🔐 Screenshot Saver</h2>
+    <p>Sign in with your admin account.</p>
+
+    <form id="rtdbLoginForm">
+      <label>Email</label>
+      <input id="rtdbEmail" type="email" required
+        autocomplete="username"
+        style="width:100%;padding:12px;margin:6px 0 14px">
+
+      <label>Password</label>
+      <input id="rtdbPassword" type="password" required
+        autocomplete="current-password"
+        style="width:100%;padding:12px;margin:6px 0 14px">
+
+      <button id="rtdbLoginButton" type="submit"
+        style="width:100%;padding:12px">
+        Sign in
+      </button>
+    </form>
+
+    <p id="rtdbLoginError" style="color:#ff9999"></p>
+  </div>
+</div>
+
+
+    <div class="container">
+      <!-- PAGE INTRO -->
+      <div class="workspace-intro">
+        <h1>Screenshot workspace</h1>
+        <p>Upload your screenshots, organize your files and generate naming conventions in one place.</p>
+      </div>
+
+
+<div style="
+  display:flex;align-items:center;gap:14px;
+  flex-wrap:wrap;margin:12px 0 20px;
+">
+  <a href="dashboard.html">☷ Open File Dashboard</a>
+  <span id="rtdbAdminEmail" style="font-size:12px;opacity:.7"></span>
+  <button type="button" id="rtdbLogoutButton">Sign out</button>
+</div>
+
+
+      <!-- MAIN WORKSPACE -->
+      <div class="row workspace-layout">
+        <!-- LEFT: UPLOAD -->
+        <div class="col-md-6">
+          <div class="section upload-panel">
+            <h2>Save Screenshot</h2>
+
+            <p class="upload-description">Upload and save your screenshot to the selected folder.</p>
+
+            <form id="uploadForm">
+              <label>Upload Type:</label>
+              <select id="uploadType" name="uploadType">
+                <option value="newsletter">Newsletter</option>
+                <option value="banners">Banners Upload</option>
+              </select>
+
+              <label>Screenshot Image:</label>
+              <input type="file" id="screenshotInput" accept="image/*" required />
+
+              <label>Folder Name:</label>
+              <input type="text" id="folderInput" placeholder="Enter folder name..." required />
+
+              <div id="bannerNameContainer" style="display: none">
+                <label for="bannerImageNameInput">Image Name:</label>
+                <input type="text" id="bannerImageNameInput" placeholder="Enter image name..." />
+              </div>
+
+              <button type="submit">Save Screenshot</button>
+            </form>
+
+            <p id="status"></p>
+          </div>
+        </div>
+
+        <!-- RIGHT: NAMING -->
+        <div class="col-md-6">
+          <div id="Naming" class="section">
+            <h2>Naming Convention</h2>
+
+            <p class="naming-intro">Enter your campaign details and generate the required naming information.</p>
+
+            <!-- HIDDEN ORIGINAL FIELDS -->
+            <div class="">
+              <div class="form-group" style="display: none">
+                <label for="programCode">Program Code*</label>
+                <select id="programCode">
+                  <option value="ES">ES - Email Send</option>
+                  <option value="NL">NL - Newsletter</option>
+                </select>
+              </div>
+
+              <div class="form-group autocomplete-wrapper" style="display: none">
+                <label for="vendor">Vendor*</label>
+                <input id="vendor" type="text" placeholder="Choose vendor..." autocomplete="off" />
+                <div id="vendorList" class="autocomplete-list"></div>
+              </div>
+
+              <div id="languageInputWrapper" class="form-group autocomplete-wrapper" style="display: none">
+                <label for="languageInput">Language*</label>
+                <input id="languageInput" type="text" placeholder="Type to search..." autocomplete="off" />
+                <div id="languageList" class="autocomplete-list"></div>
+                <div id="salesOrgPopup" class="autocomplete-list" style="display: none"></div>
+              </div>
+
+              <div class="form-group" style="display: none">
+                <label for="customDate">Date*</label>
+                <input type="date" id="customDate" />
+              </div>
+
+              <!-- CAMPAIGN NAME -->
+              <div class="naming-main-fields">
+                <div class="">
+                  <label for="campaignName">Campaign Name*</label>
+                  <input type="text" id="campaignName" autocomplete="off" onblur="autoParseCampaignInfo()" placeholder="Enter campaign name..." />
+                </div>
+              </div>
+
+              <div class="form-group" style="display: none">
+                <label for="campaignID">Project ID*</label>
+                <input type="text" id="campaignID" autocomplete="off" />
+              </div>
+            </div>
+
+            <!-- BANNER FIELDS -->
+            <div class="naming-banner-panel">
+              <div class="form-1">
+                <h3>Banner Fields POE</h3>
+
+                <div class="form-group">
+                  <label for="typeBanner">Type Banner*</label>
+                  <select id="typeBanner">
+                    <option value="">-- Select banner --</option>
+                    <option value="Front banner">Front banner</option>
+                    <option value="Large banner">Large banner</option>
+                    <option value="Mega banner">Mega banner</option>
+                    <option value="Product banner">Product banner</option>
+                    <option value="Basket banner">Basket banner</option>
+                    <option value="Homepage banner">Homepage banner</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="idTicket">ID Ticket*</label>
+                  <input type="text" id="idTicket" autocomplete="off" placeholder="Enter ticket ID..." />
+                </div>
+              </div>
+            </div>
+
+            <!-- BANNER PROOF -->
+            <div id="bannerProofSection" style="display: none">
+              <h2>Naming Proof Banner</h2>
+
+              <div id="proofNameResult"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIỮ NGUYÊN TOÀN BỘ SCRIPT GỐC BÊN DƯỚI -->
+    <script>
+      const form = document.getElementById("uploadForm");
+      const statusText = document.getElementById("status");
+      const screenshotInput = document.getElementById("screenshotInput");
+      const folderInput = document.getElementById("folderInput");
+      const uploadTypeInput = document.getElementById("uploadType");
+      const bannerNameContainer = document.getElementById("bannerNameContainer");
+      const bannerImageNameInput = document.getElementById("bannerImageNameInput");
+      let detectedSalesOrg = null;
+      let detectedLangCode = null;
+      window.getScreenshotNamingData = () => ({
+  salesOrg: detectedSalesOrg,
+  langCode: detectedLangCode
+});
+      // Theo dõi người dùng có tự chỉnh Folder Name hay chưa
+      let folderManuallyEdited = false;
+
+      folderInput.addEventListener("input", (e) => {
+        if (e.isTrusted) {
+          folderManuallyEdited = true;
+        }
+      });
+      // Khi người dùng nhập Campaign Name mới,
+      // cho phép app nhận diện lại Folder Name.
+      document.getElementById("campaignName").addEventListener("input", () => {
+        folderManuallyEdited = false;
+      });
+      const idTicketInput = document.querySelector("#idTicket");
+      const bannerNameInput = document.querySelector("#bannerImageNameInput");
+      const typeBannerInput = document.querySelector("#typeBanner");
+      const campaignNameInput = document.querySelector("#campaignName");
+      let currentWeek = "";
+
+      function updateImageName() {
+        const week = currentWeek.trim();
+        const type = typeBannerInput.value.trim();
+
+        // Lấy nguyên văn Campaign Name hiện tại
+        const campaign = campaignNameInput.value.trim();
+
+        const idTicket = idTicketInput.value.trim();
+
+        if (!week || !type || !campaign) return;
+
+        bannerNameInput.value = `${week}_${type}_${campaign}_${idTicket}`.trim();
+      }
+
+      idTicketInput.addEventListener("input", updateImageName);
+      campaignNameInput.addEventListener("input", updateImageName);
+      typeBannerInput.addEventListener("change", updateImageName);
+      bannerImageNameInput.addEventListener("input", () => {
+        const val = bannerImageNameInput.value.trim();
+        if (val.length >= 2) {
+          let countryCode = "";
+
+          const patternMatch = val.match(/[_\-]([A-Z]{2})[_\-]/);
+          if (patternMatch) {
+            countryCode = patternMatch[1];
+          }
+
+          if (!countryCode) {
+            const digitLetterMatch = val.match(/\d([A-Z]{2})_/);
+            if (digitLetterMatch) {
+              countryCode = digitLetterMatch[1];
+            }
+          }
+
+          if (!countryCode) {
+            const langInput = document.getElementById("languageInput");
+            if (langInput && langInput.value) {
+              countryCode = langInput.value.trim().toUpperCase().slice(0, 2);
+            }
+          }
+
+          if (!countryCode && /^[A-Z]{2}/.test(val)) {
+            countryCode = val.slice(0, 2);
+          }
+
+          if (countryCode && /^[A-Z]{2}$/.test(countryCode) && !folderManuallyEdited) {
+            folderInput.value = countryCode;
+          }
+
+          const weekMatch = val.match(/W(\d+)/i);
+          if (weekMatch) {
+            currentWeek = `W${weekMatch[1]}`;
+          }
+          folderInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      });
+
+      function handleUploadTypeChange() {
+        const uploadType = uploadTypeInput.value;
+        localStorage.setItem("selectedUploadType", uploadType);
+        if (uploadType === "banners") {
+          folderInput.readOnly = false;
+          bannerNameContainer.style.display = "block";
+          bannerImageNameInput.setAttribute("required", "true");
+          const val = bannerImageNameInput.value.trim();
+          if (val.length >= 2) {
+            folderInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        } else {
+          folderInput.readOnly = false;
+          folderManuallyEdited = false;
+          folderInput.value = "";
+          bannerNameContainer.style.display = "none";
+          bannerImageNameInput.removeAttribute("required");
+          bannerImageNameInput.value = "";
+
+          detectedSalesOrg = null;
+          detectedLangCode = null;
+        }
+      }
+      uploadTypeInput.addEventListener("change", handleUploadTypeChange);
+      const savedUploadType = localStorage.getItem("selectedUploadType");
+      if (savedUploadType) {
+        uploadTypeInput.value = savedUploadType;
+        handleUploadTypeChange();
+      }
+      document.addEventListener("paste", async (e) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.type.indexOf("image") === 0) {
+            const file = item.getAsFile();
+            if (file) {
+              screenshotInput.files = createFileList(file);
+              updatePreview(file);
+              break;
+            }
+          }
+        }
+      });
+      function createFileList(file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        return dataTransfer.files;
+      }
+      function updatePreview(file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const oldPreview = document.getElementById("imgPreview");
+          if (oldPreview) {
+            oldPreview.remove();
+          }
+          const imgPreview = document.createElement("img");
+          imgPreview.src = reader.result;
+          imgPreview.id = "imgPreview";
+          const container = document.querySelector(".container");
+          container.appendChild(imgPreview);
+        };
+        reader.readAsDataURL(file);
+      }
+      const salesOrgMap = {
+        DE: ["1010", "2200", "6110"],
+        FR: ["2000", "2320", "6110"],
+        NL: ["2320", "2420"],
+        EN: ["1550", "2510", "2320"],
+        ES: ["2610"],
+        PT: ["2640"],
+        IT: ["2710"],
+        DK: ["2800"],
+        NO: ["2900"],
+        SE: ["3100"],
+        EE: ["5110"],
+        LV: ["5210"],
+        LT: ["5310"],
+        PL: ["5410"],
+        FI: ["5710"],
+        SI: ["5820"],
+        HR: ["5830"],
+        SK: ["5840"],
+        CZ: ["5845"],
+        HU: ["5850"],
+        RO: ["5860"],
+        BG: ["5870"],
+        SER: ["5881"],
+        ME: ["5895"],
+      };
+      const salesOrgs = [
+        { code: "1010", countryCode: "DE", countryName: "Germany" },
+        { code: "1550", countryCode: "EN", countryName: "International" },
+        { code: "2000", countryCode: "FR", countryName: "France" },
+        { code: "2200", countryCode: "AT", countryName: "Austria" },
+        { code: "2320", countryCode: "BE", countryName: "Belgium" },
+        { code: "2420", countryCode: "NL", countryName: "Netherlands" },
+        { code: "2510", countryCode: "UK", countryName: "United Kingdom" },
+        { code: "2610", countryCode: "ES", countryName: "Spain" },
+        { code: "2640", countryCode: "PT", countryName: "Portugal" },
+        { code: "2710", countryCode: "IT", countryName: "Italy" },
+        { code: "2800", countryCode: "DK", countryName: "Denmark" },
+        { code: "2900", countryCode: "NO", countryName: "Norway" },
+        { code: "3100", countryCode: "SE", countryName: "Sweden" },
+        { code: "5110", countryCode: "EE", countryName: "Estonia" },
+        { code: "5210", countryCode: "LV", countryName: "Latvia" },
+        { code: "5310", countryCode: "LT", countryName: "Lithuania" },
+        { code: "5410", countryCode: "PL", countryName: "Poland" },
+        { code: "5710", countryCode: "FI", countryName: "Finland" },
+        { code: "5820", countryCode: "SI", countryName: "Slovenia" },
+        { code: "5830", countryCode: "HR", countryName: "Croatia" },
+        { code: "5840", countryCode: "SK", countryName: "Slovakia" },
+        { code: "5845", countryCode: "CZ", countryName: "Czech Republic" },
+        { code: "5850", countryCode: "HU", countryName: "Hungary" },
+        { code: "5860", countryCode: "RO", countryName: "Romania" },
+        { code: "5870", countryCode: "BG", countryName: "Bulgaria" },
+        { code: "5881", countryCode: "SER", countryName: "Serbia" },
+        { code: "5895", countryCode: "ME", countryName: "Montenegro" },
+        { code: "6000", countryCode: "EN", countryName: "International" },
+        { code: "6110", countryCode: "CH", countryName: "Switzerland" },
+      ];
+      const vendorInput = document.getElementById("vendor");
+      const vendorListDiv = document.getElementById("vendorList");
+      const vendorList = [
+        "Euronic",
+        "Club-3D-BV",
+        "VIEWSONIC",
+        "ADERIAN",
+        "SAMSUNG-GSM",
+        "NEOMOUNTS",
+        "FRACTAL-DESIGN",
+        "SEAMCOM",
+        "MICROSOFT",
+        "GoTo",
+        "HP",
+        "REFURB",
+        "MICROSOFT-CSP",
+        "MICROSOFT-SURFACE",
+        "MICROSOFT-SURFACEHUB",
+        "MICROSOFT-OEM",
+        "XIAOMI-ECO",
+        "XIAOMI",
+        "LENOVO",
+        "LENOVO-IDG",
+        "LENOVO-ISG",
+        "BRIDGE",
+        "HP-SUPPLIES",
+        "HP-PRINTING",
+        "HP-COMPUTING",
+        "HPE",
+        "ARUBA",
+        "DELL",
+        "DELL-COMPUTERS",
+        "CISCO",
+        "TELEKOM-DEUTSCHLAND",
+        "INTEL",
+        "SEAGATE",
+        "SAMSUNG",
+        "SAMSUNG-MOBILE",
+        "SAMSUNG-STORAGE",
+        "ELECTRONIC ARTS",
+        "APPLE",
+        "APC",
+        "LOGITECH",
+        "WESTERN DIGITAL",
+        "HUAWEI",
+        "SOPHOS",
+        "AMD",
+        "CANON",
+        "CANON-SCANNER",
+        "CANON-SUPPLIES",
+        "CANON-LFP",
+        "FUJITSU",
+        "FUJITSU-SCANNER",
+        "FUJITSU-CCD",
+        "FORTINET",
+        "EATON",
+        "BROTHER",
+        "ASUS",
+        "N-ABLE",
+        "EPSON",
+        "UNIFY",
+        "ACER",
+        "ACER-MONITOR",
+        "ADOBE",
+        "ZOTAC",
+        "PATRONICS",
+        "LG-DISPLAYS",
+        "LG-SMART SIGNAGE",
+        "ACRONIS",
+        "IIYAMA",
+        "MOTORLA",
+        "CONTOUR DESIGN",
+        "DEMANT SOUND",
+        "VMWARE",
+        "LISTAN",
+        "GN-NETCOM",
+        "ERGOTRON",
+        "ALCATEL-LUCENT",
+        "AOC INTERNATIONAL",
+        "CONGSTAR",
+        "IBM-CLOUD",
+        "IBM-HARDWARE",
+        "IBM-SOFTWARE",
+        "KASPERKY LAB",
+        "ZYXEL",
+        "POLYCOM",
+        "NORTONLIFELOCK",
+        "LEXMARK",
+        "ESET",
+        "WATCHGUARD",
+        "RAZER",
+        "VEEAM",
+        "DATTO",
+        "MMD-MONITORS & DISPLAYS",
+        "BOSE",
+        "DICTOTA",
+        "MITEL",
+        "KINGSTON",
+        "KYOCERA",
+        "XEROX",
+        "LINDY",
+        "LEXWARE",
+        "INNOVISION",
+        "TRANSCEND",
+        "EMC",
+        "NEWSTAR",
+        "QNAP SYSTEMS",
+        "CHERRY",
+        "ROOMZ",
+        "CIRTRIX",
+        "TARGUS",
+        "NETGEAR",
+        "REALWEAR",
+        "SK HYNIX NAND PRODUCT SOLUTIONS",
+        "TP-LINK",
+        "BARCO",
+        "ARCSERVE",
+        "PROMETHEAN",
+        "AVERPOINT",
+        "ALLIED TELESIS",
+        "LANCOM",
+        "URBAN FACTORY",
+        "ASSMANN ELECTRONIC",
+        "GIGASET",
+        "GIGASET-PRO",
+        "GIGASET-CONSUMER",
+        "ALSO",
+        "MULTIVENDOR",
+        "CAMBIUM NETWORKS",
+        "3M",
+        "NEC DISPLAY SOLUTIONS",
+        "ESR",
+        "NETAPP",
+        "CROWDSTRIKE",
+        "BLUEWALKER",
+        "QUANTUM",
+        "DELOCK",
+        "OCTOGATE",
+        "YEALINK",
+        "TANDBERG DATA",
+        "MSI",
+        "INSYS",
+        "NCP",
+        "SANDBERG",
+        "DYNABOOK",
+        "MICROFOCUS",
+        "SUPER MICRO COMPUTER",
+        "VERTIV",
+        "PHILIPS",
+        "D-LINK",
+        "GIGABYTE",
+        "I-TEC",
+        "AUREA SOFTWARE",
+        "SNOM TECHNOLOGY",
+        "SONY",
+        "SILICON POWER COMPUTER & COMMUNICATION",
+        "KONFTEL AB",
+        "FANVIL",
+        "BELKIN",
+        "GEMBIRD",
+        "AVM",
+        "PNY",
+        "NET-AT-WORK",
+        "BENQ",
+        "AGFEO",
+        "BINTEC-ELMEG",
+        "MATERIALISE",
+        "STATIC CONTROL",
+        "KFA2",
+        "MGE-USV SYSTEME",
+        "SENNHEISER",
+        "LACIE",
+        "C4B",
+        "UBIQUITI NETWORKS",
+        "FELLOWES",
+        "AUERSWALD",
+        "SEH",
+        "VADE SECURE",
+        "BARRACUDA",
+        "NUTANIX",
+        "OKI",
+        "SYNOLOGY",
+        "OPTOMA",
+        "SANDISK",
+        "INTRA2NET",
+        "ESTOS",
+        "IC INTRACOM",
+        "EVER",
+        "LANBERG",
+        "DROPBOX",
+        "SILEX TECHNOLOGY EUROPE",
+        "LEITZ ACCO BRANDS",
+        "PALIT",
+        "SAPPHIRE",
+        "RAIDSONIC",
+        "XFX",
+        "CHIEFTEC",
+        "WACOM",
+        "TOSHIBA EUROPE",
+        "EFB",
+        "3DCONNEXION",
+        "PANASONIC",
+        "CORSAIR",
+        "AV STUMPFL",
+        "PIXMINDS",
+        "CANDY",
+        "PEERLESS-AV",
+        "OTTER PRODUCTS",
+        "PATRIOT MEMORY",
+        "TRUST",
+        "AVER INDORMATION",
+        "STARTECH.COM",
+        "POWERCOLOR TUL",
+        "PORT DESIGNS",
+        "QOLTEC",
+        "APACER",
+        "MIKROTIK",
+        "A-DATA",
+        "NVIDIA",
+        "GAINWARD EUROPE",
+        "SHARP",
+        "PARAT",
+        "GO EUROPE",
+        "GREEN CELL",
+        "HAMA",
+        "HITACHI-LG",
+        "TEAM GROUP",
+        "GETT GERÄTETECHNIK",
+        "SECOMP",
+        "INTER-TECH",
+        "RITTAL",
+        "GFI SOFTWARE",
+        "AIRSLATE",
+        "ZEBRA",
+        "EXTRALINK",
+        "1&1 IONOS",
+        "CHECK POINT",
+        "JABRA",
+        "REINER KARTENGERÄTE",
+        "COOLER MASTER",
+        "MEDION",
+        "NATEC",
+        "AKYGA",
+        "SANUS",
+        "JJ-COMPUTER",
+        "INNOFIL3D",
+        "GREENBONE",
+        "COREL",
+        "WITHSECURE",
+        "SONOS",
+        "ASROCK",
+        "ZEPP",
+        "SOLARWINDS",
+        "MCAFEE IRELAND",
+        "AXIS COMMUNICATIONS",
+        "KEMP TECHNOLOGIES",
+        "WIKO",
+        "TECHLY",
+        "NETRACK",
+        "TRACER",
+        "RSA SECURITY",
+        "ART",
+        "KRAMER",
+        "BASF 3D",
+        "LOGILINK",
+        "DATA AND MORE",
+        "ZALMAN",
+        "ACTIVISION",
+        "WITHINGS",
+        "INTEGRAL MEMORY PLC",
+        "DORO",
+        "CYBER POWER",
+        "CENOR",
+        "GOODRAM",
+        "DYEMANSION",
+        "TP VISION",
+        "BMG",
+        "PEACOCK",
+        "SMS EVOKO GROUP",
+        "A4TECH",
+        "VERBATIM",
+        "HGST",
+        "EVE SYSTEMS",
+        "ANKI",
+        "BLIZZARD ENTERTAINMENT",
+        "PARTNER CARE EUROPE",
+        "ENERGENIE BY GEMBIRD",
+        "TWELVE SOUTH",
+        "MILESTONES SYSTEMS A/S",
+        "LINKSYS",
+        "MEDIA TECH",
+        "TEAMVIEWER",
+        "TECHLY PRO",
+        "CREAFORM",
+        "PRINTRONIX",
+        "PANDUIT",
+        "ATEN",
+        "4WORLD",
+        "SUUNTO",
+        "MW",
+        "BLAUPUNKT",
+        "CSB",
+        "RICOH",
+        "CLOUD TECHNOLOGY SOLUTIONS",
+        "COMDIS",
+        "NEXT CONCEPT",
+        "REALME",
+        "KONICA MINOLTA",
+        "DIGITUS",
+        "XTON",
+        "EIZO",
+        "CRICUT",
+        "LETSIGNIT",
+        "NEOLT FACTORY",
+        "PELCO",
+        "MANHATTAN",
+        "ELITE SCREENS",
+        "PLENOM",
+        "EDIMAX",
+        "AZON",
+        "VIDIS S.A.",
+        "APPLICATIELINK",
+        "IVANTI",
+        "ZIMBRA",
+        "ESPERANZA",
+        "INCASE",
+        "SMART TECHNOLOGIES ULC",
+        "GRIFFIN",
+        "WHITENERGY",
+        "TENDA TECHNOLOGY",
+        "VAXTOR",
+        "HISENSE",
+        "DIGICERT",
+        "VIVO MOBILE COMMUNICATION",
+        "QS SOLUTIONS",
+        "PERSONDATASUPPORT",
+        "DROPSUITE",
+        "CRAFTUNIQUE",
+        "INCIPIO",
+        "INNO3D",
+        "TALLY GENICOM",
+        "PRICE INTERNATIONAL",
+        "ORVALDI",
+        "G.SKILL",
+        "Nuvoo",
+      ];
+      function renderVendorList(value) {
+        vendorListDiv.innerHTML = "";
+        const filtered = vendorList.filter((vendor) => vendor.toLowerCase().startsWith(value.toLowerCase()));
+        if (!value.trim()) {
+          vendorListDiv.style.display = "none";
+          return;
+        }
+        if (filtered.length === 0) {
+          vendorListDiv.style.display = "none";
+          return;
+        }
+        filtered.forEach((vendor) => {
+          const div = document.createElement("div");
+          div.className = "autocomplete-item";
+          const vendorWithDash = vendor.replace(/\s+/g, "-");
+          div.textContent = vendorWithDash;
+          div.addEventListener("click", () => {
+            vendorInput.value = vendorWithDash;
+            vendorListDiv.style.display = "none";
+            checkAndGenerate();
+          });
+          vendorListDiv.appendChild(div);
+        });
+        vendorListDiv.style.display = "block";
+      }
+      function removeVendorActive(items) {
+        items.forEach((item) => item.classList.remove("active"));
+      }
+      vendorInput.addEventListener("input", function () {
+        const val = this.value;
+        if (!val) {
+          vendorListDiv.style.display = "none";
+          return;
+        }
+        const exactMatch = vendorList.find((vendor) => vendor.toLowerCase() === val.toLowerCase());
+        if (exactMatch) {
+          this.value = exactMatch;
+          vendorListDiv.style.display = "none";
+          return;
+        }
+        renderVendorList(val);
+      });
+      vendorInput.addEventListener("blur", () => {
+        setTimeout(() => {
+          vendorListDiv.style.display = "none";
+          checkAndGenerate();
+        }, 200);
+      });
+      document.addEventListener("click", function (e) {
+        if (!vendorListDiv.contains(e.target) && e.target !== vendorInput) {
+          vendorListDiv.style.display = "none";
+        }
+      });
+      const salesOrgPopup = document.getElementById("salesOrgPopup");
+      const languageInput = document.getElementById("languageInput");
+      const languageList = document.getElementById("languageList");
+      languageInput.addEventListener("click", () => {
+        const lang = languageInput.value;
+        if (languageOptions.includes(lang)) {
+          showSalesOrgPopup(lang);
+        }
+      });
+      const languageOptions = ["DE", "FR", "NL", "EN", "ES", "IT", "DK", "NO", "SE", "EE", "LV", "LT", "PL", "PT", "FI", "SI", "HR", "SK", "CZ", "HU", "RO", "BG", "SER", "ME"];
+      function handleSingleSalesOrg(lang) {
+        const codes = salesOrgMap[lang] || [];
+        if (codes.length === 1) {
+          salesOrgPopup.style.display = "none";
+          generateNames(lang, codes[0]);
+          return true;
+        }
+        return false;
+      }
+      function showSalesOrgPopup(lang) {
+        const codes = salesOrgMap[lang] || [];
+        if (codes.length <= 1) {
+          salesOrgPopup.style.display = "none";
+          return;
+        }
+        salesOrgPopup.innerHTML = "";
+        codes.forEach((code) => {
+          const div = document.createElement("div");
+          div.className = "autocomplete-item";
+          div.textContent = code;
+          div.addEventListener("click", () => {
+            salesOrgPopup.style.display = "none";
+            renderTableByLanguageAndCode(lang, code);
+            generateNames(lang, code);
+          });
+          salesOrgPopup.appendChild(div);
+        });
+        salesOrgPopup.style.display = "block";
+      }
+      function renderLanguageList(inputVal) {
+        languageList.innerHTML = "";
+        const filtered = languageOptions.filter((l) => l.startsWith(inputVal));
+        if (filtered.length <= 1) {
+          languageList.style.display = "none";
+          return;
+        }
+        filtered.forEach((lang) => {
+          const div = document.createElement("div");
+          div.className = "autocomplete-item";
+          div.textContent = lang;
+          div.addEventListener("click", () => {
+            languageInput.value = lang;
+            languageList.style.display = "none";
+            if (!handleSingleSalesOrg(lang)) {
+              showSalesOrgPopup(lang);
+            }
+          });
+          languageList.appendChild(div);
+        });
+        languageList.style.display = "block";
+      }
+      languageInput.addEventListener("input", () => {
+        const val = languageInput.value.trim().toUpperCase();
+        if (!val) {
+          languageList.style.display = "none";
+          salesOrgPopup.style.display = "none";
+          return;
+        }
+        if (languageOptions.includes(val)) {
+          languageInput.value = val;
+          languageList.style.display = "none";
+          if (!handleSingleSalesOrg(val)) {
+            showSalesOrgPopup(val);
+          }
+          return;
+        }
+        renderLanguageList(val);
+      });
+      languageInput.addEventListener("focus", () => {
+        const val = languageInput.value.trim().toUpperCase();
+        if (!val) return;
+        if (languageOptions.includes(val)) {
+          if (!handleSingleSalesOrg(val)) {
+            showSalesOrgPopup(val);
+          }
+        } else {
+          renderLanguageList(val);
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (!languageList.contains(e.target) && e.target !== languageInput) {
+          languageList.style.display = "none";
+        }
+        if (!salesOrgPopup.contains(e.target) && e.target !== languageInput) {
+          salesOrgPopup.style.display = "none";
+        }
+      });
+      const languageSelect = document.getElementById("languageInput");
+      const codeInput = document.getElementById("codeInput");
+      const submitBtn = document.getElementById("submitBtn");
+      const resultTable = document.getElementById("resultTable");
+      const tableBody = document.getElementById("tableBody");
+      function renderTableByLanguage(lang) {
+        const codes = salesOrgMap[lang] || [];
+        const dataForLang = dataMap[lang] || {};
+        let rows = "";
+        let hasData = false;
+        codes.forEach((code) => {
+          const data = dataForLang[code];
+          if (data) {
+            hasData = true;
+            rows += `
+            <tr>
+              <td>${code}_${lang}</td>
+              <td>${data.text1}</td>
+              <td>${data.text2}</td>
+              <td>${data.text3}</td>
+              <td>${data.email}</td>
+              <td><strong>${data.ctaText}</strong></td>
+            </tr>
+          `;
+          }
+        });
+        if (hasData) {
+          tableBody.innerHTML = rows;
+          resultTable.style.display = "table";
+        } else {
+          tableBody.innerHTML = "";
+          resultTable.style.display = "none";
+        }
+      }
+      function getCurrentWeek() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 1);
+        const diff = now - start + (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60000;
+        const oneWeek = 604800000;
+        return String(Math.ceil(diff / oneWeek)).padStart(2, "0");
+      }
+      function getMMDD() {
+        const now = new Date();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+        return mm + dd;
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        function showTooltip(target, message = "Copied!") {
+          const oldTooltip = target.querySelector(".copy-tooltip");
+          if (oldTooltip) oldTooltip.remove();
+          const tooltip = document.createElement("div");
+          tooltip.className = "copy-tooltip";
+          tooltip.textContent = message;
+          target.appendChild(tooltip);
+          requestAnimationFrame(() => tooltip.classList.add("show"));
+          setTimeout(() => {
+            tooltip.classList.remove("show");
+            setTimeout(() => tooltip.remove(), 300);
+          }, 5000);
+        }
+        const proofNameResult = document.getElementById("proofNameResult");
+        proofNameResult.addEventListener("click", function (event) {
+          const span = event.target.closest(".copy-text");
+          if (span) {
+            const text = span.textContent.trim();
+            navigator.clipboard
+              .writeText(text)
+              .then(() => {
+                showTooltip(span);
+              })
+              .catch((err) => {
+                console.error("Copy failed:", err);
+              });
+          }
+        });
+      });
+      function observeProofNameResult() {
+        const proofNameResult = document.getElementById("proofNameResult");
+        if (!proofNameResult) return;
+
+        const observer = new MutationObserver(() => {
+          const span = proofNameResult.querySelector(".copy-text");
+          if (span) {
+            const text = span.textContent.trim();
+            if (text) {
+              bannerImageNameInput.value = text;
+              bannerImageNameInput.dispatchEvent(new Event("input"));
+            }
+          }
+        });
+
+        observer.observe(proofNameResult, {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", observeProofNameResult);
+
+      function checkAndGenerate() {
+        const fields = ["vendor", "campaignName", "programCode", "customDate"];
+        const langInput = document.getElementById("languageInput");
+        const idTicketEl = document.getElementById("idTicket");
+        const campaignIDEl = document.getElementById("campaignID");
+        const bannerProofSection = document.getElementById("bannerProofSection");
+        const typeBanner = document.getElementById("typeBanner");
+        const typeBannerVal = typeBanner?.value.trim();
+        const idTicketVal = idTicketEl?.value.trim();
+        const campaignIDVal = campaignIDEl?.value.trim();
+        const langVal = langInput.value.trim().toUpperCase();
+        const isLangValid = langVal && languageOptions.includes(langVal);
+        const allFilled = fields.every((id) => {
+          const el = document.getElementById(id);
+          return el && el.value.trim() !== "";
+        });
+        const showProof = typeBannerVal !== "" && idTicketVal !== "" && isLangValid;
+
+        if (allFilled) {
+          langInput.classList.remove("disabled");
+          langInput.disabled = false;
+          if (isLangValid) {
+            const salesOrgs = salesOrgMap[langVal] || [];
+            if (salesOrgs.length === 1) {
+              generateNames(langVal, salesOrgs[0]);
+            }
+          }
+        } else {
+          langInput.classList.add("disabled");
+          langInput.disabled = true;
+        }
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        const fields = ["vendor", "campaignName", "campaignID", "idTicket", "programCode", "bannerPosition", "bannerSize", "customDate", "languageInput"];
+        fields.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.addEventListener("input", checkAndGenerate);
+            el.addEventListener("change", checkAndGenerate);
+          }
+        });
+        checkAndGenerate();
+      });
+      var bannerToSizeMapping = {
+        "acmp-dashboard-banner": ["510x170", "1150x170", "1150x360"],
+        "email-banner": ["640x90", "620x180"],
+        "external-display-banner": ["160x600", "120x600", "300x250", "728x90"],
+        "shop-basket-banner": ["300x100"],
+        "shop-compare-banner": ["300x100"],
+        "shop-daily-news": ["510x170", "120x600"],
+        "shop-dashboard": ["510x170"],
+        "shop-dashboard-mega": ["1150x360"],
+        "shop-dashboard-super": ["1150x170", "1150x360"],
+        "shop-footer-banner": ["185x90"],
+        "shop-layer-banner": ["800x500"],
+        "shop-notepad-banner": ["300x100"],
+        "shop-order-confirmation-banner": ["510x400"],
+        "shop-popup-banner": ["960x500", "800x500"],
+        "shop-product-detail": ["920x90", "510x170"],
+        "social-banner": ["1200x628"],
+        "today-email-special-banner": ["620x300"],
+        "today-email-topbanner": ["670x620"],
+        "website-deals&discoveries-banner": ["510x170"],
+        "website-deals&discoveries-teaser-image": ["703x410"],
+        "website-deals&discoveries-hero-image": ["1260x523"],
+        "website-homepage-banner": ["1012x570", "920x90", "1920x575"],
+        "website-otherpage-banner": ["1012x570", "920x90", "1920x575"],
+      };
+      function generateProofName(lang, selectedCode) {
+        const vendor = document.getElementById("vendor").value;
+        const campaign = document.getElementById("campaignName").value.trim();
+        console.log("campaign", campaign);
+        const idTicket = document.getElementById("idTicket").value.trim();
+        typeBanner = document.getElementById("typeBanner").value;
+        const selectedDate = document.getElementById("customDate").value;
+        const dateObj = selectedDate ? new Date(selectedDate) : new Date();
+        const countryCode = languageInput.value.trim().toUpperCase() || selectedCode || lang;
+        const week = getWeekNumber(dateObj);
+        if (!typeBanner) {
+          document.getElementById("proofNameResult").innerHTML = "";
+          return;
+        }
+        const proofName = `W${week}_${typeBanner}_${campaign}_${idTicket}`;
+        document.getElementById("proofNameResult").innerHTML = `
+       <div class="copy-text">
+            <p>${proofName}</p>
+        </div>
+    `;
+        document.getElementById("typeBanner").addEventListener("change", () => {
+          const lang = document.getElementById("languageInput").value.trim().toUpperCase();
+          if (lang && languageOptions.includes(lang)) {
+            const salesOrgs = salesOrgMap[lang] || [];
+            if (salesOrgs.length > 0) {
+              generateProofName(lang, salesOrgs[0]);
+            }
+          }
+        });
+      }
+      function getLangFromSalesOrg(code) {
+        for (const lang in salesOrgMap) {
+          if (salesOrgMap[lang].includes(code)) {
+            return lang;
+          }
+        }
+        return "";
+      }
+      function autoParseCampaignInfo() {
+        const campaignNameInput = document.getElementById("campaignName");
+        const raw = campaignNameInput.value;
+
+        if (!raw.trim()) return;
+
+        const { langCode, campaign, campaignID } = parseCampaignInfo(raw);
+
+        // =========================================
+        // FALLBACK:
+        // Không đúng format thì giữ nguyên tên gốc
+        // =========================================
+
+        if (!langCode || !campaign) {
+          campaignNameInput.value = raw;
+
+          // Dùng nguyên tên gốc để tạo Image Name
+          updateImageName();
+
+          console.log("⚠ Campaign format not recognized. Using original name:", raw);
+
+          return;
+        }
+
+        // =========================================
+        // FORMAT HỢP LỆ:
+        // Giữ logic parsing hiện tại
+        // =========================================
+
+        campaignNameInput.value = campaign;
+
+        if (campaignID) {
+          document.getElementById("campaignID").value = campaignID;
+        }
+
+        if (langCode) {
+          const countryCode = langCode.slice(0, 2).toUpperCase();
+
+          // Không ghi đè Folder Name nếu người dùng đã tự sửa
+          if (!folderManuallyEdited) {
+            const folderInput = document.getElementById("folderInput");
+
+            folderInput.value = countryCode;
+
+            folderInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+
+          const langInput = document.getElementById("languageInput");
+
+          langInput.value = langCode;
+
+          langInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+
+        // Cập nhật Image Name sau khi parse thành công
+        updateImageName();
+      }
+
+      // function parseCampaignInfo(rawCampaign) {
+      //   const idMatch = rawCampaign.match(/\*([A-Za-z0-9]+)\*/);
+      //   const campaignID = idMatch ? idMatch[1] : "";
+
+      //   rawCampaign = rawCampaign.replace(/\*([A-Za-z0-9]+)\*/, "$1");
+      //   rawCampaign = rawCampaign.replace(/\b\d{4}-\d{2}-\d{2}\b/, "").trim();
+
+      //   let mainPart = rawCampaign
+      //     .split("-")
+      //     .slice(1)
+      //     .join("-")
+      //     .split("*")[0]
+      //     .trim();
+
+      //   mainPart = mainPart
+      //     .replace(/[-_]/g, " ")
+      //     .replace(/\b5710 ALSO Finland Oy\b/i, "5710")
+      //     .replace(/\s{2,}/g, " ")
+      //     .trim();
+
+      //   console.log("🧹 Main part after cleaning:", mainPart);
+
+      //   const tokens = mainPart.split(/\s+/).filter(Boolean);
+
+      //   // Only detect the 4-digit sales-org code.
+      //   // Vendor is no longer searched, moved, matched, or inferred.
+      //   // Quarter/Q tokens are no longer searched or used as a separator.
+      //   const codeToken = tokens.find((t) => /^\d{4}$/.test(t));
+      //   const langCode = getLangFromSalesOrg(codeToken);
+
+      //   let campaign = tokens.join(" ").trim();
+
+      //   campaign = campaign
+      //     .split(/\s+/)
+      //     .map((word) => {
+      //       if (
+      //         /\d/.test(word) ||
+      //         /^[A-Z0-9]+$/.test(word) ||
+      //         /[^a-zA-Z0-9]/.test(word)
+      //       ) {
+      //         return word;
+      //       }
+
+      //       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      //     })
+      //     .join(" ")
+      //     .trim();
+
+      //   console.log("🎯 Final:", { campaign, campaignID, langCode });
+
+      //   return {
+      //     langCode: langCode || "",
+      //     vendor: "",
+      //     campaign,
+      //     campaignID,
+      //   };
+      // }
+
+      function parseCampaignInfo(rawCampaign) {
+        // Find the first pair of *...*
+        const markerMatch = rawCampaign.match(/\*([^*]*)\*/);
+
+        let campaignID = "";
+
+        if (markerMatch) {
+          campaignID = markerMatch[1].trim();
+
+          // Keep everything before the opening *
+          // Append the content inside *...*
+          // Remove everything after the closing *
+          rawCampaign = rawCampaign.slice(0, markerMatch.index) + " " + campaignID;
+        } else {
+          // Remove date if there is no *...* marker
+          rawCampaign = rawCampaign.replace(/\b\d{4}-\d{2}-\d{2}\b/, "").trim();
+        }
+
+        let mainPart = rawCampaign.split("-").slice(1).join("-").trim();
+
+        mainPart = mainPart
+          .replace(/[-_]/g, " ")
+          .replace(/\b5710 ALSO Finland Oy\b/i, "5710")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+
+        console.log("🧹 Main part after cleaning:", mainPart);
+
+        const tokens = mainPart.split(/\s+/).filter(Boolean);
+
+        const codeToken = tokens.find((t) => /^\d{4}$/.test(t));
+        const langCode = getLangFromSalesOrg(codeToken);
+
+        let campaign = tokens.join(" ").trim();
+
+        campaign = campaign
+          .split(/\s+/)
+          .map((word) => {
+            if (/\d/.test(word) || /^[A-Z0-9]+$/.test(word) || /[^a-zA-Z0-9]/.test(word)) {
+              return word;
+            }
+
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          })
+          .join(" ")
+          .trim();
+
+        console.log("🎯 Final:", { campaign, campaignID, langCode });
+
+        return {
+          langCode: langCode || "",
+          vendor: "",
+          campaign,
+          campaignID,
+        };
+      }
+
+      document.getElementById("campaignName").addEventListener("input", (e) => {
+        const raw = e.target.value;
+        autoParseCampaignInfo(raw);
+      });
+      function generateNames(_, __) {
+        // const rawCampaign = document.getElementById("campaignName").value.replace(/\s+/g, "");
+        const rawCampaign = document.getElementById("campaignName").value.trim();
+
+        const parsed = parseCampaignInfo(rawCampaign);
+        if (parsed.campaign) {
+          document.getElementById("campaignName").value = parsed.campaign;
+        }
+        if (parsed.vendor) {
+          document.getElementById("vendor").value = parsed.vendor;
+        }
+        if (parsed.langCode) {
+          document.getElementById("languageInput").value = parsed.langCode;
+        }
+        const vendor = document.getElementById("vendor").value.toLowerCase();
+        const campaign = document.getElementById("campaignName").value.replace(/\s+/g, "");
+        const langCode = document.getElementById("languageInput").value;
+        const project = document.getElementById("campaignID").value.trim();
+        const programCode = document.getElementById("programCode").value;
+        const selectedDate = document.getElementById("customDate").value;
+        const dateObj = selectedDate ? new Date(selectedDate) : new Date();
+        const year = dateObj.getFullYear().toString().slice(-2);
+        const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const dd = String(dateObj.getDate()).padStart(2, "0");
+        const mmdd = `${mm}${dd}`;
+        const week = getWeekNumber(dateObj);
+        const yycw = `${year}CW${week}`;
+        const salesOrgsToRender = salesOrgMap[langCode] || [];
+        salesOrgsToRender.forEach((code) => {
+          const org = salesOrgs.find((item) => item.code === code);
+          const countryName = org ? org.countryName : "Unknown";
+          const fullName = `${code}-${programCode}-${yycw}-${mmdd}-${vendor}-${langCode}${campaign}-${project}`;
+          console.log("fullName", fullName);
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${code}_${langCode}</td>
+            <td>${countryName}</td>
+            <td><span class="email-name">${fullName}</span></td>
+        `;
+        });
+        generateProofName(langCode, salesOrgsToRender[0]);
+      }
+      function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+        return String(weekNo).padStart(2, "0");
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("customDate").value = today;
+        const typeBannerInput = document.getElementById("typeBanner");
+        if (typeBannerInput) {
+          typeBannerInput.addEventListener("input", () => {
+            const lang = document.getElementById("languageInput").value.trim().toUpperCase();
+            const salesOrgs = salesOrgMap[lang] || [];
+            const selectedCode = salesOrgs.length === 1 ? salesOrgs[0] : "";
+            generateProofName(lang, selectedCode);
+          });
+        }
+
+        const folderInput = document.querySelector("#folderInput");
+        folderInput.addEventListener("input", () => {
+          const value = folderInput.value.trim();
+
+          const { salesOrg, langCode } = parseSalesOrgAndLangCode(value);
+
+          detectedSalesOrg = salesOrg;
+          detectedLangCode = langCode;
+
+          console.log("📌 Detected salesOrg:", detectedSalesOrg);
+          console.log("📌 Detected langCode:", detectedLangCode);
+        });
+      });
+      function parseSalesOrgAndLangCode(input) {
+        const salesOrgMatch = input.match(/[-|:]\s*(\d{4})/);
+
+        if (!salesOrgMatch) {
+          console.log("⚠ Không tìm thấy salesOrg trong:", input);
+          return { salesOrg: null, langCode: null };
+        }
+
+        const salesOrg = salesOrgMatch[1];
+
+        const salesOrgToLang = {
+          2800: "GB",
+          2900: "IE",
+          5410: "PL",
+          5710: "FI",
+          5720: "SE",
+          5730: "DK",
+          5750: "NO",
+          5780: "IS",
+        };
+
+        const langCode = salesOrgToLang[salesOrg] || null;
+
+        return { salesOrg, langCode };
+      }
+      
+    </script>
+    
+<script type="module">
+import {
+  auth,
+  db,
+  ADMIN_UID
+} from "./firebase-config.js";
+
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+import {
+  ref,
+  get,
+  set,
+  remove
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+
+
+const loginGate = document.getElementById("rtdbLoginGate");
+const loginForm = document.getElementById("rtdbLoginForm");
+const loginError = document.getElementById("rtdbLoginError");
+const loginButton = document.getElementById("rtdbLoginButton");
+
+const form = document.getElementById("uploadForm");
+const statusText = document.getElementById("status");
+const screenshotInput = document.getElementById("screenshotInput");
+const folderInput = document.getElementById("folderInput");
+const uploadTypeInput = document.getElementById("uploadType");
+const bannerImageNameInput = document.getElementById("bannerImageNameInput");
+
+const uploadButton = form.querySelector('button[type="submit"]');
+
+let currentAdmin = null;
+
+
+// =====================================
+// AUTHENTICATION
+// =====================================
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  loginError.textContent = "";
+  loginButton.disabled = true;
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("rtdbEmail").value.trim(),
+      document.getElementById("rtdbPassword").value
+    );
+
+  } catch (error) {
+    console.error(error);
+    loginError.textContent =
+      "Login failed. Please check your email and password.";
+
+  } finally {
+    loginButton.disabled = false;
+  }
+});
+
+
+document.getElementById("rtdbLogoutButton")
+  .addEventListener("click", () => signOut(auth));
+
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (
+    user &&
+    ADMIN_UID !== "PASTE_ADMIN_UID_HERE" &&
+    user.uid === ADMIN_UID
+  ) {
+    currentAdmin = user;
+    loginGate.style.display = "none";
+
+    document.getElementById("rtdbAdminEmail").textContent =
+      user.email || "Admin";
+
+    loginError.textContent = "";
+
+  } else {
+    currentAdmin = null;
+    loginGate.style.display = "flex";
+
+    if (user) {
+      loginError.textContent = "This account is not authorized.";
+      await signOut(auth);
+    } else if (ADMIN_UID === "PASTE_ADMIN_UID_HERE") {
+      loginError.textContent =
+        "Please configure ADMIN_UID in firebase-config.js.";
+    }
+  }
+});
+
+
+// =====================================
+// HELPERS
+// =====================================
+
+function getISOWeek(date = new Date()) {
+
+  const d = new Date(Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  ));
+
+  d.setUTCDate(
+    d.getUTCDate() + 4 - (d.getUTCDay() || 7)
+  );
+
+  const yearStart = new Date(Date.UTC(
+    d.getUTCFullYear(), 0, 1
+  ));
+
+  return Math.ceil(
+    (((d - yearStart) / 86400000) + 1) / 7
+  );
+}
+
+
+function cleanImageName(imageName) {
+  return imageName.replace(/\*[^*]*\*.*$/, "").trim();
+}
+
+
+function getExtension(fileName) {
+  const match = fileName.match(/(\.[^.]+)$/);
+  return match ? match[1] : "";
+}
+
+
+function validatePathPart(value, label) {
+
+  if (
+    !value ||
+    value === "." ||
+    value === ".." ||
+    /[\/\\\u0000-\u001f]/.test(value)
+  ) {
+    throw new Error(label + " is invalid.");
+  }
+
+  return value;
+}
+
+
+// Realtime Database keys cannot contain:
+// . $ # [ ] /
+// Encode the original path to a safe key.
+function makeDatabaseKey(value) {
+
+  return btoa(
+    unescape(encodeURIComponent(value))
+  )
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+
+function fileToDataURL(file) {
+
+  return new Promise((resolve, reject) => {
+
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(
+      new Error("Could not read screenshot.")
+    );
+
+    reader.readAsDataURL(file);
+  });
+}
+
+
+// =====================================
+// BUILD ORIGINAL FOLDER STRUCTURE
+// =====================================
+
+function buildUploadDetails(file) {
+
+  const folderName = validatePathPart(
+    folderInput.value.trim(),
+    "Folder name"
+  );
+
+  const uploadType = uploadTypeInput.value;
+
+  const rawImageName =
+    uploadType === "banners"
+      ? bannerImageNameInput.value.trim()
+      : "Statistic";
+
+  if (!file) {
+    throw new Error("Please select or paste a screenshot.");
+  }
+
+  if (!["newsletter", "banners"].includes(uploadType)) {
+    throw new Error("Invalid upload type.");
+  }
+
+  if (!rawImageName) {
+    throw new Error("Please enter image name.");
+  }
+
+  const imageName = validatePathPart(
+    cleanImageName(rawImageName),
+    "Image name"
+  );
+
+  const extension = getExtension(file.name);
+
+  let week = getISOWeek();
+  let country = "";
+  let folderPath = "";
+
+  const countryMap = {
+    "2800": "DK",
+    "2900": "NO",
+    "3100": "SE",
+    "5710": "FI"
+  };
+
+
+  if (uploadType === "newsletter") {
+
+    country = countryMap[folderName.slice(0, 4)] || "";
+
+    folderPath = `Newsletter/Week ${week}/`;
+
+    if (country) {
+      folderPath += `${country}/`;
+    }
+
+    folderPath += folderName;
+
+  } else {
+
+    const weekMatch = imageName.match(/^W(\d+)/i);
+
+    if (weekMatch) {
+      week = Number(weekMatch[1]);
+    }
+
+    folderPath =
+      `Banners Upload/Week ${week}/${folderName}`;
+  }
+
+
+  const storagePath =
+    `${folderPath}/${imageName}${extension}`;
+
+  const namingData =
+    window.getScreenshotNamingData
+      ? window.getScreenshotNamingData()
+      : {};
+
+  return {
+
+    fileName: `${imageName}${extension}`,
+    originalFileName: file.name,
+
+    storagePath,
+    uploadType,
+    week,
+    country,
+    folderName,
+
+    campaign:
+      document.getElementById("campaignName").value.trim(),
+
+    salesOrg: namingData.salesOrg || "",
+    langCode: namingData.langCode || "",
+
+    idTicket:
+      document.getElementById("idTicket").value.trim(),
+
+    contentType: file.type,
+    size: file.size
+  };
+}
+
+
+// =====================================
+// UPLOAD TO REALTIME DATABASE
+// =====================================
+
+form.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  if (!currentAdmin || currentAdmin.uid !== ADMIN_UID) {
+    statusText.textContent = "Please sign in as admin first.";
+    statusText.style.color = "red";
+    return;
+  }
+
+  const file = screenshotInput.files[0];
+
+  uploadButton.disabled = true;
+  uploadButton.textContent = "Uploading...";
+
+  statusText.textContent = "";
+  statusText.style.color = "";
+
+  let imageRef = null;
+  let imageWasUploaded = false;
+
+  try {
+
+    const details = buildUploadDetails(file);
+
+    if (!file.type.startsWith("image/")) {
+      throw new Error("Only image files are supported.");
+    }
+
+    // Leave room below RTDB's 10 MB string limit
+    // after Base64 conversion.
+    const MAX_FILE_SIZE = 6 * 1024 * 1024;
+
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error(
+        "Image is too large. Please use an image below 6 MB."
+      );
+    }
+
+    const databaseKey = makeDatabaseKey(details.storagePath);
+
+    const metadataRef = ref(
+      db,
+      `screenshotMetadata/${databaseKey}`
+    );
+
+    imageRef = ref(
+      db,
+      `screenshotImages/${databaseKey}`
+    );
+
+
+    // Check existing metadata before upload.
+    const existing = await get(metadataRef);
+
+    if (existing.exists()) {
+      throw new Error(
+        "This filename already exists. Please use another name."
+      );
+    }
+
+
+    statusText.textContent = "Preparing screenshot...";
+
+    const imageData = await fileToDataURL(file);
+
+    statusText.textContent = "Uploading image...";
+
+
+    // Store image content separately.
+    // RTDB Rules prevent overwriting an existing image.
+    await set(imageRef, imageData);
+    imageWasUploaded = true;
+
+
+    // Save searchable metadata separately.
+    try {
+
+      await set(metadataRef, {
+        ...details,
+        createdBy: currentAdmin.uid,
+        createdAt: Date.now()
+      });
+
+    } catch (metadataError) {
+
+      // Roll back image if metadata write fails.
+      try {
+        await remove(imageRef);
+      } catch (rollbackError) {
+        console.error("Image rollback failed:", rollbackError);
+      }
+
+      throw metadataError;
+    }
+
+
+    statusText.textContent =
+      "Uploaded successfully: " + details.storagePath;
+
+    statusText.style.color = "green";
+
+  } catch (error) {
+
+    console.error("Realtime Database upload error:", error);
+
+    statusText.textContent =
+      error.message || "Upload failed.";
+
+    statusText.style.color = "red";
+
+    // Best-effort cleanup if upload succeeded
+    // but a later step failed.
+    if (imageWasUploaded && imageRef) {
+      try {
+        await remove(imageRef);
+      } catch (cleanupError) {
+        console.error("Cleanup failed:", cleanupError);
+      }
+    }
+
+  } finally {
+
+    uploadButton.disabled = false;
+    uploadButton.textContent = "Save Screenshot";
+  }
+});
+
+</script>
+
+  </body>
+</html>

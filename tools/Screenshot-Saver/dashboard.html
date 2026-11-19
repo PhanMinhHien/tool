@@ -1,0 +1,864 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screenshot Dashboard</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101216;
+  --surface: #1b2028;
+  --border: #343b47;
+  --text: #f0f1f5;
+  --muted: #929baa;
+  --accent: #aaa5f5;
+  --danger: #f08b91;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 28px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1450px;
+  margin: auto;
+}
+
+.panel {
+  padding: 22px;
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+input, select, button {
+  font: inherit;
+}
+
+input, select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  color: var(--text);
+  background: #14181f;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+button {
+  padding: 10px 14px;
+  color: #e9e7ff;
+  background: #34334d;
+  border: 1px solid #514e75;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  color: #c1c7d2;
+  font-size: 12px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.auth {
+  max-width: 420px;
+  margin: 10vh auto;
+}
+
+.auth button {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.error {
+  color: var(--danger);
+  overflow-wrap: anywhere;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.email {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+
+.stats {
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 15px;
+}
+
+.file-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #171b22;
+}
+
+.file-placeholder {
+  height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #10141b;
+  color: var(--muted);
+  font-size: 42px;
+}
+
+.file-info {
+  padding: 13px;
+}
+
+.file-name {
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.actions button {
+  flex: 1;
+  font-size: 12px;
+}
+
+.delete {
+  color: #ffdfe2;
+  background: #452b31;
+  border-color: #704047;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #000c;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-box {
+  width: min(1100px, 96vw);
+  max-height: 94vh;
+  padding: 15px;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal img {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  margin: auto;
+  object-fit: contain;
+}
+
+@media(max-width: 900px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(max-width: 550px) {
+  body {
+    padding: 14px;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .email {
+    margin-left: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginGate" class="panel auth">
+  <h2>🔐 Screenshot Dashboard</h2>
+  <p>Sign in with your admin account.</p>
+
+  <form id="loginForm">
+    <label>Email</label>
+    <input id="loginEmail" type="email"
+      autocomplete="username" required>
+
+    <label>Password</label>
+    <input id="loginPassword" type="password"
+      autocomplete="current-password" required>
+
+    <button id="loginButton" type="submit">Sign in</button>
+  </form>
+
+  <p id="loginError" class="error"></p>
+</section>
+
+
+<main id="dashboard" class="container" style="display:none">
+
+  <h1>Screenshot Dashboard</h1>
+  <p style="color:var(--muted)">
+    Browse, preview, download and manage your screenshots.
+  </p>
+
+  <div class="topbar">
+    <a href="index.html">← Back to Upload</a>
+    <span id="signedInEmail" class="email"></span>
+    <button id="logoutButton">Sign out</button>
+  </div>
+
+  <section class="panel">
+
+    <div class="filters">
+
+      <div>
+        <label>Search</label>
+        <input id="searchInput" type="search"
+          placeholder="File, folder, campaign...">
+      </div>
+
+      <div>
+        <label>Upload Type</label>
+        <select id="typeFilter">
+          <option value="">All types</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="banners">Banners Upload</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Week</label>
+        <select id="weekFilter">
+          <option value="">All weeks</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Country</label>
+        <select id="countryFilter">
+          <option value="">All countries</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Campaign</label>
+        <select id="campaignFilter">
+          <option value="">All campaigns</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div id="fileStats" class="stats">Loading...</div>
+    <div id="fileGrid" class="grid"></div>
+
+  </section>
+</main>
+
+
+<div id="previewModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <strong id="previewTitle">Preview</strong>
+      <button id="closePreview">Close</button>
+    </div>
+    <img id="previewImage" alt="Screenshot preview">
+  </div>
+</div>
+
+
+<script type="module">
+
+import {
+  auth,
+  db,
+  ADMIN_UID
+} from "./firebase-config.js";
+
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+import {
+  ref,
+  get,
+  remove
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+
+
+const loginGate = document.getElementById("loginGate");
+const dashboard = document.getElementById("dashboard");
+const loginError = document.getElementById("loginError");
+const grid = document.getElementById("fileGrid");
+const stats = document.getElementById("fileStats");
+
+let allFiles = [];
+let cachedImageId = null;
+let cachedImageData = null;
+
+
+// =====================================
+// LOGIN
+// =====================================
+
+document.getElementById("loginForm")
+.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  loginError.textContent = "";
+
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("loginEmail").value.trim(),
+      document.getElementById("loginPassword").value
+    );
+
+  } catch (error) {
+
+    console.error(error);
+    loginError.textContent =
+      "Login failed. Check your email and password.";
+
+  } finally {
+    button.disabled = false;
+  }
+});
+
+
+document.getElementById("logoutButton")
+.addEventListener("click", () => signOut(auth));
+
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (
+    !user ||
+    ADMIN_UID === "PASTE_ADMIN_UID_HERE" ||
+    user.uid !== ADMIN_UID
+  ) {
+
+    dashboard.style.display = "none";
+    loginGate.style.display = "block";
+
+    if (user && user.uid !== ADMIN_UID) {
+      loginError.textContent = "This account is not authorized.";
+      await signOut(auth);
+    }
+
+    if (ADMIN_UID === "PASTE_ADMIN_UID_HERE") {
+      loginError.textContent =
+        "Please configure ADMIN_UID first.";
+    }
+
+    return;
+  }
+
+  loginGate.style.display = "none";
+  dashboard.style.display = "block";
+
+  document.getElementById("signedInEmail").textContent =
+    user.email || "Admin";
+
+  await loadFiles();
+});
+
+
+// =====================================
+// LOAD METADATA ONLY
+// =====================================
+
+async function loadFiles() {
+
+  stats.textContent = "Loading file information...";
+  grid.innerHTML = "";
+
+  try {
+
+    const snapshot = await get(
+      ref(db, "screenshotMetadata")
+    );
+
+    const data = snapshot.val() || {};
+
+    allFiles = Object.entries(data).map(([id, item]) => ({
+      id,
+      ...item
+    }));
+
+    allFiles.sort(
+      (a, b) => (b.createdAt || 0) - (a.createdAt || 0)
+    );
+
+    populateFilters();
+    renderFiles();
+
+  } catch (error) {
+
+    console.error(error);
+    stats.textContent =
+      "Could not load metadata. Check Realtime Database Rules.";
+  }
+}
+
+
+// =====================================
+// FILTERS
+// =====================================
+
+function populateSelect(id, values) {
+
+  const select = document.getElementById(id);
+  const previous = select.value;
+
+  const firstOption = select.options[0].outerHTML;
+  select.innerHTML = firstOption;
+
+  values.forEach(value => {
+
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+
+    select.appendChild(option);
+  });
+
+  select.value = previous;
+}
+
+
+function populateFilters() {
+
+  const weeks = [
+    ...new Set(allFiles.map(f => f.week).filter(v => v != null))
+  ].sort((a, b) => Number(b) - Number(a));
+
+  const countries = [
+    ...new Set(allFiles.map(f => f.country).filter(Boolean))
+  ].sort();
+
+  const campaigns = [
+    ...new Set(allFiles.map(f => f.campaign).filter(Boolean))
+  ].sort();
+
+  populateSelect("weekFilter", weeks);
+  populateSelect("countryFilter", countries);
+  populateSelect("campaignFilter", campaigns);
+}
+
+
+// =====================================
+// RENDER
+// =====================================
+
+function renderFiles() {
+
+  const term =
+    document.getElementById("searchInput").value
+      .trim().toLowerCase();
+
+  const type = document.getElementById("typeFilter").value;
+  const week = document.getElementById("weekFilter").value;
+  const country = document.getElementById("countryFilter").value;
+  const campaign = document.getElementById("campaignFilter").value;
+
+  const filtered = allFiles.filter(file => {
+
+    const searchable = [
+      file.fileName,
+      file.originalFileName,
+      file.folderName,
+      file.campaign,
+      file.country,
+      file.storagePath,
+      file.idTicket,
+      file.salesOrg,
+      file.langCode
+    ].join(" ").toLowerCase();
+
+    return (
+      (!term || searchable.includes(term)) &&
+      (!type || file.uploadType === type) &&
+      (!week || String(file.week) === week) &&
+      (!country || file.country === country) &&
+      (!campaign || file.campaign === campaign)
+    );
+  });
+
+  stats.textContent =
+    `${filtered.length} file(s) shown · ${allFiles.length} total`;
+
+  grid.innerHTML = "";
+
+  if (!filtered.length) {
+
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No screenshots found.";
+
+    grid.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(createFileCard);
+}
+
+
+// =====================================
+// FILE CARD
+// =====================================
+
+function createFileCard(file) {
+
+  const card = document.createElement("article");
+  card.className = "file-card";
+
+  const placeholder = document.createElement("div");
+  placeholder.className = "file-placeholder";
+  placeholder.textContent = "▧";
+
+  const info = document.createElement("div");
+  info.className = "file-info";
+
+  const name = document.createElement("div");
+  name.className = "file-name";
+  name.textContent = file.fileName || "Unnamed file";
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+
+  meta.textContent =
+    `${file.uploadType || ""} · Week ${file.week || ""}` +
+    (file.country ? ` · ${file.country}` : "");
+
+  const campaign = document.createElement("div");
+  campaign.className = "meta";
+  campaign.textContent = file.campaign || "";
+
+  const folder = document.createElement("div");
+  folder.className = "meta";
+  folder.textContent = file.storagePath || "";
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+  const previewButton = document.createElement("button");
+  previewButton.textContent = "Preview";
+
+  previewButton.addEventListener("click", () => {
+    previewFile(file, previewButton);
+  });
+
+  const downloadButton = document.createElement("button");
+  downloadButton.textContent = "Download";
+
+  downloadButton.addEventListener("click", () => {
+    downloadFile(file, downloadButton);
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.className = "delete";
+
+  deleteButton.addEventListener("click", () => {
+    deleteFile(file, deleteButton);
+  });
+
+  actions.append(
+    previewButton,
+    downloadButton,
+    deleteButton
+  );
+
+  info.append(name, meta, campaign, folder, actions);
+  card.append(placeholder, info);
+
+  grid.appendChild(card);
+}
+
+
+// =====================================
+// GET IMAGE ON DEMAND
+// =====================================
+
+async function getImageData(file) {
+
+  if (
+    cachedImageId === file.id &&
+    cachedImageData
+  ) {
+    return cachedImageData;
+  }
+
+  const snapshot = await get(
+    ref(db, `screenshotImages/${file.id}`)
+  );
+
+  if (!snapshot.exists()) {
+    throw new Error("Image data was not found.");
+  }
+
+  cachedImageId = file.id;
+  cachedImageData = snapshot.val();
+
+  return cachedImageData;
+}
+
+
+// =====================================
+// PREVIEW
+// =====================================
+
+async function previewFile(file, button) {
+
+  button.disabled = true;
+  button.textContent = "Loading...";
+
+  try {
+
+    const imageData = await getImageData(file);
+
+    document.getElementById("previewTitle").textContent =
+      file.fileName || "Screenshot";
+
+    document.getElementById("previewImage").src = imageData;
+
+    document.getElementById("previewModal")
+      .classList.add("open");
+
+  } catch (error) {
+
+    console.error(error);
+    alert(error.message || "Could not load image.");
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Preview";
+  }
+}
+
+
+function closePreview() {
+
+  document.getElementById("previewModal")
+    .classList.remove("open");
+
+  document.getElementById("previewImage").src = "";
+}
+
+
+document.getElementById("closePreview")
+.addEventListener("click", closePreview);
+
+
+document.getElementById("previewModal")
+.addEventListener("click", event => {
+
+  if (event.target.id === "previewModal") {
+    closePreview();
+  }
+});
+
+
+// =====================================
+// DOWNLOAD
+// =====================================
+
+async function downloadFile(file, button) {
+
+  button.disabled = true;
+  button.textContent = "Loading...";
+
+  try {
+
+    const imageData = await getImageData(file);
+
+    const link = document.createElement("a");
+
+    link.href = imageData;
+    link.download = file.fileName || "screenshot";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+  } catch (error) {
+
+    console.error(error);
+    alert(error.message || "Download failed.");
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Download";
+  }
+}
+
+
+// =====================================
+// DELETE IMAGE + METADATA
+// =====================================
+
+async function deleteFile(file, button) {
+
+  const confirmed = confirm(
+    "Delete this screenshot permanently?\n\n" +
+    file.storagePath +
+    "\n\nThis cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Deleting...";
+
+  try {
+
+    await remove(
+      ref(db, `screenshotImages/${file.id}`)
+    );
+
+    await remove(
+      ref(db, `screenshotMetadata/${file.id}`)
+    );
+
+    if (cachedImageId === file.id) {
+      cachedImageId = null;
+      cachedImageData = null;
+    }
+
+    allFiles = allFiles.filter(
+      item => item.id !== file.id
+    );
+
+    populateFilters();
+    renderFiles();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Delete could not be fully completed. " +
+      "Refresh the dashboard and check the record."
+    );
+
+    button.disabled = false;
+    button.textContent = "Delete";
+  }
+}
+
+
+// =====================================
+// FILTER EVENTS
+// =====================================
+
+[
+  "searchInput",
+  "typeFilter",
+  "weekFilter",
+  "countryFilter",
+  "campaignFilter"
+].forEach(id => {
+
+  const element = document.getElementById(id);
+
+  element.addEventListener(
+    id === "searchInput" ? "input" : "change",
+    renderFiles
+  );
+});
+
+</script>
+
+</body>
+</html>
