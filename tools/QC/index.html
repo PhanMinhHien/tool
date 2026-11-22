@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>HTML Text & Link QC — V3.6</title>
+    <title>HTML Text & Link QC — V3.7</title>
     <style>
       :root {
         color-scheme: dark;
@@ -324,6 +324,192 @@
         border: 1px dashed #364866;
         border-radius: 12px;
         color: var(--muted);
+      }
+
+      /* V3.7 - Quick Result Preview */
+      #quickResultBar[hidden],
+      #quickResultPreview[hidden] {
+        display: none !important;
+      }
+      #quickResultBar {
+        position: fixed;
+        z-index: 1000;
+        left: 50%;
+        bottom: 16px;
+        transform: translateX(-50%);
+        width: min(760px, calc(100vw - 28px));
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid #405477;
+        border-radius: 15px;
+        background: rgba(10, 19, 35, 0.96);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+        backdrop-filter: blur(14px);
+      }
+      .quick-result-brand {
+        min-width: 0;
+      }
+      .quick-result-brand strong {
+        display: block;
+        font-size: 12px;
+      }
+      .quick-result-brand span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 2px;
+      }
+      .quick-result-metrics {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-left: auto;
+      }
+      .quick-metric {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 8px;
+        border-radius: 9px;
+        background: #111e33;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .quick-metric b {
+        font-size: 14px;
+      }
+      .quick-metric.pass b {
+        color: var(--green);
+      }
+      .quick-metric.fail b {
+        color: var(--red);
+      }
+      .quick-metric.review b {
+        color: var(--yellow);
+      }
+      .quick-result-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .quick-result-actions button {
+        padding: 7px 10px;
+        font-size: 11px;
+      }
+      #quickPreviewBtn {
+        background: #293b61;
+        border-color: #526b9b;
+      }
+      #quickResultPreview {
+        position: fixed;
+        z-index: 1001;
+        right: max(16px, calc((100vw - 1100px) / 2));
+        bottom: 78px;
+        width: min(440px, calc(100vw - 28px));
+        max-height: min(62vh, 560px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #405477;
+        border-radius: 15px;
+        background: #0b1528;
+        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5);
+      }
+      .quick-preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .quick-preview-head strong {
+        font-size: 13px;
+      }
+      .quick-preview-head span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .quick-preview-list {
+        overflow: auto;
+        padding: 8px;
+        display: grid;
+        gap: 7px;
+      }
+      .quick-preview-item {
+        width: 100%;
+        text-align: left;
+        display: block;
+        padding: 10px 11px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #101d32;
+      }
+      .quick-preview-item:hover {
+        border-color: #7186ff;
+        filter: none;
+      }
+      .quick-preview-item.active {
+        border-color: #7186ff;
+        background: #172747;
+      }
+      .quick-preview-item-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .quick-preview-item-title {
+        font-size: 11px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+      .quick-preview-item-detail {
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.45;
+        margin-top: 5px;
+      }
+      .quick-preview-empty {
+        padding: 20px 12px;
+        text-align: center;
+        color: var(--green);
+        font-size: 12px;
+      }
+      .quick-preview-foot {
+        padding: 9px 12px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 10px;
+      }
+      @media (max-width: 620px) {
+        #quickResultBar {
+          bottom: 9px;
+          gap: 7px;
+          padding: 8px;
+          flex-wrap: wrap;
+        }
+        .quick-result-brand {
+          flex: 1;
+        }
+        .quick-result-metrics {
+          margin-left: 0;
+          gap: 5px;
+        }
+        .quick-metric {
+          padding: 5px 6px;
+        }
+        .quick-result-actions {
+          margin-left: auto;
+        }
+        #quickResultPreview {
+          right: 10px;
+          bottom: 105px;
+          width: calc(100vw - 20px);
+        }
       }
 
       .profile-row {
@@ -714,7 +900,7 @@
         }
       }
 
-      /* V3.6 · Diff, validation, issue queue and layout improvements */
+      /* V3.7 · Diff, validation, issue queue and layout improvements */
       .fieldhead-actions {
         display: flex;
         align-items: center;
@@ -786,10 +972,9 @@
         backdrop-filter: blur(12px);
       }
       .inspector-grid {
-        grid-template-columns: minmax(
-            0,
-            calc(var(--inspector-left, 50%) - 4px)
-          ) 8px minmax(0, calc(var(--inspector-right, 50%) - 4px));
+        grid-template-columns:
+          minmax(0, calc(var(--inspector-left, 50%) - 4px))
+          8px minmax(0, calc(var(--inspector-right, 50%) - 4px));
         align-items: stretch;
       }
       .inspector-splitter {
@@ -1023,6 +1208,50 @@
           may not exist in copied page source.
         </p>
       </section>
+
+      <!-- V3.7 - Floating Quick Result Preview -->
+      <div id="quickResultBar" hidden aria-live="polite">
+        <div class="quick-result-brand">
+          <strong>QC complete</strong>
+          <span id="quickResultStatus">Results are ready</span>
+        </div>
+        <div class="quick-result-metrics">
+          <div class="quick-metric pass">
+            <b id="quickPassCount">0</b><span>Passed</span>
+          </div>
+          <div class="quick-metric fail">
+            <b id="quickFailCount">0</b><span>Failed</span>
+          </div>
+          <div class="quick-metric review">
+            <b id="quickReviewCount">0</b><span>Review</span>
+          </div>
+        </div>
+        <div class="quick-result-actions">
+          <button id="quickPreviewBtn" type="button" aria-expanded="false">
+            Quick view
+          </button>
+          <button id="quickJumpBtn" type="button">View all ↓</button>
+        </div>
+      </div>
+      <aside id="quickResultPreview" hidden aria-label="Quick QC issue preview">
+        <div class="quick-preview-head">
+          <div>
+            <strong>Quick issue preview</strong>
+            <span id="quickPreviewSummary">Issues found in this scan</span>
+          </div>
+          <button
+            id="quickPreviewClose"
+            type="button"
+            aria-label="Close quick preview"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="quick-preview-list" id="quickPreviewList"></div>
+        <div class="quick-preview-foot">
+          Select an issue to inspect it in the full QC results.
+        </div>
+      </aside>
 
       <!-- V2.2 SIDE-BY-SIDE VISUAL INSPECTOR -->
 
@@ -2106,12 +2335,15 @@
             blocking.push("HTML source is empty.");
           if (!String(brief || "").trim())
             blocking.push("Original Brief is empty.");
-    const markupWithoutCommentsOrRawText = String(html || "")
-  .replace(new RegExp("<!--[\\s\\S]*?-->", "g"), "")
-  .replace(
-    new RegExp("<(script|style|textarea|title)\\b[^>]*>[\\s\\S]*?<\\/\\1\\s*>", "gi"),
-    ""
-  );
+          const markupWithoutCommentsOrRawText = String(html || "")
+            .replace(new RegExp("<!--[\\s\\S]*?-->", "g"), "")
+            .replace(
+              new RegExp(
+                "<(script|style|textarea|title)\\b[^>]*>[\\s\\S]*?<\\/\\1\\s*>",
+                "gi",
+              ),
+              "",
+            );
           if (
             html.trim() &&
             !/<\s*body\b/i.test(markupWithoutCommentsOrRawText)
@@ -2186,6 +2418,117 @@
           panel.hidden = false;
           panel.innerHTML = `<div class="validation-title">Pre-QC validation · ${blocking.length ? "Action required" : "Warnings"}</div>${blocking.map((message) => `<div class="validation-block">✕ ${esc(message)}</div>`).join("")}${warnings.map((message) => `<div class="validation-warning">⚠ ${esc(message)}</div>`).join("")}`;
         }
+        function findExtraHtmlWording(
+          expected,
+          position,
+          docData,
+          briefItems,
+          mode,
+          currentItem,
+        ) {
+          const full = String(docData?.full || "");
+
+          if (!full || position == null) return [];
+
+          // Find the HTML text block containing the matched Brief item.
+          const previousBlock = full.lastIndexOf(
+            "\n\n",
+            Math.max(0, position - 1),
+          );
+
+          const nextBlock = full.indexOf("\n\n", position);
+
+          const blockStart = previousBlock < 0 ? 0 : previousBlock + 2;
+
+          const blockEnd = nextBlock < 0 ? full.length : nextBlock;
+
+          const actualBlock = full
+            .slice(blockStart, blockEnd)
+            .replace(/\n+/g, " ")
+            .trim();
+
+          if (!actualBlock) return [];
+
+          // Compare the expected Brief text with its HTML block.
+          const alignment = alignExpectedToActual(
+            expected,
+            actualBlock,
+            expected,
+          );
+
+          // Words belonging to other Brief text items are not considered extra.
+          const otherBriefWords = new Set();
+
+          briefItems.forEach((item) => {
+            if (item === currentItem || item.type !== "text") return;
+
+            wordTokens(item.value).forEach((token) => {
+              otherBriefWords.add(
+                norm(token.word, mode, detectLocale(token.word)),
+              );
+            });
+          });
+
+          return alignment.extra
+            .map((item) => item.word)
+            .filter((word) => {
+              const normalized = norm(word, mode, detectLocale(word));
+
+              return !otherBriefWords.has(normalized);
+            });
+        }
+        function renderQuickResultPreview() {
+          const bar = $("quickResultBar");
+          if (!results.length) {
+            bar.hidden = true;
+            $("quickResultPreview").hidden = true;
+            return;
+          }
+          const passed = results.filter(
+            (item) => item.status === "passed",
+          ).length;
+          const failed = results.filter(
+            (item) => item.status === "failed",
+          ).length;
+          const review = results.filter(
+            (item) => item.status === "review",
+          ).length;
+          const issues = results.filter((item) => item.status !== "passed");
+          $("quickPassCount").textContent = passed;
+          $("quickFailCount").textContent = failed;
+          $("quickReviewCount").textContent = review;
+          $("quickResultStatus").textContent = issues.length
+            ? `${issues.length} item(s) need attention`
+            : "All Brief items passed";
+          $("quickPreviewSummary").textContent =
+            `${issues.length} issue(s) · ${results.length} total QC item(s)`;
+          $("quickPreviewList").innerHTML = issues.length
+            ? issues
+                .map((item) => {
+const cls = item.status === 'failed' ? 'missing' : 'review';
+
+const badgeLabel = item.issueType === 'extra-html'
+  ? 'Extra HTML'
+  : item.status === 'failed'
+    ? 'Failed'
+    : 'Review'; 
+                      return `<button type="button" class="quick-preview-item ${selectedIssueIndex === item.index ? "active" : ""}" data-quick-index="${item.index}">
+                  <div class="quick-preview-item-top">
+                    <span class="quick-preview-item-title">${esc(item.value)}</span>
+                   <span class="badge ${cls}">${esc(badgeLabel)}</span>
+                  </div>
+                  <div class="quick-preview-item-detail">${esc(item.type.toUpperCase())} · ${esc(item.detail || item.label || "")}</div>
+                </button>`;
+                })
+                .join("")
+            : '<div class="quick-preview-empty">✓ No issues found. All QC items passed.</div>';
+          bar.hidden = false;
+        }
+
+        function closeQuickResultPreview() {
+          $("quickResultPreview").hidden = true;
+          $("quickPreviewBtn").setAttribute("aria-expanded", "false");
+        }
 
         function runQC() {
           const items = parseBrief(originalBrief.value);
@@ -2197,6 +2540,8 @@
           renderPreQCValidation(validation);
           if (validation.blocking.length) {
             results = [];
+            $("quickResultBar").hidden = true;
+            $("quickResultPreview").hidden = true;
             $("results").style.display = "none";
             $("sourceInspector").style.display = "none";
             setStatus(
@@ -2220,37 +2565,47 @@
             results = items.map((x, index) => {
               if (x.type === "text") {
                 const m = locateText(x.value, d, mode);
+
                 const candidate = !m.found
                   ? findBestTextCandidate(x.value, d.full, mode)
                   : null;
+
                 const mismatch = !!candidate;
+
+                const extraHtmlWords = m.found
+                  ? findExtraHtmlWording(x.value, m.position, d, items, mode, x)
+                  : [];
                 return {
                   ...x,
                   index,
                   status: !m.found
-                    ? mismatch
-                      ? "review"
-                      : "failed"
-                    : m.count > 1
-                      ? "review"
-                      : "passed",
+  ? (mismatch ? "review" : "failed")
+  : (m.count > 1 || extraHtmlWords.length > 0)
+    ? "review"
+    : "passed",
                   issueType: mismatch
-                    ? "mismatch"
-                    : m.count > 1
-                      ? "duplicate"
-                      : "",
+  ? "mismatch"
+  : extraHtmlWords.length
+    ? "extra-html"
+    : (m.count > 1 ? "duplicate" : ""),
                   label: !m.found
-                    ? mismatch
-                      ? "Possible text mismatch"
-                      : "Not found"
-                    : m.count > 1
-                      ? "Duplicate text"
-                      : "Found",
-                  detail: m.found
-                    ? `Found ${m.count} time(s) · ${m.path}`
-                    : mismatch
-                      ? `A similar HTML text candidate was found (${Math.round(candidate.similarity * 100)}% similarity). Review the difference.`
-                      : m.detail,
+  ? (mismatch ? "Possible text mismatch" : "Not found")
+  : extraHtmlWords.length
+    ? "Extra HTML wording"
+    : m.count > 1
+      ? "Duplicate text"
+      : "Found",
+                 detail: m.found
+  ? `Found ${m.count} time(s) · ${m.path}${
+      extraHtmlWords.length
+        ? ` · Extra HTML wording: ${extraHtmlWords.join(", ")}`
+        : ""
+    }${
+      m.count > 1 ? " · Duplicate text" : ""
+    }`
+  : mismatch
+    ? `A similar HTML text candidate was found (${Math.round(candidate.similarity * 100)}% similarity). Review the difference.`
+    : m.detail,
                   expected: x.value,
                   actual: mismatch
                     ? candidate.originalText || candidate.text
@@ -2260,6 +2615,8 @@
                     : m.snippet || "",
                   missingWords: mismatch ? candidate.alignment.missing : [],
                   alignment: mismatch ? candidate.alignment : null,
+                    extraHtmlWords,
+
                   similarity: mismatch ? candidate.similarity : null,
                   snippet: m.snippet || (mismatch ? candidate.text : ""),
                   position: m.position ?? null,
@@ -2395,6 +2752,7 @@
             const firstIssue = results.findIndex((r) => r.status !== "passed");
 
             selectIssue(firstIssue >= 0 ? firstIssue : 0);
+            renderQuickResultPreview();
             renderAllSourceOverview();
             $("copyBtn").disabled = false;
             $("exportCsvBtn").disabled = false;
@@ -2459,8 +2817,27 @@
               </div>`
                 : ""
             }
-            ${r.snippet ? `<div class="snippet">${esc(r.snippet)}</div>` : ""}
-          </article>
+${r.issueType === 'extra-html' && r.extraHtmlWords?.length
+  ? `
+    <div class="diff-box">
+      <div class="diff-label">
+        Extra HTML wording · Not found elsewhere in Brief
+      </div>
+      <div class="diff-summary">
+        <span>
+          <b>Extra:</b>
+          ${esc(r.extraHtmlWords.join(', '))}
+        </span>
+      </div>
+    </div>
+  `
+  : ''
+}
+
+${r.snippet
+  ? `<div class="snippet">${esc(r.snippet)}</div>`
+  : ''}
+            </article>
         `;
                 })
                 .join("")
@@ -3871,6 +4248,7 @@
 
           $("sourceInspector").style.display = "block";
           renderList();
+          if (!$("quickResultPreview").hidden) renderQuickResultPreview();
           renderBriefHighlight(item);
           renderSourceHighlight(item);
 
@@ -3895,7 +4273,7 @@
           const textItems = results.filter((r) => r.type === "text").length;
           const linkItems = results.filter((r) => r.type === "link").length;
           const lines = [
-            "HTML TEXT & LINK QC — V3.6 REPORT",
+            "HTML TEXT & LINK QC — V3.7 REPORT",
             "================================",
             `Generated: ${new Date().toLocaleString()}`,
             `Total: ${results.length} | Passed: ${passed} | Failed: ${failed} | Review: ${review}`,
@@ -4003,6 +4381,8 @@
         function invalidateResultsIfPresent() {
           if (!results.length) return;
           results = [];
+          $("quickResultBar").hidden = true;
+          $("quickResultPreview").hidden = true;
           selectedIssueIndex = -1;
           selectedOccurrenceIndex = 0;
           sourceOverviewMode = false;
@@ -4067,7 +4447,7 @@
         });
 
         // ========================================
-        // V3.6 - OFFLINE MULTILINGUAL REGRESSION TEST LAB
+        // V3.7 - OFFLINE MULTILINGUAL REGRESSION TEST LAB
         // Tests normalization, locale hints and segmentation support locally.
         // ========================================
         function runMultilingualTestLab() {
@@ -4572,6 +4952,45 @@
           });
         });
 
+        $("quickPreviewBtn").addEventListener("click", () => {
+          const preview = $("quickResultPreview");
+          preview.hidden = !preview.hidden;
+          $("quickPreviewBtn").setAttribute(
+            "aria-expanded",
+            String(!preview.hidden),
+          );
+        });
+        $("quickPreviewClose").addEventListener(
+          "click",
+          closeQuickResultPreview,
+        );
+        $("quickJumpBtn").addEventListener("click", () => {
+          closeQuickResultPreview();
+          $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        $("quickPreviewList").addEventListener("click", (event) => {
+          const item = event.target.closest("[data-quick-index]");
+          if (!item) return;
+          const index = Number(item.dataset.quickIndex);
+          activeFilter = "all";
+          document.querySelectorAll(".tab").forEach((tab) => {
+            tab.classList.toggle("active", tab.dataset.filter === "all");
+          });
+          selectIssue(index);
+          closeQuickResultPreview();
+          requestAnimationFrame(() => {
+            const card = $("resultList").querySelector(
+              `.result[data-index="${index}"]`,
+            );
+            if (card)
+              card.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !$("quickResultPreview").hidden)
+            closeQuickResultPreview();
+        });
+
         $("onlyIssuesToggle").addEventListener("change", (event) => {
           onlyIssues = event.target.checked;
           renderList();
@@ -4655,6 +5074,9 @@
           originalBrief.value = "";
 
           results = [];
+          $("quickResultBar").hidden = true;
+          $("quickResultPreview").hidden = true;
+          $("quickPreviewBtn").setAttribute("aria-expanded", "false");
           activeFilter = "all";
           onlyIssues = false;
           $("onlyIssuesToggle").checked = false;
