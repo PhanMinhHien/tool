@@ -1,0 +1,4175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HTML Text & Link QC — V3.5</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0a1020;
+        --panel: #121b30;
+        --panel2: #0c1528;
+        --line: #293854;
+        --text: #eaf0fc;
+        --muted: #91a0ba;
+        --green: #39ce91;
+        --red: #ff7180;
+        --yellow: #f3c66b;
+        --blue: #78bdff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(ellipse at top, #192747 0%, var(--bg) 52%);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+      }
+      .app {
+        max-width: 1440px;
+        margin: auto;
+        padding: 28px 22px 60px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        margin-bottom: 22px;
+      }
+      h1 {
+        font-size: 27px;
+        letter-spacing: -0.7px;
+        line-height: 1.2;
+        margin: 0 0 7px;
+      }
+      .sub,
+      .hint,
+      .foot {
+        color: var(--muted);
+      }
+      .sub {
+        margin: 0;
+      }
+      .pill {
+        border: 1px solid #3a4b70;
+        background: #1a2948;
+        color: #c1ccff;
+        border-radius: 99px;
+        padding: 5px 10px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 15px;
+      }
+      .panel {
+        background: linear-gradient(180deg, #152039f5, #10192cf5);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 17px;
+        min-width: 0;
+        box-shadow: 0 12px 35px #0002;
+      }
+      .panel h2 {
+        font-size: 15px;
+        margin: 0 0 5px;
+      }
+      .hint {
+        font-size: 12px;
+        margin: 0 0 12px;
+      }
+      .fieldhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+      .counter {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      textarea {
+        width: 100%;
+        resize: vertical;
+        display: block;
+        background: var(--panel2);
+        border: 1px solid #2b3b59;
+        border-radius: 11px;
+        padding: 13px;
+        color: #e7efff;
+        outline: none;
+        font:
+          12px/1.6 ui-monospace,
+          monospace;
+        tab-size: 2;
+      }
+      textarea:focus {
+        border-color: #8797ff;
+        box-shadow: 0 0 0 3px #8797ff20;
+      }
+      #htmlSource,
+      #originalBrief {
+        min-height: 470px;
+      }
+      .side {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+        margin-top: 12px;
+        padding: 12px 14px;
+        background: #111b30;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .options label {
+        font-size: 12px;
+        color: #c4cee1;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .options input {
+        accent-color: #8b9aff;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-top: 14px;
+      }
+      button {
+        border: 1px solid #364866;
+        border-radius: 10px;
+        background: #1b2944;
+        color: var(--text);
+        padding: 9px 13px;
+        font: 600 12px system-ui;
+        cursor: pointer;
+      }
+      button:hover {
+        filter: brightness(1.13);
+      }
+      button.primary {
+        background: linear-gradient(135deg, #7186ff, #9275e9);
+        border: 0;
+        color: white;
+        padding: 11px 20px;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .status {
+        font-size: 11px;
+        color: var(--muted);
+        margin-left: auto;
+      }
+      .error {
+        color: var(--red);
+      }
+      .callout {
+        background: #111d33;
+        border: 1px solid #2b3b59;
+        padding: 11px 13px;
+        border-radius: 11px;
+        font-size: 11px;
+        color: #b9c7df;
+        margin-top: 12px;
+      }
+      .results {
+        display: none;
+        margin-top: 17px;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 9px;
+        margin: 14px 0;
+      }
+      .stat {
+        background: #0c1629;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 11px;
+      }
+      .stat strong {
+        display: block;
+        font-size: 23px;
+      }
+      .stat span {
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.3px;
+      }
+      .ok strong {
+        color: var(--green);
+      }
+      .bad strong {
+        color: var(--red);
+      }
+      .warn strong {
+        color: var(--yellow);
+      }
+      .info strong {
+        color: var(--blue);
+      }
+      .tabs {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin: 14px 0;
+      }
+      .tab {
+        font-size: 11px;
+        padding: 7px 11px;
+        border-radius: 99px;
+        color: var(--muted);
+      }
+      .tab.active {
+        background: #2a3a62;
+        border-color: #7285ff;
+        color: white;
+      }
+      .result-list {
+        display: grid;
+        gap: 9px;
+      }
+      .result {
+        background: #0d172a;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 13px;
+      }
+      .result-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .result-name {
+        font-weight: 650;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+      .badge {
+        font-size: 10px;
+        font-weight: 800;
+        border-radius: 99px;
+        padding: 4px 8px;
+        white-space: nowrap;
+      }
+      .found {
+        background: #123b30;
+        color: #75e8b9;
+      }
+      .missing {
+        background: #48242c;
+        color: #ff9da6;
+      }
+      .review {
+        background: #493a20;
+        color: #ffda83;
+      }
+      .detail {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 7px;
+        overflow-wrap: anywhere;
+      }
+      .snippet {
+        margin-top: 8px;
+        padding: 9px 10px;
+        background: #080f1d;
+        border-radius: 8px;
+        color: #bdc9df;
+        font:
+          11px/1.55 ui-monospace,
+          monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .legend {
+        font-size: 11px;
+        color: var(--muted);
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .legend b {
+        color: var(--text);
+      }
+      .foot {
+        font-size: 11px;
+        margin-top: 15px;
+      }
+      .empty {
+        padding: 24px;
+        text-align: center;
+        border: 1px dashed #364866;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      .profile-row {
+        margin: 10px 0 12px;
+      }
+      .profile-row > label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text);
+      }
+      .profile-row select {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #0b1426;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 9px 11px;
+      }
+      .profile-row .hint {
+        margin: 5px 0 0;
+      }
+      .test-lab-results {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #0b1426;
+        font-size: 11px;
+      }
+      .test-lab-results .test-pass {
+        color: var(--green);
+      }
+      .test-lab-results .test-fail {
+        color: var(--red);
+      }
+      .test-lab-results .test-lab-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 5px 12px;
+        margin-top: 8px;
+      }
+      .diff-box {
+        margin-top: 7px;
+        padding: 8px;
+        border: 1px solid rgba(243, 198, 107, 0.28);
+        border-radius: 8px;
+        background: rgba(243, 198, 107, 0.06);
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .diff-box .expected {
+        color: #9de4bd;
+      }
+      .diff-box .actual {
+        color: #ffb2b9;
+      }
+      .diff-box .diff-label {
+        color: var(--muted);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 3px;
+      }
+      .result-type-tag {
+        display: inline-block;
+        margin-left: 6px;
+        color: var(--yellow);
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      /* V2.1 - Source Inspector */
+      .source-toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+      }
+
+      .source-toolbar button {
+        padding: 7px 11px;
+      }
+
+      .source-info {
+        font-size: 11px;
+        color: var(--muted);
+        margin-left: auto;
+      }
+
+      .source-view {
+        max-height: 560px;
+        overflow: auto;
+        background: #080f1d;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+      }
+
+      #sourceCode {
+        margin: 0;
+        padding: 16px;
+        color: #b9c9df;
+        font:
+          12px/1.75 ui-monospace,
+          monospace;
+        white-space: pre;
+        overflow-wrap: normal;
+        tab-size: 2;
+      }
+
+      #sourceCode mark {
+        background: #715819;
+        color: #fff1b5;
+        border-radius: 3px;
+        outline: 1px solid #e9bb50;
+      }
+
+      #sourceCode mark.active-highlight {
+        background: #a34b35;
+        color: white;
+        outline: 2px solid #ff997d;
+      }
+
+      #sourceCode mark.missing-highlight,
+      .inspector-content mark.missing-highlight {
+        background: #7f1d1d;
+        color: #fff1f1;
+        outline: 1px dashed #ef4444;
+        border-radius: 3px;
+        padding: 0 2px;
+        font-weight: 700;
+      }
+
+      #sourceCode mark.mismatch-highlight {
+        background: #7f1d1d;
+        color: #fff1f1;
+        outline: 1px solid #ef4444;
+      }
+
+      #sourceCode mark.all-match-highlight {
+        background: #174b3b;
+        color: #9af0c6;
+        outline: 1px solid #39ce91;
+        border-radius: 3px;
+      }
+
+      #sourceCode .not-found-suggestions {
+        margin-top: 18px;
+        padding: 12px;
+        border: 1px dashed #ef4444;
+        border-radius: 8px;
+        background: rgba(127, 29, 29, 0.12);
+        white-space: normal;
+      }
+
+      #sourceCode .not-found-suggestions-title {
+        color: #ff9da6;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      #sourceCode .not-found-suggestion {
+        margin: 6px 0;
+        color: #fff1f1;
+      }
+
+      .result {
+        cursor: pointer;
+        transition: border-color 0.15s;
+      }
+
+      .result:hover {
+        border-color: #7186ff;
+      }
+
+      .result.selected {
+        border-color: #8797ff;
+        background: #182541;
+      }
+
+      .source-empty {
+        padding: 12px;
+        color: var(--yellow);
+        font-size: 12px;
+      }
+
+      /* V2.3 - Inspector controls and text-only mode */
+      .inspector-heading-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .inspector-heading-actions button {
+        padding: 6px 9px;
+        font-size: 10px;
+      }
+      .inspector-content mark {
+        cursor: pointer;
+      }
+      .inspector-content mark:hover {
+        filter: brightness(1.2);
+      }
+      #sourceCode.text-only-view {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      #sourceCode.text-only-view .text-only-line {
+        display: block;
+        min-height: 1.75em;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        padding: 2px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      }
+      #sourceCode.text-only-view .text-only-section {
+        margin: 12px 0 5px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(148, 163, 184, 0.2);
+        color: var(--muted, #94a3b8);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      #sourceCode.text-only-view .text-only-link-line {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        overflow-wrap: anywhere;
+      }
+      #sourceCode.text-only-view .text-only-link-label {
+        font-weight: 600;
+      }
+      #sourceCode.text-only-view .text-only-link-url {
+        color: var(--muted, #94a3b8);
+        font-size: 11px;
+      }
+      .source-toolbar .toolbar-group {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      #occurrenceCounter {
+        color: var(--muted);
+        font-size: 11px;
+        min-width: 95px;
+        text-align: center;
+      }
+
+      /* V2.2 - Side-by-side Visual Inspector */
+
+      .visual-inspector {
+        display: none;
+        margin-top: 17px;
+      }
+
+      .inspector-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .inspector-panel {
+        min-width: 0;
+        background: #0d172a;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .inspector-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        background: #152039;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .inspector-heading strong {
+        font-size: 12px;
+      }
+
+      .inspector-content {
+        height: 560px;
+        overflow: auto;
+        padding: 16px;
+        background: #080f1d;
+        color: #bdc9df;
+        font:
+          12px/1.8 ui-monospace,
+          monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        scroll-behavior: smooth;
+      }
+
+      #briefPreview {
+        white-space: pre-wrap;
+      }
+
+      .inspector-content mark {
+        background: #174b3b;
+        color: #9af0c6;
+        border-radius: 3px;
+        outline: 1px solid #39ce91;
+      }
+
+      .inspector-content mark.active-highlight {
+        background: #a34b35;
+        color: white;
+        outline: 2px solid #ff997d;
+      }
+
+      .inspector-content mark.approximate-highlight {
+        background: #715819;
+        color: #fff1b5;
+        outline: 1px solid #e9bb50;
+      }
+
+      .inspector-content mark.mismatch-highlight {
+        background: #7f1d1d;
+        color: #fff1f1;
+        outline: 1px solid #ef4444;
+      }
+
+      .inspector-placeholder {
+        color: var(--muted);
+        text-align: center;
+        padding: 30px 12px;
+        font-size: 12px;
+      }
+
+      .inspector-meta {
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .inspector-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .inspector-content {
+          height: 380px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        #htmlSource,
+        #originalBrief {
+          min-height: 280px;
+        }
+        .summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        header {
+          flex-direction: column;
+        }
+        .status {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div>
+          <h1>HTML Text & Link QC</h1>
+          <p class="sub">
+            Full QC · Text, URLs, anchor text, sequence and HTML locations.
+          </p>
+        </div>
+        <span class="pill">VERSION 3.5 · LOCAL ONLY</span>
+      </header>
+      <div class="grid">
+        <section class="panel">
+          <div class="fieldhead">
+            <h2>01 · HTML Source</h2>
+            <span class="counter" id="htmlCount">0 characters</span>
+          </div>
+          <p class="hint">
+            Paste the complete source copied from View Page Source. HTML is
+            parsed locally; scripts are never executed.
+          </p>
+          <textarea
+            id="htmlSource"
+            spellcheck="false"
+            placeholder="<!DOCTYPE html>&#10;<html>... paste complete HTML source here ...</html>"
+          ></textarea>
+        </section>
+        <div class="side">
+          <section class="panel" style="flex: 1">
+            <div class="fieldhead">
+              <h2>02 · Original Brief</h2>
+              <span class="counter" id="briefCount">0 characters</span>
+            </div>
+            <p class="hint">
+              Paste the entire brief as-is, including text and URLs. Keep the
+              original order and line breaks.
+            </p>
+            <textarea
+              id="originalBrief"
+              placeholder="Welcome to our store!&#10;&#10;Explore our Summer Sale 2026.&#10;&#10;Shop Now: https://example.com/summer&#10;&#10;Terms & Conditions apply."
+            ></textarea>
+            <div class="callout" id="detectedInfo">
+              Detected items will appear here after you paste your brief.
+            </div>
+          </section>
+          <section class="panel">
+            <h2>03 · QC Settings</h2>
+            <div class="options">
+              <label
+                ><input type="radio" name="matchMode" value="smart" checked />
+                Smart text (ignore case & extra spaces)</label
+              ><label
+                ><input type="radio" name="matchMode" value="strict" /> Strict
+                text (case-sensitive)</label
+              >
+            </div>
+            <div class="profile-row">
+              <label for="qcProfile">QC Rule Profile</label>
+              <select id="qcProfile">
+                <option value="standard" selected>Standard QC</option>
+                <option value="localization">Localization QC</option>
+                <option value="strict">Strict Content QC</option>
+                <option value="link-audit">Link Audit QC</option>
+              </select>
+              <p class="hint" id="profileDescription">
+                Balanced text, link, duplicate and sequence checks.
+              </p>
+            </div>
+            <div class="options">
+              <label
+                ><input type="checkbox" id="checkSequence" checked /> Check
+                content order</label
+              ><label
+                ><input type="checkbox" id="checkAnchor" checked /> Check link
+                anchor/context</label
+              >
+            </div>
+            <div class="toolbar">
+              <button class="primary" id="runBtn">▶ Run Full QC</button
+              ><button id="copyBtn" disabled>Copy report</button
+              ><button id="exportCsvBtn" disabled>Export CSV</button
+              ><button id="clearBtn">Clear all</button>
+            </div>
+            <div class="toolbar" style="margin-top: 8px">
+              <button id="runTestLabBtn" type="button">
+                Run Multilingual Test Lab
+              </button>
+              <span class="counter" id="testLabSummary"
+                >Built-in offline tests · no data uploaded</span
+              >
+            </div>
+            <div id="testLabResults" class="test-lab-results" hidden></div>
+            <div class="status" id="status" style="margin: 10px 0 0">Ready</div>
+          </section>
+        </div>
+      </div>
+      <section class="panel results" id="results">
+        <div class="fieldhead">
+          <div>
+            <h2>QC Results</h2>
+            <p class="hint" style="margin: 4px 0 0">
+              Presence, order, URL destination and anchor/context are reported
+              separately.
+            </p>
+          </div>
+          <span class="pill" id="scanLabel">Scan complete</span>
+        </div>
+        <div class="summary">
+          <div class="stat ok">
+            <strong id="passCount">0</strong><span>PASSED</span>
+          </div>
+          <div class="stat bad">
+            <strong id="failCount">0</strong><span>FAILED</span>
+          </div>
+          <div class="stat warn">
+            <strong id="reviewCount">0</strong><span>REVIEW</span>
+          </div>
+          <div class="stat info">
+            <strong id="textTotal">0</strong><span>TEXT ITEMS</span>
+          </div>
+          <div class="stat info">
+            <strong id="linkTotal">0</strong><span>URL ITEMS</span>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-filter="all">All</button
+          ><button class="tab" data-filter="text">Text</button
+          ><button class="tab" data-filter="link">Links</button
+          ><button class="tab" data-filter="failed">Failed</button
+          ><button class="tab" data-filter="mismatch">Mismatch</button
+          ><button class="tab" data-filter="review">Review</button>
+        </div>
+        <div class="result-list" id="resultList"></div>
+        <div class="legend">
+          <span><b>Passed:</b> found and checks passed</span
+          ><span><b>Failed:</b> missing or wrong URL</span
+          ><span
+            ><b>Review:</b> duplicate, sequence or anchor needs attention</span
+          >
+        </div>
+        <p class="foot">
+          This checks whether URLs occur in href attributes; it does not request
+          destination pages or confirm they are live. Sequence is based on
+          document order. Dynamic content rendered only after JavaScript runs
+          may not exist in copied page source.
+        </p>
+      </section>
+
+      <!-- V2.2 SIDE-BY-SIDE VISUAL INSPECTOR -->
+
+      <section class="panel visual-inspector" id="sourceInspector">
+        <div class="fieldhead">
+          <div>
+            <h2>04 · Visual Text Inspector</h2>
+            <p class="hint" style="margin: 4px 0 0">
+              Compare Original Brief and HTML Source with synchronized
+              highlighting.
+            </p>
+          </div>
+          <span class="pill" id="sourceStatus">Waiting</span>
+        </div>
+
+        <div class="source-toolbar">
+          <div class="toolbar-group">
+            <button id="prevIssueBtn">← Previous issue</button>
+            <button id="nextIssueBtn">Next issue →</button>
+          </div>
+          <div class="toolbar-group">
+            <button id="prevOccurrenceBtn" disabled>← Occurrence</button>
+            <span id="occurrenceCounter">0 / 0</span>
+            <button id="nextOccurrenceBtn" disabled>Occurrence →</button>
+          </div>
+          <span class="source-info" id="issueCounter"> No issue selected </span>
+        </div>
+
+        <div class="legend" style="margin: 0 0 12px">
+          <span><b style="color: #75e8b9">Green:</b> Matched</span>
+          <span><b style="color: #ffda83">Yellow:</b> Review</span>
+          <span><b style="color: #ff9da6">Red:</b> Missing</span>
+          <span><b style="color: #ff997d">Orange:</b> Current selection</span>
+        </div>
+
+        <div class="inspector-grid">
+          <!-- ORIGINAL BRIEF -->
+
+          <div class="inspector-panel">
+            <div class="inspector-heading">
+              <strong>02 · Original Brief</strong>
+              <span class="inspector-meta" id="briefInspectorStatus">
+                Waiting
+              </span>
+            </div>
+
+            <div class="inspector-content" id="briefPreview">
+              <div class="inspector-placeholder">
+                Run QC to inspect the Original Brief.
+              </div>
+            </div>
+          </div>
+
+          <!-- HTML SOURCE -->
+
+          <div class="inspector-panel">
+            <div class="inspector-heading">
+              <strong>01 · HTML Source</strong>
+              <div class="inspector-heading-actions">
+                <span class="inspector-meta" id="htmlInspectorStatus"
+                  >Waiting</span
+                >
+                <button id="toggleSourceViewBtn" type="button">
+                  Text / Link only
+                </button>
+              </div>
+            </div>
+
+            <div class="inspector-content" id="sourceCode">
+              <div class="inspector-placeholder">
+                Run QC to inspect the HTML Source.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="source-empty" id="sourceMessage">
+          Select a QC result to inspect both sources.
+        </div>
+      </section>
+    </div>
+    <script>
+      (() => {
+        const $ = (id) => document.getElementById(id),
+          htmlSource = $("htmlSource"),
+          originalBrief = $("originalBrief");
+        let results = [];
+        let activeFilter = "all";
+        let selectedIssueIndex = -1;
+        let selectedOccurrenceIndex = 0;
+        let sourceViewMode = "raw";
+        let sourceOverviewMode = false;
+        const URL_RE = /https?:\/\/[^\s<>"'`]+/gi;
+        function cleanUrl(s) {
+          return s.replace(/[.,!?;:)\]}]+$/g, "");
+        }
+
+        function parseBrief(value) {
+          const items = [];
+          let last = 0;
+          let m;
+
+          URL_RE.lastIndex = 0;
+
+          while ((m = URL_RE.exec(value)) !== null) {
+            const url = cleanUrl(m[0]);
+            const start = m.index;
+            const end = start + url.length;
+
+            // Text trước URL
+            const before = value.slice(last, start);
+            if (before.trim()) {
+              items.push({ type: "text", value: before.trim() });
+            }
+
+            if (url) {
+              // Xác định dòng chứa URL
+              const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+              const lineEndIndex = value.indexOf("\n", end);
+              const lineEnd = lineEndIndex < 0 ? value.length : lineEndIndex;
+
+              const line = value.slice(lineStart, lineEnd);
+              const prefix = value.slice(lineStart, start).trim();
+
+              // Bỏ dấu câu ngay sau URL khi xác định text phía sau
+              const suffix = value
+                .slice(end, lineEnd)
+                .replace(/^[\s.,!?;:)\]}]+/, "")
+                .trim();
+
+              // Đếm số URL trên cùng một dòng
+              const urlsOnLine = (line.match(/https?:\/\/[^\s<>"'`]+/gi) || [])
+                .length;
+
+              // Lấy dòng ngay phía trên
+              let previousLine = "";
+
+              if (lineStart > 0) {
+                const previousLineEnd = lineStart - 1;
+                const previousLineStart =
+                  value.lastIndexOf("\n", previousLineEnd - 1) + 1;
+
+                previousLine = value
+                  .slice(previousLineStart, previousLineEnd)
+                  .trim();
+              }
+
+              const previousLineHasUrl = /https?:\/\/[^\s<>"'`]+/i.test(
+                previousLine,
+              );
+
+              let context;
+
+              // Case 1: Nhiều URL cùng dòng
+              // Hoặc URL nằm giữa một đoạn text
+              // => Kiểm tra URL độc lập, không kiểm tra anchor context
+              if (urlsOnLine > 1 || (prefix && suffix)) {
+                context = {
+                  line,
+                  prefix: "",
+                  suffix: "",
+                  independent: true,
+                };
+              }
+
+              // Case 2: URL nằm riêng một dòng
+              // => Ghép với text ngay dòng phía trên
+              else if (
+                !prefix &&
+                !suffix &&
+                previousLine &&
+                !previousLineHasUrl
+              ) {
+                context = {
+                  line,
+                  prefix: previousLine,
+                  suffix: "",
+                  independent: false,
+                };
+              }
+
+              // Case 3: URL nằm cuối dòng text
+              // => Giữ nguyên cách kiểm tra hiện tại
+              else if (prefix && !suffix) {
+                context = {
+                  line,
+                  prefix,
+                  suffix: "",
+                  independent: false,
+                };
+              }
+
+              // Case 4: URL không có text liên quan
+              else {
+                context = {
+                  line,
+                  prefix: "",
+                  suffix: "",
+                  independent: true,
+                };
+              }
+
+              items.push({
+                type: "link",
+                value: url,
+                context,
+              });
+            }
+
+            last = end;
+            URL_RE.lastIndex = m.index + m[0].length;
+          }
+
+          // Text còn lại sau URL cuối cùng
+          if (value.slice(last).trim()) {
+            items.push({
+              type: "text",
+              value: value.slice(last).trim(),
+            });
+          }
+
+          // Tách text thành từng dòng như logic cũ
+          const expanded = [];
+
+          for (const x of items) {
+            if (x.type === "link") {
+              expanded.push(x);
+            } else {
+              x.value
+                .split(/\n+/)
+                .map((s) => s.trim())
+                .filter((v) => Boolean(v))
+                .forEach((v) => {
+                  // Keep headings as Brief content too (e.g. **Link Titles**).
+                  // Remove only the Markdown wrappers, not the heading text itself.
+                  const clean = v
+                    .replace(/^#{1,6}\s+/, "")
+                    .replace(/^\*\*(.*?)\*\*$/, "$1")
+                    .replace(/^__(.*?)__$/, "$1")
+                    .replace(/^<h[1-6]\b[^>]*>([\s\S]*)<\/h[1-6]>$/i, "$1")
+                    .trim();
+                  if (clean) expanded.push({ type: "text", value: clean });
+                });
+            }
+          }
+
+          expanded.forEach((x, i) => (x.order = i));
+
+          return expanded;
+        }
+
+        // ========================================
+        // V3 - MULTILINGUAL NORMALIZATION
+        // Each Brief item is normalized independently so mixed-language
+        // briefs can be checked without a manual language selector.
+        // ========================================
+        function detectLocale(value) {
+          const s = String(value || "");
+          // Script-based detection first (more reliable than guessing by words).
+          if (/[\u3040-\u30ff]/u.test(s)) return "ja"; // Hiragana / Katakana
+          if (/[\uac00-\ud7af]/u.test(s)) return "ko"; // Hangul
+          if (/[\u0e00-\u0e7f]/u.test(s)) return "th"; // Thai
+          if (/[\u0600-\u06ff\u0750-\u077f]/u.test(s)) return "ar";
+          if (/[\u0400-\u04ff]/u.test(s)) return "ru";
+          if (/[\u0370-\u03ff]/u.test(s)) return "el";
+          if (/[\u0900-\u097f]/u.test(s)) return "hi";
+          if (/[\u4e00-\u9fff]/u.test(s)) return "zh";
+          // Language-specific Latin signals.
+          if (/[\u011f\u0131\u015f\u011e\u0130\u015e]/iu.test(s)) return "tr";
+          if (/[\u0103\u0111\u0129\u0169\u01a1\u01b0\u1ea0-\u1eff]/iu.test(s))
+            return "vi";
+          return "en";
+        }
+
+        // Normalize text while preserving a UTF-16 offset map back to the
+        // original string. All browser string indexes (indexOf/slice) are
+        // UTF-16 based, so the map deliberately contains one entry per code unit.
+        function normalizeMappedText(
+          value,
+          mode = "smart",
+          localeOverride = "",
+        ) {
+          const source = String(value || "");
+          const locale = localeOverride || detectLocale(source);
+          let units;
+          if (
+            typeof Intl !== "undefined" &&
+            typeof Intl.Segmenter === "function"
+          ) {
+            try {
+              units = [
+                ...new Intl.Segmenter(locale || "und", {
+                  granularity: "grapheme",
+                }).segment(source),
+              ].map((x) => ({ part: x.segment, index: x.index }));
+            } catch {
+              units = null;
+            }
+          }
+          if (!units) {
+            units = [];
+            const pattern = /\P{M}\p{M}*|\p{M}+/gu;
+            for (const match of source.matchAll(pattern)) {
+              units.push({ part: match[0], index: match.index });
+            }
+          }
+
+          let text = "";
+          const starts = [];
+          const ends = [];
+          const append = (character, rawStart, rawEnd) => {
+            for (let k = 0; k < character.length; k++) {
+              text += character[k];
+              starts.push(rawStart);
+              ends.push(rawEnd);
+            }
+          };
+
+          for (const unit of units) {
+            let transformed = unit.part
+              .normalize("NFKC")
+              .replace(/[\u200b-\u200f\u2060\ufeff]/g, "");
+            if (mode === "smart") {
+              try {
+                transformed = transformed.toLocaleLowerCase(locale);
+              } catch {
+                transformed = transformed.toLowerCase();
+              }
+            }
+            const rawStart = unit.index;
+            const rawEnd = unit.index + unit.part.length;
+            for (const character of transformed) {
+              if (/\s/u.test(character)) {
+                if (text && !text.endsWith(" ")) append(" ", rawStart, rawEnd);
+              } else {
+                append(character, rawStart, rawEnd);
+              }
+            }
+          }
+
+          while (text.endsWith(" ")) {
+            text = text.slice(0, -1);
+            starts.pop();
+            ends.pop();
+          }
+          return { text, starts, ends, locale };
+        }
+
+        function space(s) {
+          return normalizeMappedText(s, "strict").text;
+        }
+
+        function norm(s, mode, localeOverride = "") {
+          return normalizeMappedText(s, mode, localeOverride).text;
+        }
+
+        function getWordSegmenter(locale) {
+          if (
+            typeof Intl === "undefined" ||
+            typeof Intl.Segmenter !== "function"
+          )
+            return null;
+          try {
+            return new Intl.Segmenter(locale || "und", { granularity: "word" });
+          } catch {
+            return null;
+          }
+        }
+
+        function hasLanguageAwareBoundary(source, start, end, query) {
+          const locale = detectLocale(query || source);
+          const segmenter = getWordSegmenter(locale);
+          if (segmenter) {
+            const segments = [...segmenter.segment(source)];
+            const startsAtBoundary =
+              start === 0 || segments.some((x) => x.index === start);
+            const endsAtBoundary =
+              end === source.length ||
+              segments.some((x) => x.index + x.segment.length === end);
+            if (startsAtBoundary && endsAtBoundary) return true;
+            // CJK/Thai segmentation may not align with an entire phrase; do not
+            // apply Latin-style letter boundaries to scripts without spaces.
+            if (/^(ja|zh|ko|th)$/i.test(locale)) return true;
+          }
+          const isWordChar = (ch) => !!ch && /[\p{L}\p{N}_]/u.test(ch);
+          return (
+            !isWordChar(source[start - 1] || "") &&
+            !isWordChar(source[end] || "")
+          );
+        }
+        function esc(s) {
+          return String(s).replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
+        }
+        function pathOf(el) {
+          if (!el || el.nodeType !== 1) return "(unknown element)";
+          const a = [];
+          while (el && el.nodeType === 1 && a.length < 6) {
+            let p = el.tagName.toLowerCase();
+            if (el.id) {
+              p += "#" + el.id;
+              a.unshift(p);
+              break;
+            }
+            const cls = [...el.classList].slice(0, 2);
+            if (cls.length) p += "." + cls.join(".");
+            const par = el.parentElement;
+            if (par) {
+              const sib = [...par.children].filter(
+                (x) => x.tagName === el.tagName,
+              );
+              if (sib.length > 1) p += `:nth-of-type(${sib.indexOf(el) + 1})`;
+            }
+            a.unshift(p);
+            el = par;
+          }
+          return a.join(" > ");
+        }
+        const BLOCK_TEXT_TAGS = new Set([
+          "address",
+          "article",
+          "aside",
+          "blockquote",
+          "dd",
+          "div",
+          "dl",
+          "dt",
+          "fieldset",
+          "figcaption",
+          "figure",
+          "footer",
+          "form",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "header",
+          "hr",
+          "li",
+          "main",
+          "nav",
+          "ol",
+          "p",
+          "section",
+          "table",
+          "tbody",
+          "td",
+          "tfoot",
+          "th",
+          "thead",
+          "tr",
+          "ul",
+        ]);
+
+        function isHiddenByMarkup(element) {
+          let current = element;
+          while (current && current.nodeType === 1) {
+            if (current.hasAttribute("hidden")) return true;
+            if (
+              (current.getAttribute("aria-hidden") || "")
+                .trim()
+                .toLowerCase() === "true"
+            )
+              return true;
+            const style = current.getAttribute("style") || "";
+            if (
+              /(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)\b/i.test(
+                style,
+              )
+            )
+              return true;
+            current = current.parentElement;
+          }
+          return false;
+        }
+
+        function extractDocument(doc) {
+          const root = doc.body || doc.documentElement;
+          const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+            acceptNode(n) {
+              const p = n.parentElement;
+              if (
+                !p ||
+                p.closest("script,style,noscript,template,svg,head") ||
+                isHiddenByMarkup(p)
+              )
+                return NodeFilter.FILTER_REJECT;
+              return n.nodeValue.length
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+            },
+          });
+          let full = "";
+          const nodes = [];
+          let n;
+          let previousBlock = null;
+          let previousTextNode = null;
+          const hasBreakBetween = (previous, current) => {
+            if (!previous) return false;
+            try {
+              const range = doc.createRange();
+              range.setStartAfter(previous);
+              range.setEndBefore(current);
+              return !!range.cloneContents().querySelector("br");
+            } catch {
+              return false;
+            }
+          };
+          while ((n = walker.nextNode())) {
+            let block = n.parentElement;
+            while (
+              block &&
+              block !== root &&
+              !BLOCK_TEXT_TAGS.has(block.tagName.toLowerCase())
+            ) {
+              block = block.parentElement;
+            }
+            if (!block || block === root) block = root;
+
+            // Add a separator only when crossing a block boundary. Inline tags
+            // (strong/em/span/a) do not manufacture spaces or line breaks.
+            const crossedBlock = previousTextNode && block !== previousBlock;
+            const crossedBreak =
+              !crossedBlock &&
+              block === previousBlock &&
+              hasBreakBetween(previousTextNode, n);
+            if (full && crossedBlock) {
+              // Paragraph/block boundaries separate candidate-search regions.
+              // Use a double newline so a visual <br> inside the same block
+              // remains a soft line break that matching can normalize to space.
+              full = full.replace(/\n+$/, "") + "\n\n";
+            } else if (full && crossedBreak && !full.endsWith("\n")) {
+              // <br> changes visual line layout, not the text-matching block.
+              full += "\n";
+            }
+
+            const raw = n.nodeValue.replace(/\u00a0/g, " ");
+            const start = full.length;
+            full += raw;
+            nodes.push({
+              start,
+              end: full.length,
+              node: n,
+              element: n.parentElement,
+            });
+            previousBlock = block;
+            previousTextNode = n;
+          }
+
+          const links = [...root.querySelectorAll("[href]")]
+            .map((el) => ({
+              url: (el.getAttribute("href") || "").trim(),
+              element: el,
+              anchor: space(el.textContent || ""),
+              path: pathOf(el),
+            }))
+            .filter((x) => x.url && !isHiddenByMarkup(x.element));
+          const events = [];
+          nodes.forEach((x) => events.push({ pos: x.start, type: "text" }));
+          links.forEach((x) => {
+            const first = nodes.find((n) => x.element.contains(n.node));
+            events.push({
+              pos: first ? first.start : full.length,
+              type: "link",
+              link: x,
+            });
+          });
+          events.sort((a, b) => a.pos - b.pos);
+          return { full, nodes, links, events };
+        }
+        function findAll(hay, needle) {
+          const out = [];
+          if (!needle) return out;
+          let from = 0;
+          while (true) {
+            const i = hay.indexOf(needle, from);
+            if (i < 0) break;
+            out.push(i);
+            from = i + Math.max(needle.length, 1);
+          }
+          return out;
+        }
+        function locateText(q, d, mode) {
+          const mapped = normalizeMappedText(d.full, mode, detectLocale(q));
+          const needle = norm(q, mode, detectLocale(q));
+          const idx = findAll(mapped.text, needle).filter((index) =>
+            hasLanguageAwareBoundary(
+              mapped.text,
+              index,
+              index + needle.length,
+              q,
+            ),
+          );
+          if (!idx.length) {
+            return {
+              found: false,
+              count: 0,
+              detail: "No matching visible text found in parsed HTML.",
+            };
+          }
+          const firstNormalizedIndex = idx[0];
+          const originalStart = mapped.starts[firstNormalizedIndex];
+          const originalEnd =
+            mapped.ends[firstNormalizedIndex + needle.length - 1];
+          const node = d.nodes.find(
+            (n) => originalStart >= n.start && originalStart <= n.end,
+          );
+          const snippet = d.full
+            .slice(
+              Math.max(0, originalStart - 65),
+              Math.min(d.full.length, originalEnd + 65),
+            )
+            .replace(/\s+/g, " ")
+            .trim();
+          return {
+            found: true,
+            count: idx.length,
+            position: originalStart,
+            path: node ? pathOf(node.element) : "(text node)",
+            snippet,
+          };
+        }
+
+        // ========================================
+        // V3.1 - TEXT DIFFERENCE DIAGNOSTICS
+        // Brief remains the only source of QC items. This helper only proposes
+        // a nearby HTML candidate when an expected Brief item was not found.
+        // ========================================
+        function editDistance(a, b) {
+          if (a.length > 220 || b.length > 220) return 999;
+          let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+          for (let i = 1; i <= a.length; i++) {
+            const curr = [i];
+            for (let j = 1; j <= b.length; j++) {
+              curr[j] = Math.min(
+                curr[j - 1] + 1,
+                prev[j] + 1,
+                prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+              );
+            }
+            prev = curr;
+          }
+          return prev[b.length];
+        }
+
+        function wordTokens(value) {
+          const text = String(value || "");
+          const segmenter = getWordSegmenter(detectLocale(text));
+          if (segmenter) {
+            const segmented = [...segmenter.segment(text)]
+              .filter((part) => part.isWordLike)
+              .map((part) => ({
+                word: part.segment,
+                index: part.index,
+                end: part.index + part.segment.length,
+              }));
+            if (segmented.length) return segmented;
+          }
+          return [...text.matchAll(/[\p{L}\p{N}]+/gu)].map((m) => ({
+            word: m[0],
+            index: m.index,
+            end: m.index + m[0].length,
+          }));
+        }
+
+        // Align words with LCS so missing Brief words can be suggested at
+        // their exact insertion point instead of highlighting an entire guess.
+        function alignExpectedToActual(
+          expected,
+          actual,
+          expectedOriginal = expected,
+        ) {
+          const ew = wordTokens(expected);
+          const originalWords = wordTokens(expectedOriginal);
+          const aw = wordTokens(actual);
+          const dp = Array.from({ length: ew.length + 1 }, () =>
+            Array(aw.length + 1).fill(0),
+          );
+          for (let i = ew.length - 1; i >= 0; i--) {
+            for (let j = aw.length - 1; j >= 0; j--) {
+              dp[i][j] =
+                ew[i].word === aw[j].word
+                  ? 1 + dp[i + 1][j + 1]
+                  : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            }
+          }
+          const missing = [];
+          let i = 0,
+            j = 0;
+          while (i < ew.length) {
+            if (j < aw.length && ew[i].word === aw[j].word) {
+              i++;
+              j++;
+            } else if (j < aw.length && dp[i][j + 1] > dp[i + 1][j]) {
+              j++; // extra word in HTML; leave it visible for review
+            } else {
+              missing.push({
+                word: originalWords[i]?.word || ew[i].word,
+                beforeWordIndex: j,
+              });
+              i++;
+            }
+          }
+          return {
+            expectedWords: ew,
+            actualWords: aw,
+            missing,
+            matched: dp[0][0],
+          };
+        }
+
+        function findBestTextCandidate(expected, visibleText, mode) {
+          const locale = detectLocale(expected);
+          // Candidate discovery is deliberately case-insensitive even in Strict
+          // mode: Strict still fails the exact check, but can explain case-only differences.
+          const target = norm(expected, "smart", locale);
+          if (!target) return null;
+          const targetWords = wordTokens(target);
+          if (!targetWords.length || targetWords.length > 240) return null;
+
+          // Double newlines represent separate block elements. A single newline
+          // represents an explicit <br> inside the same paragraph and must behave
+          // like ordinary whitespace so candidates can span the visual line break.
+          const blocks = String(visibleText || "")
+            .split(/\n{2,}/)
+            .map((block) => block.replace(/\n+/g, " "))
+            .filter(Boolean);
+          const maxDrift = Math.min(
+            6,
+            Math.max(2, Math.ceil(targetWords.length * 0.06)),
+          );
+          const maxExtra = Math.min(
+            4,
+            Math.max(2, Math.ceil(targetWords.length * 0.05)),
+          );
+          let best = null;
+
+          for (const originalBlock of blocks) {
+            const mappedBlock = normalizeMappedText(
+              originalBlock,
+              "smart",
+              locale,
+            );
+            const hay = mappedBlock.text;
+            const hayWords = wordTokens(hay);
+            if (!hayWords.length) continue;
+            const frequency = new Map();
+            hayWords.forEach((token) =>
+              frequency.set(token.word, (frequency.get(token.word) || 0) + 1),
+            );
+
+            // Anchor on the rarer expected words rather than testing every
+            // arbitrary window in the entire document. This prevents cross-section
+            // matches and keeps large pages responsive.
+            const anchorIndexes = targetWords
+              .map((token, index) => ({
+                index,
+                frequency: frequency.get(token.word) || 0,
+              }))
+              .filter((x) => x.frequency > 0)
+              .sort((a, b) => a.frequency - b.frequency)
+              .slice(0, Math.min(12, targetWords.length));
+            const starts = new Set();
+            for (const anchor of anchorIndexes) {
+              for (let pos = 0; pos < hayWords.length; pos++) {
+                if (hayWords[pos].word !== targetWords[anchor.index].word)
+                  continue;
+                for (let drift = -maxDrift; drift <= maxDrift; drift++) {
+                  const startIndex = pos - anchor.index + drift;
+                  if (startIndex >= 0 && startIndex < hayWords.length)
+                    starts.add(startIndex);
+                }
+              }
+            }
+            if (!starts.size) continue;
+            const allStarts = [...starts].sort((a, b) => a - b);
+            const startLimit = targetWords.length <= 3 ? 500 : 160;
+            const orderedStarts =
+              allStarts.length <= startLimit
+                ? allStarts
+                : Array.from(
+                    { length: startLimit },
+                    (_, index) =>
+                      allStarts[
+                        Math.round(
+                          (index * (allStarts.length - 1)) / (startLimit - 1),
+                        )
+                      ],
+                  );
+            const minCount = Math.max(1, targetWords.length - maxExtra);
+            const maxCount = Math.min(
+              hayWords.length,
+              targetWords.length + maxExtra,
+            );
+
+            for (const startIndex of orderedStarts) {
+              for (let count = minCount; count <= maxCount; count++) {
+                const endIndex = startIndex + count - 1;
+                if (endIndex >= hayWords.length) continue;
+                const start = hayWords[startIndex].index;
+                const end = hayWords[endIndex].end;
+                const text = hay.slice(start, end);
+                if (!text || text.length > Math.max(900, target.length + 100))
+                  continue;
+
+                const alignment = alignExpectedToActual(target, text, expected);
+                const precision =
+                  alignment.matched / Math.max(alignment.actualWords.length, 1);
+                const recall =
+                  alignment.matched /
+                  Math.max(alignment.expectedWords.length, 1);
+                const f1 =
+                  precision + recall
+                    ? (2 * precision * recall) / (precision + recall)
+                    : 0;
+                if (precision < 0.78 || recall < 0.4 || !alignment.matched)
+                  continue;
+
+                const distance =
+                  text.length <= 500 && target.length <= 500
+                    ? editDistance(target, text)
+                    : 999;
+                const similarity =
+                  targetWords.length <= 3 || distance === 999
+                    ? f1
+                    : Math.max(
+                        0,
+                        1 - distance / Math.max(target.length, text.length, 1),
+                      );
+                const score = f1 * 0.84 + similarity * 0.16;
+                if (!best || score > best.score) {
+                  const rawStart = mappedBlock.starts[start];
+                  const rawEnd = mappedBlock.ends[end - 1];
+                  const originalText =
+                    rawStart == null || rawEnd == null
+                      ? text
+                      : originalBlock.slice(rawStart, rawEnd);
+                  best = {
+                    text,
+                    originalText,
+                    similarity,
+                    score,
+                    alignment,
+                    precision,
+                    recall,
+                  };
+                }
+              }
+            }
+          }
+
+          if (!best) return null;
+          const threshold = targetWords.length <= 3 ? 0.6 : 0.7;
+          return best.score >= threshold ? best : null;
+        }
+
+        function canonicalUrl(value) {
+          try {
+            const url = new URL(value);
+            url.hostname = url.hostname.toLowerCase();
+            if (
+              (url.protocol === "https:" && url.port === "443") ||
+              (url.protocol === "http:" && url.port === "80")
+            )
+              url.port = "";
+            return url.href;
+          } catch {
+            return String(value || "").trim();
+          }
+        }
+
+        function getLinkAuditNotes(link) {
+          const notes = [];
+          let url;
+          try {
+            url = new URL(link.url, location.href);
+          } catch {
+            url = null;
+          }
+          const isExternal =
+            !!url &&
+            /^https?:$/.test(url.protocol) &&
+            url.origin !== location.origin;
+          const target = (
+            link.element.getAttribute("target") || ""
+          ).toLowerCase();
+          const rel = (link.element.getAttribute("rel") || "")
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
+          if (isExternal && target === "_blank" && !rel.includes("noopener")) {
+            notes.push(
+              'External link opens in a new tab without rel="noopener".',
+            );
+          }
+          if (
+            isExternal &&
+            target === "_blank" &&
+            !rel.includes("noreferrer")
+          ) {
+            notes.push(
+              'Consider rel="noreferrer" for the new-tab external link.',
+            );
+          }
+          return {
+            notes,
+            target: target || "(not set)",
+            rel: rel.join(" ") || "(not set)",
+            isExternal,
+          };
+        }
+
+        function checkAnchor(ctx, links, mode) {
+          // URL nằm giữa đoạn text hoặc cần kiểm tra độc lập
+          if (ctx?.independent) {
+            return {
+              status: "skip",
+              message:
+                "URL is embedded in brief text and checked independently. Anchor check skipped.",
+            };
+          }
+
+          if (!ctx || (!ctx.prefix && !ctx.suffix)) {
+            return {
+              status: "review",
+              message:
+                "No descriptive text beside this URL in the brief; anchor cannot be confirmed.",
+            };
+          }
+
+          const expected = [ctx.prefix, ctx.suffix]
+            .filter(Boolean)
+            .map((x) => norm(x, mode));
+
+          const anchors = links
+            .map((x) => ({
+              a: norm(x.anchor, mode),
+              link: x,
+            }))
+            .filter((x) => x.a);
+
+          const matched = anchors.filter((x) =>
+            expected.some((e) => {
+              if (!e || !x.a) return false;
+              const cleanExpected = e.replace(
+                /^[\p{P}\p{S}\s]+|[\p{P}\p{S}\s]+$/gu,
+                "",
+              );
+              const cleanAnchor = x.a.replace(
+                /^[\p{P}\p{S}\s]+|[\p{P}\p{S}\s]+$/gu,
+                "",
+              );
+              if (cleanExpected === cleanAnchor) return true;
+              const expectedWords = wordTokens(cleanExpected).map(
+                (t) => t.word,
+              );
+              const anchorWords = wordTokens(cleanAnchor).map((t) => t.word);
+              if (!anchorWords.length || !expectedWords.length) return false;
+              const overlap = anchorWords.filter((word) =>
+                expectedWords.includes(word),
+              ).length;
+              const coverage = overlap / anchorWords.length;
+              // A single-word anchor is accepted only when the expected context is also
+              // a single word; otherwise require at least two matching anchor words.
+              return (
+                coverage >= 0.8 &&
+                (anchorWords.length === 1
+                  ? expectedWords.length === 1
+                  : overlap >= 2)
+              );
+            }),
+          );
+
+          return matched.length
+            ? {
+                status: "pass",
+                message: "Related brief wording appears in anchor text.",
+                matches: matched,
+              }
+            : {
+                status: "review",
+                message:
+                  "Brief wording was not confirmed in the anchor text. Check whether the URL is linked to the intended words.",
+                matches: [],
+              };
+        }
+
+        function runQC() {
+          if (!htmlSource.value.trim())
+            return setStatus("Paste HTML source first.", true);
+          const items = parseBrief(originalBrief.value);
+          if (!items.length)
+            return setStatus(
+              "Paste an original brief containing text or URLs.",
+              true,
+            );
+          setStatus("Scanning HTML…");
+          try {
+            const doc = new DOMParser().parseFromString(
+                htmlSource.value,
+                "text/html",
+              ),
+              d = extractDocument(doc),
+              mode = document.querySelector(
+                'input[name="matchMode"]:checked',
+              ).value,
+              seq = $("checkSequence").checked,
+              anchorOn = $("checkAnchor").checked;
+            results = items.map((x, index) => {
+              if (x.type === "text") {
+                const m = locateText(x.value, d, mode);
+                const candidate = !m.found
+                  ? findBestTextCandidate(x.value, d.full, mode)
+                  : null;
+                const mismatch = !!candidate;
+                return {
+                  ...x,
+                  index,
+                  status: !m.found
+                    ? mismatch
+                      ? "review"
+                      : "failed"
+                    : m.count > 1
+                      ? "review"
+                      : "passed",
+                  issueType: mismatch
+                    ? "mismatch"
+                    : m.count > 1
+                      ? "duplicate"
+                      : "",
+                  label: !m.found
+                    ? mismatch
+                      ? "Possible text mismatch"
+                      : "Not found"
+                    : m.count > 1
+                      ? "Duplicate text"
+                      : "Found",
+                  detail: m.found
+                    ? `Found ${m.count} time(s) · ${m.path}`
+                    : mismatch
+                      ? `A similar HTML text candidate was found (${Math.round(candidate.similarity * 100)}% similarity). Review the difference.`
+                      : m.detail,
+                  expected: x.value,
+                  actual: mismatch
+                    ? candidate.originalText || candidate.text
+                    : m.snippet || "",
+                  actualDisplay: mismatch
+                    ? candidate.originalText || candidate.text
+                    : m.snippet || "",
+                  missingWords: mismatch ? candidate.alignment.missing : [],
+                  similarity: mismatch ? candidate.similarity : null,
+                  snippet: m.snippet || (mismatch ? candidate.text : ""),
+                  position: m.position ?? null,
+                };
+              }
+              const exact = d.links.filter((l) => l.url === x.value),
+                canonical = exact.length
+                  ? []
+                  : d.links.filter(
+                      (l) => canonicalUrl(l.url) === canonicalUrl(x.value),
+                    ),
+                near = d.links.filter(
+                  (l) =>
+                    norm(l.url, mode).includes(norm(x.value, mode)) ||
+                    norm(x.value, mode).includes(norm(l.url, mode)),
+                );
+              const matchedLinks = exact.length ? exact : canonical;
+              let status,
+                label,
+                detail,
+                snippet = "",
+                position = null,
+                anchorResult = null;
+              if (matchedLinks.length) {
+                status = matchedLinks.length > 1 ? "review" : "passed";
+                label =
+                  matchedLinks.length > 1
+                    ? "Duplicate URL"
+                    : canonical.length
+                      ? "URL found · normalized match"
+                      : "URL found";
+                detail = `Found ${matchedLinks.length} href match(es) · ${matchedLinks.map((l) => l.path).join(" | ")}`;
+                snippet = matchedLinks
+                  .map(
+                    (l) =>
+                      `href="${l.url}"${l.anchor ? ` · anchor: "${l.anchor}"` : ""} · target="${l.element.getAttribute("target") || ""}" · rel="${l.element.getAttribute("rel") || ""}"`,
+                  )
+                  .join("\n");
+                const ev = d.events.find(
+                  (e) => e.type === "link" && e.link === matchedLinks[0],
+                );
+                position = ev ? ev.pos : null;
+                if (anchorOn) {
+                  anchorResult = checkAnchor(x.context, matchedLinks, mode);
+                  detail += " · " + anchorResult.message;
+                  if (anchorResult.status === "review" && status === "passed") {
+                    status = "review";
+                    label = "URL found · anchor review";
+                  }
+                }
+              } else {
+                status = near.length ? "review" : "failed";
+                label = near.length ? "Possible URL mismatch" : "URL not found";
+                detail = near.length
+                  ? "Similar href(s): " + near.map((l) => l.url).join(" | ")
+                  : "No exact href match found in HTML.";
+                snippet = near
+                  .map(
+                    (l) =>
+                      `href="${l.url}"${l.anchor ? ` · anchor: "${l.anchor}"` : ""} · target="${l.element.getAttribute("target") || ""}" · rel="${l.element.getAttribute("rel") || ""}"`,
+                  )
+                  .join("\n");
+              }
+              return {
+                ...x,
+                index,
+                status,
+                label,
+                detail,
+                snippet,
+                position,
+                anchorResult,
+                issueType:
+                  !matchedLinks.length && near.length ? "link-mismatch" : "",
+                actualUrls: near.map((link) => link.url),
+                linkAudit: matchedLinks[0]
+                  ? getLinkAuditNotes(matchedLinks[0])
+                  : null,
+              };
+            });
+            if ($("qcProfile").value === "link-audit") {
+              results.forEach((r) => {
+                if (
+                  r.type !== "link" ||
+                  !r.linkAudit ||
+                  !r.linkAudit.notes.length
+                )
+                  return;
+                if (r.status === "passed") r.status = "review";
+                r.issueType = "link-audit";
+                r.label += " · link security review";
+                r.detail += " · " + r.linkAudit.notes.join(" ");
+              });
+            }
+            if (seq) {
+              let last = -1;
+              results
+                .filter((r) => r.position !== null)
+                .sort((a, b) => a.index - b.index)
+                .forEach((r) => {
+                  if (r.position < last) {
+                    r.sequence = "out-of-order";
+                    if (r.status === "passed") {
+                      r.status = "review";
+                      r.label += " · order review";
+                    }
+                    r.detail += " · Appears out of brief order.";
+                  } else r.sequence = "in-order";
+                  last = Math.max(last, r.position);
+                });
+            }
+            renderList();
+            $("results").style.display = "block";
+            const p = results.filter((x) => x.status === "passed").length,
+              f = results.filter((x) => x.status === "failed").length,
+              r = results.filter((x) => x.status === "review").length;
+            $("passCount").textContent = p;
+            $("failCount").textContent = f;
+            $("reviewCount").textContent = r;
+            $("textTotal").textContent = items.filter(
+              (x) => x.type === "text",
+            ).length;
+            $("linkTotal").textContent = items.filter(
+              (x) => x.type === "link",
+            ).length;
+            $("scanLabel").textContent = f
+              ? "Issues found"
+              : r
+                ? "Review recommended"
+                : "QC passed";
+
+            // Automatically open the first issue after QC.
+            const firstIssue = results.findIndex((r) => r.status !== "passed");
+
+            selectIssue(firstIssue >= 0 ? firstIssue : 0);
+            renderAllSourceOverview();
+            $("copyBtn").disabled = false;
+            $("exportCsvBtn").disabled = false;
+            setStatus(
+              `Scanned ${d.nodes.length} text nodes and ${d.links.length} href attributes.`,
+            );
+          } catch (e) {
+            setStatus("QC failed: " + e.message, true);
+          }
+        }
+
+        function renderList() {
+          const shown = results.filter(
+            (r) =>
+              activeFilter === "all" ||
+              r.type === activeFilter ||
+              (activeFilter === "failed" && r.status === "failed") ||
+              (activeFilter === "mismatch" &&
+                ["mismatch", "link-mismatch"].includes(r.issueType)) ||
+              (activeFilter === "review" &&
+                r.status === "review" &&
+                r.issueType !== "mismatch"),
+          );
+
+          $("resultList").innerHTML = shown.length
+            ? shown
+                .map((r) => {
+                  const cls =
+                    r.status === "passed"
+                      ? "found"
+                      : r.status === "failed"
+                        ? "missing"
+                        : "review";
+
+                  return `
+          <article
+            class="result ${selectedIssueIndex === r.index ? "selected" : ""}"
+            data-index="${r.index}"
+          >
+            <div class="result-top">
+              <div class="result-name">${esc(r.value)}</div>
+              <span class="badge ${cls}">${esc(r.label)}</span>
+            </div>
+            <div class="detail">
+              ${r.type.toUpperCase()} · ${esc(r.detail)}
+              ${["mismatch", "link-mismatch"].includes(r.issueType) ? '<span class="result-type-tag">Mismatch</span>' : ""}
+            </div>
+            ${
+              r.issueType === "mismatch"
+                ? `
+              <div class="diff-box">
+                <div class="diff-label">Expected · from Brief</div>
+                <div class="expected">${esc(r.expected || r.value)}</div>
+                <div class="diff-label" style="margin-top:7px">Possible actual · HTML candidate</div>
+                <div class="actual">${esc(r.actualDisplay || r.actual || "")}</div>
+              </div>`
+                : ""
+            }
+            ${r.snippet ? `<div class="snippet">${esc(r.snippet)}</div>` : ""}
+          </article>
+        `;
+                })
+                .join("")
+            : '<div class="empty">No results in this filter.</div>';
+        }
+
+        // ========================================
+        // V2.1 - SOURCE HIGHLIGHT ENGINE
+        // ========================================
+
+        // Only search visible HTML text, not tags, attributes, comments, scripts, styles or hidden content.
+
+        function getBodySourceRange(source) {
+          let cursor = 0;
+          let bodyStart = -1;
+          const rawTextTags = new Set(["script", "style", "textarea", "title"]);
+
+          function findTagEnd(start) {
+            let quote = "";
+            for (let i = start; i < source.length; i++) {
+              const ch = source[i];
+              if (quote) {
+                if (ch === quote) quote = "";
+              } else if (ch === '"' || ch === "'") {
+                quote = ch;
+              } else if (ch === ">") {
+                return i;
+              }
+            }
+            return -1;
+          }
+
+          while (cursor < source.length) {
+            const tagStart = source.indexOf("<", cursor);
+            if (tagStart === -1) break;
+
+            if (source.startsWith("<!--", tagStart)) {
+              const commentEnd = source.indexOf("-->", tagStart + 4);
+              cursor = commentEnd === -1 ? source.length : commentEnd + 3;
+              continue;
+            }
+
+            if (
+              source.startsWith("<!", tagStart) ||
+              source.startsWith("<?", tagStart)
+            ) {
+              const end = findTagEnd(tagStart + 2);
+              cursor = end === -1 ? source.length : end + 1;
+              continue;
+            }
+
+            const tagEnd = findTagEnd(tagStart + 1);
+            if (tagEnd === -1) break;
+            const token = source.slice(tagStart, tagEnd + 1);
+            const match = token.match(/^<\s*(\/?)\s*([a-zA-Z][\w:-]*)/);
+            if (!match) {
+              cursor = tagStart + 1;
+              continue;
+            }
+
+            const closing = match[1] === "/";
+            const tag = match[2].toLowerCase();
+
+            // Ignore raw-text elements everywhere, including scripts/styles in <head>,
+            // so strings such as "<body>" inside JavaScript cannot start the scan.
+            if (!closing && rawTextTags.has(tag)) {
+              const closePattern = new RegExp("</\\s*" + tag + "\\s*>", "ig");
+              closePattern.lastIndex = tagEnd + 1;
+              const closeMatch = closePattern.exec(source);
+              cursor = closeMatch ? closePattern.lastIndex : source.length;
+              continue;
+            }
+
+            if (bodyStart === -1) {
+              if (!closing && tag === "body") bodyStart = tagEnd + 1;
+            } else if (closing && tag === "body") {
+              return { start: bodyStart, end: tagStart };
+            }
+
+            cursor = tagEnd + 1;
+          }
+
+          return bodyStart === -1
+            ? { start: 0, end: source.length }
+            : { start: bodyStart, end: source.length };
+        }
+
+        function getVisibleSourceRanges(source) {
+          const ranges = [];
+          const skippedTags = [
+            "script",
+            "style",
+            "noscript",
+            "template",
+            "svg",
+            "head",
+            "title",
+          ];
+
+          function hasHiddenPresentation(token) {
+            if (/\shidden(?:\s|=|\/?>)/i.test(token)) return true;
+            if (
+              /\baria-hidden\s*=\s*(?:"true"|'true'|true)(?:\s|\/?>)/i.test(
+                token,
+              )
+            )
+              return true;
+            const styleMatch = token.match(
+              /\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i,
+            );
+            const style = styleMatch
+              ? (styleMatch[1] ?? styleMatch[2] ?? styleMatch[3] ?? "")
+              : "";
+            return /(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)\b/i.test(
+              style,
+            );
+          }
+          const voidTags = new Set([
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
+          ]);
+
+          const bodyRange = getBodySourceRange(source);
+          let cursor = bodyRange.start;
+          const bodyEnd = bodyRange.end;
+          const skipStack = [];
+
+          function findTagEnd(start) {
+            let quote = "";
+            for (let i = start; i < source.length; i++) {
+              const ch = source[i];
+              if (quote) {
+                if (ch === quote) quote = "";
+              } else if (ch === '"' || ch === "'") {
+                quote = ch;
+              } else if (ch === ">") {
+                return i;
+              }
+            }
+            return -1;
+          }
+
+          while (cursor < bodyEnd) {
+            const foundTagStart = source.indexOf("<", cursor);
+            const tagStart =
+              foundTagStart === -1 || foundTagStart >= bodyEnd
+                ? -1
+                : foundTagStart;
+
+            if (tagStart === -1) {
+              if (skipStack.length === 0 && cursor < bodyEnd) {
+                ranges.push({ start: cursor, end: bodyEnd });
+              }
+              break;
+            }
+
+            if (tagStart > cursor && skipStack.length === 0) {
+              ranges.push({ start: cursor, end: tagStart });
+            }
+
+            if (source.startsWith("<!--", tagStart)) {
+              const commentEnd = source.indexOf("-->", tagStart + 4);
+              cursor = commentEnd === -1 ? source.length : commentEnd + 3;
+              continue;
+            }
+
+            // Skip declarations such as <!DOCTYPE html> and processing instructions.
+            // They are markup metadata, not visible page text.
+            if (
+              source.startsWith("<!", tagStart) ||
+              source.startsWith("<?", tagStart)
+            ) {
+              const declarationEnd = findTagEnd(tagStart + 2);
+              cursor =
+                declarationEnd === -1 ? source.length : declarationEnd + 1;
+              continue;
+            }
+
+            const tagEnd = findTagEnd(tagStart + 1);
+            if (tagEnd === -1) break;
+
+            const token = source.slice(tagStart, tagEnd + 1);
+            const tagMatch = token.match(/^<\s*(\/?)\s*([a-zA-Z][\w:-]*)/);
+
+            // A literal less-than sign, not an HTML tag.
+            if (!tagMatch) {
+              if (skipStack.length === 0) {
+                ranges.push({ start: tagStart, end: tagStart + 1 });
+              }
+              cursor = tagStart + 1;
+              continue;
+            }
+
+            const isClosing = tagMatch[1] === "/";
+            const tag = tagMatch[2].toLowerCase();
+            const selfClosing = /\/\s*>$/.test(token) || voidTags.has(tag);
+
+            // Script/style/title contents are raw text. Never interpret strings such
+            // as '<body>' or '<svg>' inside them as real markup while scanning source.
+            if (!isClosing && ["script", "style", "title"].includes(tag)) {
+              const closePattern = new RegExp("</\\s*" + tag + "\\s*>", "ig");
+              closePattern.lastIndex = tagEnd + 1;
+              const closeMatch = closePattern.exec(source);
+              cursor = closeMatch ? closePattern.lastIndex : bodyEnd;
+              continue;
+            }
+
+            // Textarea contents are visible text, but '<tag>' inside the value is
+            // literal text rather than markup. Keep the content as one visible range.
+            if (!isClosing && tag === "textarea") {
+              const closePattern = /<\/\s*textarea\s*>/gi;
+              closePattern.lastIndex = tagEnd + 1;
+              const closeMatch = closePattern.exec(source);
+              const contentEnd = closeMatch ? closeMatch.index : bodyEnd;
+              if (skipStack.length === 0 && contentEnd > tagEnd + 1)
+                ranges.push({ start: tagEnd + 1, end: contentEnd });
+              cursor = closeMatch ? closePattern.lastIndex : bodyEnd;
+              continue;
+            }
+
+            if (skipStack.length) {
+              if (isClosing) {
+                const index = skipStack.lastIndexOf(tag);
+                if (index !== -1) skipStack.splice(index);
+              } else if (!selfClosing) {
+                // Track nested descendants too, otherwise a nested </div> could
+                // accidentally end an outer hidden <div> early.
+                skipStack.push(tag);
+              }
+              cursor = tagEnd + 1;
+              continue;
+            }
+
+            if (
+              !isClosing &&
+              (skippedTags.includes(tag) || hasHiddenPresentation(token)) &&
+              !selfClosing
+            ) {
+              skipStack.push(tag);
+            }
+
+            cursor = tagEnd + 1;
+          }
+
+          // Keep inline elements (strong, em, span, a, etc.) in the same visual line.
+          // A new line is created only when the markup between text chunks contains
+          // a block-level element or an explicit line break.
+          const blockTags = new Set([
+            "address",
+            "article",
+            "aside",
+            "blockquote",
+            "br",
+            "dd",
+            "div",
+            "dl",
+            "dt",
+            "fieldset",
+            "figcaption",
+            "figure",
+            "footer",
+            "form",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "header",
+            "hr",
+            "li",
+            "main",
+            "nav",
+            "ol",
+            "p",
+            "pre",
+            "section",
+            "table",
+            "tbody",
+            "td",
+            "tfoot",
+            "th",
+            "thead",
+            "tr",
+            "ul",
+          ]);
+
+          return ranges.map((range, index) => {
+            if (index === 0) return { ...range, breakBefore: true };
+            const previous = ranges[index - 1];
+            const gap = source.slice(previous.end, range.start);
+            const tags = gap.matchAll(/<\s*\/?\s*([a-zA-Z][\w:-]*)\b[^>]*>/g);
+            let breakBefore = false;
+            for (const tagMatch of tags) {
+              if (blockTags.has(tagMatch[1].toLowerCase())) {
+                breakBefore = true;
+                break;
+              }
+            }
+            return { ...range, breakBefore };
+          });
+        }
+
+        function getRenderableVisibleRanges(source) {
+          const ranges = getVisibleSourceRanges(source).filter((range) =>
+            /\S/.test(source.slice(range.start, range.end)),
+          );
+          return ranges
+            .map((range, index) => {
+              let start = range.start;
+              let end = range.end;
+              const nextStartsBlock = !!ranges[index + 1]?.breakBefore;
+              if (range.breakBefore) {
+                while (start < end && /\s/.test(source[start])) start++;
+              }
+              if (nextStartsBlock || index === ranges.length - 1) {
+                while (end > start && /\s/.test(source[end - 1])) end--;
+              }
+              return { ...range, start, end };
+            })
+            .filter((range) => range.start < range.end);
+        }
+
+        function decodeVisibleChunkWithMap(raw, rawStart) {
+          const decoded = [];
+          const map = [];
+          const entityPattern =
+            /^&(?:#[xX][0-9a-fA-F]+|#\d+|[a-zA-Z][a-zA-Z0-9]+);/;
+          const decoder = document.createElement("textarea");
+
+          for (let i = 0; i < raw.length; ) {
+            let token = raw[i];
+            let end = i + 1;
+            if (token === "&") {
+              const match = raw.slice(i).match(entityPattern);
+              if (match) {
+                token = match[0];
+                end = i + token.length;
+                decoder.innerHTML = token;
+                const value = decoder.value;
+                if (value && value !== token) {
+                  for (let j = 0; j < value.length; j++) {
+                    decoded.push(value[j]);
+                    map.push({ start: rawStart + i, end: rawStart + end });
+                  }
+                  i = end;
+                  continue;
+                }
+              }
+            }
+            for (let j = 0; j < token.length; j++) {
+              decoded.push(token[j]);
+              map.push({ start: rawStart + i, end: rawStart + end });
+            }
+            i = end;
+          }
+          return { text: decoded.join(""), map };
+        }
+
+        // Build a normalized visible-text stream while retaining its exact source
+        // offsets. This allows matches to cross inline tags without highlighting
+        // unrelated words elsewhere in the page.
+        function buildVisibleSourceMap(source, mode, query = "") {
+          const ranges = getVisibleSourceRanges(source);
+          let text = "";
+          const starts = [];
+          const ends = [];
+          const locale = detectLocale(query || source);
+
+          function appendMapped(segment, rawMap) {
+            let segmenter = null;
+            if (typeof Intl !== "undefined" && Intl.Segmenter) {
+              try {
+                segmenter = new Intl.Segmenter(locale || "und", {
+                  granularity: "grapheme",
+                });
+              } catch {}
+            }
+            const units = segmenter
+              ? [...segmenter.segment(segment)].map((x) => ({
+                  part: x.segment,
+                  index: x.index,
+                }))
+              : (() => {
+                  const out = [];
+                  let offset = 0;
+                  for (const part of segment) {
+                    out.push({ part, index: offset });
+                    offset += part.length;
+                  }
+                  return out;
+                })();
+
+            for (const unit of units) {
+              const rawFrom = rawMap[unit.index]?.start;
+              const lastIndex = unit.index + unit.part.length - 1;
+              const rawTo = rawMap[lastIndex]?.end;
+              if (rawFrom == null || rawTo == null) continue;
+              let value = unit.part.normalize("NFKC");
+              if (mode === "smart") {
+                try {
+                  value = value.toLocaleLowerCase(locale);
+                } catch {
+                  value = value.toLowerCase();
+                }
+              }
+              value = value.replace(/[\u200b-\u200f\u2060\ufeff]/g, "");
+              for (const ch of value) {
+                if (/\s/u.test(ch)) {
+                  if (!text || text.endsWith(" ")) continue;
+                  text += " ";
+                  starts.push(rawFrom);
+                  ends.push(rawTo);
+                } else {
+                  // Match JavaScript's UTF-16 indexing: astral characters occupy two
+                  // string positions and therefore need two identical map entries.
+                  for (let unitIndex = 0; unitIndex < ch.length; unitIndex++) {
+                    text += ch[unitIndex];
+                    starts.push(rawFrom);
+                    ends.push(rawTo);
+                  }
+                }
+              }
+            }
+          }
+
+          ranges.forEach((range, index) => {
+            const raw = source.slice(range.start, range.end);
+            const decoded = decodeVisibleChunkWithMap(raw, range.start);
+            // Add a separator for block boundaries only. Inline tags such as
+            // <strong> must not create artificial spaces inside a word.
+            if (index && range.breakBefore && text && !text.endsWith(" ")) {
+              text += " ";
+              starts.push(range.start);
+              ends.push(range.start);
+            }
+            appendMapped(decoded.text, decoded.map);
+          });
+
+          // Trim the normalized stream and its offset arrays together.
+          while (text.startsWith(" ")) {
+            text = text.slice(1);
+            starts.shift();
+            ends.shift();
+          }
+          while (text.endsWith(" ")) {
+            text = text.slice(0, -1);
+            starts.pop();
+            ends.pop();
+          }
+          return { text, starts, ends };
+        }
+
+        function findMappedSourceRanges(query, source, mode) {
+          const needle = norm(query, mode);
+          if (!needle) return [];
+          const mapped = buildVisibleSourceMap(source, mode, query);
+          const found = [];
+          let from = 0;
+          let matchIndex = 0;
+          while (true) {
+            const at = mapped.text.indexOf(needle, from);
+            if (at < 0) break;
+            if (
+              !hasLanguageAwareBoundary(
+                mapped.text,
+                at,
+                at + needle.length,
+                query,
+              )
+            ) {
+              from = at + 1;
+              continue;
+            }
+            const rawStart = mapped.starts[at];
+            const rawEnd = mapped.ends[at + needle.length - 1];
+            if (rawStart != null && rawEnd != null && rawEnd > rawStart) {
+              // Split at HTML tags so the highlight never wraps markup itself.
+              let partStart = rawStart;
+              let partEnd = mapped.ends[at];
+              for (let i = at + 1; i < at + needle.length; i++) {
+                const nextStart = mapped.starts[i];
+                const nextEnd = mapped.ends[i];
+                if (nextStart == null || nextEnd == null) continue;
+                if (nextStart > partEnd) {
+                  found.push({ start: partStart, end: partEnd, matchIndex });
+                  partStart = nextStart;
+                  partEnd = nextEnd;
+                } else {
+                  partEnd = Math.max(partEnd, nextEnd);
+                }
+              }
+              found.push({ start: partStart, end: partEnd, matchIndex });
+              matchIndex++;
+            }
+            from = at + Math.max(needle.length, 1);
+          }
+          return found;
+        }
+
+        function findSourceRanges(item) {
+          const source = htmlSource.value;
+          const mode = document.querySelector(
+            'input[name="matchMode"]:checked',
+          ).value;
+          if (item.type === "link") {
+            const bodyRange = getBodySourceRange(source);
+            const bodySource = source.slice(bodyRange.start, bodyRange.end);
+            const regex = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+            const ranges = [];
+            const targetUrls =
+              item.issueType === "link-mismatch" && item.actualUrls?.length
+                ? item.actualUrls
+                : [item.value];
+            const decode = document.createElement("textarea");
+            let match;
+            while ((match = regex.exec(bodySource)) !== null) {
+              if (match.index > 0 && /[\w:-]/.test(bodySource[match.index - 1]))
+                continue;
+              const rawValue = match[1] ?? match[2] ?? match[3] ?? "";
+              decode.innerHTML = rawValue;
+              const value = decode.value.trim();
+              if (
+                value &&
+                targetUrls.some(
+                  (target) => canonicalUrl(value) === canonicalUrl(target),
+                )
+              ) {
+                const groupIndex =
+                  match[1] != null
+                    ? match[0].indexOf(match[1])
+                    : match[2] != null
+                      ? match[0].indexOf(match[2])
+                      : match[0].indexOf(match[3]);
+                const offset = bodyRange.start + match.index + groupIndex;
+                ranges.push({
+                  start: offset,
+                  end: offset + rawValue.length,
+                  matchIndex: ranges.length,
+                });
+              }
+            }
+            return { ranges, approximate: item.issueType === "link-mismatch" };
+          }
+
+          const ranges = findMappedSourceRanges(item.value, source, mode);
+          return { ranges, approximate: false };
+        }
+
+        function getLinkAnchorTexts(item) {
+          const doc = new DOMParser().parseFromString(
+            htmlSource.value,
+            "text/html",
+          );
+          const expected =
+            item.issueType === "link-mismatch" && item.actualUrls?.length
+              ? item.actualUrls
+              : [item.value];
+          return [...doc.body.querySelectorAll("[href]")]
+            .filter(
+              (el) =>
+                !isHiddenByMarkup(el) &&
+                expected.some(
+                  (value) =>
+                    canonicalUrl((el.getAttribute("href") || "").trim()) ===
+                    canonicalUrl(value),
+                ),
+            )
+            .map((el) => (el.textContent || "").trim())
+            .filter(Boolean);
+        }
+
+        function renderTextOnlySource(
+          item,
+          sourceRanges,
+          matchRanges,
+          approximate,
+          insertions = [],
+        ) {
+          const source = htmlSource.value;
+          const parts = sourceRanges
+            .filter((segment) =>
+              /\S/.test(source.slice(segment.start, segment.end)),
+            )
+            .map((segment) => ({
+              start: segment.start,
+              end: segment.end,
+              breakBefore: !!segment.breakBefore,
+            }));
+
+          const output = [];
+          let occurrence = 0;
+          let currentLine = "";
+
+          parts.forEach((part) => {
+            if (part.breakBefore && currentLine) {
+              output.push(`<div class="text-only-line">${currentLine}</div>`);
+              currentLine = "";
+            }
+            const localMatches = matchRanges
+              .filter((r) => r.start < part.end && r.end > part.start)
+              .map((r) => ({
+                type: "range",
+                start: Math.max(r.start, part.start),
+                end: Math.min(r.end, part.end),
+                matchIndex: r.matchIndex,
+              }));
+            const localInsertions = insertions
+              .filter((x) => x.position >= part.start && x.position <= part.end)
+              .map((x) => ({
+                type: "insert",
+                position: x.position,
+                text: x.text,
+                matchIndex: x.matchIndex ?? 0,
+              }));
+            const events = [...localMatches, ...localInsertions].sort(
+              (a, b) =>
+                (a.type === "insert" ? a.position : a.start) -
+                (b.type === "insert" ? b.position : b.start),
+            );
+            let cursor = part.start;
+            let chunk = "";
+
+            events.forEach((event) => {
+              const start =
+                event.type === "insert" ? event.position : event.start;
+              if (start < cursor) return;
+              chunk += esc(source.slice(cursor, start));
+              const occurrenceId = event.matchIndex ?? occurrence;
+              occurrence = Math.max(occurrence, occurrenceId + 1);
+              if (event.type === "insert") {
+                chunk += `<mark class="missing-highlight" title="Suggested missing word" data-item-index="${selectedIssueIndex}" data-occurrence="${occurrenceId}" data-local-occurrence="${occurrenceId}">${esc(event.text)}</mark>`;
+                cursor = start;
+              } else {
+                chunk += `<mark class="${occurrenceId === selectedOccurrenceIndex ? "active-highlight" : ""} ${approximate ? "mismatch-highlight" : ""}" data-item-index="${selectedIssueIndex}" data-occurrence="${occurrenceId}" data-local-occurrence="${occurrenceId}">${esc(source.slice(start, event.end))}</mark>`;
+                cursor = event.end;
+              }
+            });
+
+            chunk += esc(source.slice(cursor, part.end));
+            currentLine += chunk;
+          });
+          if (currentLine)
+            output.push(`<div class="text-only-line">${currentLine}</div>`);
+
+          // Include anchor labels and their href values in this clean view.
+          const parsedDoc = new DOMParser().parseFromString(
+            source,
+            "text/html",
+          );
+          const linkLines = [...parsedDoc.body.querySelectorAll("a[href]")]
+            .filter((anchor) => !isHiddenByMarkup(anchor))
+            .map((anchor) => {
+              const href = (anchor.getAttribute("href") || "").trim();
+              if (!href) return "";
+              const label =
+                (anchor.textContent || "").trim() || "Unlabelled link";
+              const isSelectedLink =
+                item.type === "link" &&
+                [item.value, ...(item.actualUrls || [])].some(
+                  (value) => canonicalUrl(href) === canonicalUrl(value),
+                );
+              const linkClass =
+                item.issueType === "link-mismatch"
+                  ? "approximate-highlight"
+                  : "active-highlight";
+              const urlMarkup = isSelectedLink
+                ? `<mark class="${linkClass}" data-item-index="${selectedIssueIndex}" data-occurrence="0" data-local-occurrence="0">${esc(href)}</mark>`
+                : esc(href);
+              return `<div class="text-only-link-line"><span class="text-only-link-label">${esc(label)}</span><span class="text-only-link-url">${urlMarkup}</span></div>`;
+            })
+            .filter(Boolean);
+
+          if (linkLines.length) {
+            output.push('<div class="text-only-section">LINKS</div>');
+            output.push(...linkLines);
+          }
+
+          $("sourceCode").classList.add("text-only-view");
+          $("sourceCode").innerHTML =
+            output.join("") ||
+            '<div class="inspector-placeholder">No visible text or links found in HTML source.</div>';
+
+          const visibleMatchCount = Math.max(
+            occurrence,
+            item.type === "link" && linkLines.length ? 1 : 0,
+          );
+          updateOccurrenceControls(visibleMatchCount);
+          syncActiveMarks();
+          $("htmlInspectorStatus").textContent = visibleMatchCount
+            ? `${visibleMatchCount} visible match(es) · ${linkLines.length} link(s)`
+            : `${linkLines.length} link(s) · no visible text match`;
+          $("sourceStatus").textContent = "Text / Link only";
+
+          if (item.type === "link" && !matchRanges.length) {
+            $("sourceMessage").textContent =
+              "This URL has no visible anchor text (for example, an image-only link). The URL is still shown in Text / Link only mode and checked in Raw HTML mode.";
+          }
+        }
+
+        function findMappedInsertionPoints(
+          candidateText,
+          missingWords,
+          source,
+          mode,
+        ) {
+          if (!candidateText || !missingWords?.length) return [];
+          const mapped = buildVisibleSourceMap(source, mode, candidateText);
+          const needle = norm(candidateText, mode, detectLocale(candidateText));
+          const at = mapped.text.indexOf(needle);
+          if (at < 0) return [];
+          const actualWords = wordTokens(needle);
+          return missingWords
+            .map((missing) => {
+              const next = actualWords[missing.beforeWordIndex];
+              const previous = actualWords[missing.beforeWordIndex - 1];
+              let rawPosition = null;
+              if (next) rawPosition = mapped.starts[at + next.index];
+              else if (previous)
+                rawPosition = mapped.ends[at + previous.end - 1];
+              if (rawPosition == null) return null;
+              return {
+                position: rawPosition,
+                text: next ? `${missing.word} ` : ` ${missing.word}`,
+                matchIndex: 0,
+              };
+            })
+            .filter(Boolean);
+        }
+
+        function renderAllSourceOverview() {
+          sourceOverviewMode = true;
+          const source = htmlSource.value;
+          const mode = document.querySelector(
+            'input[name="matchMode"]:checked',
+          ).value;
+          const bodyRange = getBodySourceRange(source);
+          const events = [];
+          const notFound = [];
+          let occurrence = 0;
+
+          results.forEach((item) => {
+            if (item.type === "text") {
+              if (item.issueType === "mismatch" && item.actual) {
+                const insertions = findMappedInsertionPoints(
+                  item.actual,
+                  item.missingWords || [],
+                  source,
+                  mode,
+                );
+                if (insertions.length) {
+                  const itemOccurrence = occurrence++;
+                  insertions.forEach((entry) =>
+                    events.push({
+                      type: "insert",
+                      position: entry.position,
+                      text: entry.text,
+                      itemIndex: item.index,
+                      occurrence: itemOccurrence,
+                      localOccurrence: entry.matchIndex ?? 0,
+                    }),
+                  );
+                } else {
+                  const groupOccurrences = new Map();
+                  findMappedSourceRanges(item.actual, source, mode).forEach(
+                    (range) => {
+                      const group = range.matchIndex ?? 0;
+                      if (!groupOccurrences.has(group))
+                        groupOccurrences.set(group, occurrence++);
+                      events.push({
+                        type: "range",
+                        ...range,
+                        kind: "mismatch",
+                        itemIndex: item.index,
+                        occurrence: groupOccurrences.get(group),
+                        localOccurrence: group,
+                      });
+                    },
+                  );
+                }
+              } else if (item.status === "failed") {
+                // No candidate exists in the HTML. Keep the original source intact and
+                // show a red, explicit suggestion block after the body instead.
+                notFound.push(item);
+              } else {
+                const found = findSourceRanges(item);
+                const groupOccurrences = new Map();
+                found.ranges.forEach((range) => {
+                  const group = range.matchIndex ?? 0;
+                  if (!groupOccurrences.has(group))
+                    groupOccurrences.set(group, occurrence++);
+                  events.push({
+                    type: "range",
+                    ...range,
+                    kind: "match",
+                    itemIndex: item.index,
+                    occurrence: groupOccurrences.get(group),
+                    localOccurrence: group,
+                  });
+                });
+              }
+            } else {
+              const found = findSourceRanges(item);
+              const groupOccurrences = new Map();
+              found.ranges.forEach((range) => {
+                const group = range.matchIndex ?? 0;
+                if (!groupOccurrences.has(group))
+                  groupOccurrences.set(group, occurrence++);
+                events.push({
+                  type: "range",
+                  ...range,
+                  kind: item.issueType === "link-mismatch" ? "review" : "match",
+                  itemIndex: item.index,
+                  occurrence: groupOccurrences.get(group),
+                  localOccurrence: group,
+                });
+              });
+              if (
+                item.status === "failed" ||
+                item.issueType === "link-mismatch"
+              )
+                notFound.push(item);
+            }
+          });
+
+          events.sort((a, b) => {
+            const pa = a.type === "insert" ? a.position : a.start;
+            const pb = b.type === "insert" ? b.position : b.start;
+            return pa - pb || (a.type === "insert" ? -1 : 1);
+          });
+
+          if (sourceViewMode === "text") {
+            const visibleRanges = getRenderableVisibleRanges(source);
+            const textLines = [];
+            let currentTextLine = "";
+            visibleRanges.forEach((range, rangeIndex) => {
+              if (range.breakBefore && currentTextLine) {
+                textLines.push(
+                  `<div class="text-only-line">${currentTextLine}</div>`,
+                );
+                currentTextLine = "";
+              }
+              const localEvents = events
+                .filter((event) => {
+                  const start =
+                    event.type === "insert" ? event.position : event.start;
+                  const end =
+                    event.type === "insert" ? event.position : event.end;
+                  return event.type === "insert"
+                    ? start >= range.start && start <= range.end
+                    : start < range.end && end > range.start;
+                })
+                .sort(
+                  (a, b) =>
+                    (a.type === "insert" ? a.position : a.start) -
+                    (b.type === "insert" ? b.position : b.start),
+                );
+              let chunk = "";
+              let localCursor = range.start;
+              for (const event of localEvents) {
+                const start =
+                  event.type === "insert"
+                    ? event.position
+                    : Math.max(event.start, range.start);
+                const end =
+                  event.type === "insert"
+                    ? event.position
+                    : Math.min(event.end, range.end);
+                if (start < localCursor) continue;
+                chunk += esc(source.slice(localCursor, start));
+                if (event.type === "insert") {
+                  chunk += `<mark class="missing-highlight" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(event.text)}</mark>`;
+                  localCursor = start;
+                } else {
+                  const cls =
+                    event.kind === "match"
+                      ? "all-match-highlight"
+                      : event.kind === "review"
+                        ? "approximate-highlight"
+                        : "mismatch-highlight";
+                  chunk += `<mark class="${cls}" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(source.slice(start, end))}</mark>`;
+                  localCursor = end;
+                }
+              }
+              chunk += esc(source.slice(localCursor, range.end));
+              currentTextLine += chunk;
+            });
+            if (currentTextLine)
+              textLines.push(
+                `<div class="text-only-line">${currentTextLine}</div>`,
+              );
+            const parsed = new DOMParser().parseFromString(source, "text/html");
+            const linkLines = [...parsed.body.querySelectorAll("a[href]")]
+              .filter((anchor) => !isHiddenByMarkup(anchor))
+              .map((anchor) => {
+                const href = (anchor.getAttribute("href") || "").trim();
+                if (!href) return "";
+                const label =
+                  (anchor.textContent || "").trim() || "Unlabelled link";
+                const linkItem = results.find(
+                  (r) =>
+                    r.type === "link" &&
+                    (canonicalUrl(r.value) === canonicalUrl(href) ||
+                      (r.actualUrls || []).some(
+                        (value) => canonicalUrl(value) === canonicalUrl(href),
+                      )),
+                );
+                let urlMarkup = esc(href);
+                if (linkItem) {
+                  const linkEvent = events.find(
+                    (event) =>
+                      event.itemIndex === linkItem.index &&
+                      event.type === "range",
+                  );
+                  const linkOccurrence = linkEvent
+                    ? linkEvent.occurrence
+                    : occurrence++;
+                  const linkClass =
+                    linkItem.issueType === "link-mismatch"
+                      ? "approximate-highlight"
+                      : "all-match-highlight";
+                  urlMarkup = `<mark class="${linkClass}" data-item-index="${linkItem.index}" data-occurrence="${linkOccurrence}" data-local-occurrence="${linkEvent?.localOccurrence ?? 0}">${esc(href)}</mark>`;
+                }
+                return `<div class="text-only-link-line"><span class="text-only-link-label">${esc(label)}</span><span class="text-only-link-url">${urlMarkup}</span></div>`;
+              })
+              .filter(Boolean);
+            let textOutput = textLines.join("");
+            if (linkLines.length)
+              textOutput +=
+                '<div class="text-only-section">LINKS</div>' +
+                linkLines.join("");
+            if (notFound.length) {
+              textOutput += `<div class="not-found-suggestions"><div class="not-found-suggestions-title">MISSING / MISMATCHED BRIEF ITEMS · ${notFound.length} item(s)</div>`;
+              notFound.forEach((item) => {
+                textOutput += `<div class="not-found-suggestion"><span style="color:#ff9da6;font-weight:700">[Missing]</span> <mark class="missing-highlight" data-item-index="${item.index}" data-occurrence="${occurrence++}" data-local-occurrence="0">${esc(item.value)}</mark></div>`;
+              });
+              textOutput += "</div>";
+            }
+            $("sourceCode").classList.add("text-only-view");
+            $("sourceCode").innerHTML =
+              textOutput ||
+              '<div class="inspector-placeholder">No visible text or links found in HTML source.</div>';
+            $("htmlInspectorStatus").textContent =
+              `${events.length} annotation(s) · ${notFound.length} not found`;
+            $("sourceStatus").textContent = "Full QC overview";
+            $("sourceMessage").textContent =
+              "Showing all Brief items together in Text / Link only view. Red suggestions identify missing or mismatched text and do not modify the original HTML.";
+            updateOccurrenceControls(occurrence);
+            syncActiveMarks();
+            return;
+          }
+
+          let output = "";
+          let cursor = bodyRange.start;
+          for (const event of events) {
+            const start =
+              event.type === "insert" ? event.position : event.start;
+            const end = event.type === "insert" ? event.position : event.end;
+            if (start < cursor || start > bodyRange.end) continue;
+            output += esc(source.slice(cursor, start));
+            if (event.type === "insert") {
+              output += `<mark class="missing-highlight" title="Suggested missing word" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(event.text)}</mark>`;
+              cursor = start;
+            } else {
+              const cls =
+                event.kind === "match"
+                  ? "all-match-highlight"
+                  : event.kind === "review"
+                    ? "approximate-highlight"
+                    : "mismatch-highlight";
+              output += `<mark class="${cls}" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(source.slice(start, end))}</mark>`;
+              cursor = end;
+            }
+          }
+          output += esc(source.slice(cursor, bodyRange.end));
+
+          if (notFound.length) {
+            output += `<div class="not-found-suggestions"><div class="not-found-suggestions-title">MISSING / MISMATCHED BRIEF ITEMS · ${notFound.length} item(s)</div>`;
+            notFound.forEach((item) => {
+              output += `<div class="not-found-suggestion"><span style="color:#ff9da6;font-weight:700">[Missing]</span> <mark class="missing-highlight" data-item-index="${item.index}" data-occurrence="${occurrence++}" data-local-occurrence="0">${esc(item.value)}</mark></div>`;
+            });
+            output += "</div>";
+          }
+
+          $("sourceCode").classList.remove("text-only-view");
+          $("sourceCode").innerHTML =
+            output ||
+            '<div class="inspector-placeholder">No visible body content found in HTML source.</div>';
+          $("htmlInspectorStatus").textContent =
+            `${events.length} annotation(s) · ${notFound.length} not found`;
+          $("sourceStatus").textContent = "Full QC overview";
+          $("sourceMessage").textContent =
+            "Showing all Brief items together. Green = matched; red = missing or mismatched. Items not found are listed as red suggestions below the HTML body; these suggestions do not modify the original HTML.";
+          updateOccurrenceControls(occurrence);
+          syncActiveMarks();
+        }
+
+        function renderSourceHighlight(item) {
+          const source = htmlSource.value;
+          const isMismatch =
+            item.type === "text" &&
+            item.issueType === "mismatch" &&
+            item.actual;
+          const result = isMismatch
+            ? {
+                ranges: item.missingWords?.length
+                  ? []
+                  : findMappedSourceRanges(
+                      item.actual,
+                      source,
+                      document.querySelector('input[name="matchMode"]:checked')
+                        .value,
+                    ),
+                approximate: true,
+              }
+            : findSourceRanges(item);
+          let ranges = result.ranges.sort((a, b) => a.start - b.start);
+          const mode = document.querySelector(
+            'input[name="matchMode"]:checked',
+          ).value;
+          const insertions = isMismatch
+            ? findMappedInsertionPoints(
+                item.actual,
+                item.missingWords,
+                source,
+                mode,
+              )
+            : [];
+          if (isMismatch && item.missingWords?.length && !insertions.length) {
+            ranges = findMappedSourceRanges(item.actual, source, mode).sort(
+              (a, b) => a.start - b.start,
+            );
+          }
+          const merged = [];
+
+          for (const range of ranges) {
+            const last = merged[merged.length - 1];
+            if (
+              last &&
+              range.start <= last.end &&
+              (last.matchIndex ?? 0) === (range.matchIndex ?? 0)
+            )
+              last.end = Math.max(last.end, range.end);
+            else merged.push({ ...range });
+          }
+
+          if (sourceViewMode === "text") {
+            let textRanges = merged;
+            if (item.type === "link") {
+              textRanges = [];
+              for (const anchor of getLinkAnchorTexts(item)) {
+                const anchorResult = findSourceRanges({
+                  type: "text",
+                  value: anchor,
+                });
+                textRanges.push(...anchorResult.ranges);
+              }
+              textRanges.sort((a, b) => a.start - b.start);
+            }
+            renderTextOnlySource(
+              item,
+              getRenderableVisibleRanges(source),
+              textRanges,
+              result.approximate && item.type !== "link",
+              insertions,
+            );
+            if (
+              (item.status === "failed" && !textRanges.length) ||
+              item.issueType === "link-mismatch"
+            ) {
+              $("sourceCode").innerHTML +=
+                `<div class="not-found-suggestions"><div class="not-found-suggestions-title">${item.issueType === "link-mismatch" ? "EXPECTED URL NOT FOUND" : "NOT FOUND IN HTML"}</div><div class="not-found-suggestion"><mark class="missing-highlight" data-item-index="${item.index}" data-occurrence="0" data-local-occurrence="0">${esc(item.value)}</mark></div></div>`;
+              $("htmlInspectorStatus").textContent =
+                item.issueType === "link-mismatch"
+                  ? "Possible URL mismatch · suggestion shown"
+                  : "Not found · suggestion shown";
+              updateOccurrenceControls(1);
+              syncActiveMarks();
+            }
+            if (item.issueType === "link-mismatch") {
+              $("sourceMessage").textContent =
+                "The yellow URL is a possible actual href. The red URL is the expected Brief destination.";
+            } else if (item.status === "failed") {
+              $("sourceMessage").textContent =
+                "This Brief item was not found in the visible HTML. The red text is a suggestion only.";
+            } else if (insertions.length) {
+              $("sourceMessage").textContent =
+                "Red labels are suggested words missing from the HTML. They are visual suggestions and do not modify the original source.";
+            } else if (item.issueType === "mismatch") {
+              $("sourceMessage").textContent =
+                "The closest HTML candidate is shown in red. Check the missing or changed wording.";
+            } else if (item.type === "link" && !textRanges.length) {
+              $("sourceMessage").textContent =
+                "This URL has no visible anchor text (for example, an image-only link). The URL is still shown and checked.";
+            } else if (item.type === "link") {
+              $("sourceMessage").textContent =
+                "The link anchor text and destination URL are shown below.";
+            } else {
+              $("sourceMessage").textContent =
+                "The matching visible HTML text is highlighted in green.";
+            }
+            return;
+          }
+
+          $("sourceCode").classList.remove("text-only-view");
+
+          if (!merged.length && !insertions.length) {
+            if (item.status === "failed") {
+              const bodyRange = getBodySourceRange(source);
+              const bodyText = esc(
+                source.slice(bodyRange.start, bodyRange.end),
+              );
+              $("sourceCode").innerHTML =
+                `${bodyText}<div class="not-found-suggestions"><div class="not-found-suggestions-title">NOT FOUND IN HTML</div><div class="not-found-suggestion"><mark class="missing-highlight" data-item-index="${item.index}" data-occurrence="0" data-local-occurrence="0">${esc(item.value)}</mark></div></div>`;
+            } else {
+              $("sourceCode").innerHTML =
+                '<div class="inspector-placeholder">No matching content found in HTML source.</div>';
+            }
+            if (item.status !== "failed")
+              $("htmlInspectorStatus").textContent = "Not located";
+            $("sourceMessage").textContent =
+              item.status === "failed"
+                ? "This item may be missing from the HTML."
+                : "Could not locate the corresponding HTML source.";
+            $("sourceStatus").textContent = "Not located";
+            updateOccurrenceControls(item.status === "failed" ? 1 : 0);
+            syncActiveMarks();
+            return;
+          }
+
+          const bodyRange = getBodySourceRange(source);
+          const events = [
+            ...merged.map((range, index) => ({
+              type: "range",
+              ...range,
+              index: range.matchIndex ?? index,
+            })),
+            ...insertions.map((entry, index) => ({
+              type: "insert",
+              position: entry.position,
+              text: entry.text,
+              index: entry.matchIndex ?? merged.length + index,
+            })),
+          ].sort(
+            (a, b) =>
+              (a.type === "insert" ? a.position : a.start) -
+              (b.type === "insert" ? b.position : b.start),
+          );
+          let output = "";
+          let cursor = bodyRange.start;
+          events.forEach((event) => {
+            const position =
+              event.type === "insert" ? event.position : event.start;
+            if (position < cursor) return;
+            output += esc(source.slice(cursor, position));
+            if (event.type === "insert") {
+              output += `<mark class="missing-highlight" title="Suggested missing word" data-item-index="${selectedIssueIndex}" data-occurrence="${event.index}" data-local-occurrence="${event.index}">${esc(event.text)}</mark>`;
+              cursor = position;
+            } else {
+              const highlightClass =
+                isMismatch || item.status === "failed"
+                  ? "mismatch-highlight"
+                  : item.issueType === "link-mismatch" ||
+                      item.issueType === "duplicate" ||
+                      (item.status === "review" && item.type === "text")
+                    ? "approximate-highlight"
+                    : "all-match-highlight";
+              output += `<mark class="${event.index === selectedOccurrenceIndex ? "active-highlight" : ""} ${highlightClass}" data-item-index="${selectedIssueIndex}" data-occurrence="${event.index}" data-local-occurrence="${event.index}">${esc(source.slice(event.start, event.end))}</mark>`;
+              cursor = event.end;
+            }
+          });
+          output += esc(source.slice(cursor, bodyRange.end));
+          if (item.issueType === "link-mismatch") {
+            output += `<div class="not-found-suggestions"><div class="not-found-suggestions-title">EXPECTED URL NOT FOUND</div><div class="not-found-suggestion"><mark class="missing-highlight" data-item-index="${item.index}" data-occurrence="0" data-local-occurrence="0">${esc(item.value)}</mark></div></div>`;
+          }
+          $("sourceCode").innerHTML = output;
+          $("htmlInspectorStatus").textContent = insertions.length
+            ? `${insertions.length} suggested insertion(s)`
+            : result.approximate
+              ? "Approximate match"
+              : `${merged.length} match(es)`;
+          $("sourceMessage").textContent = insertions.length
+            ? "Red labels are suggested words missing from the HTML. They are visual suggestions and are not part of the source code."
+            : item.issueType === "link-mismatch"
+              ? "A similar href is highlighted in yellow; the expected Brief URL is shown in red below."
+              : result.approximate
+                ? "The closest HTML text is highlighted in red for review."
+                : `Located ${merged.length} source match(es).`;
+          $("sourceStatus").textContent = insertions.length
+            ? "Missing words suggested"
+            : result.approximate
+              ? "Approximate"
+              : "Located";
+          updateOccurrenceControls(
+            new Set(events.map((event) => event.index)).size,
+          );
+          syncActiveMarks();
+          scrollToActiveOccurrence();
+        }
+
+        // ========================================
+        // V2.2 - BRIEF HIGHLIGHT ENGINE
+        // ========================================
+
+        function renderBriefHighlight(item) {
+          const brief = originalBrief.value;
+          const mode = document.querySelector(
+            'input[name="matchMode"]:checked',
+          ).value;
+          const query = item.value;
+          if (!query) return;
+
+          const locale = detectLocale(query);
+          const mapped = normalizeMappedText(brief, mode, locale);
+          const needle = norm(query, mode, locale);
+          const positions = findAll(mapped.text, needle);
+          const ranges = positions
+            .map((pos) => ({
+              start: mapped.starts[pos],
+              end: mapped.ends[pos + needle.length - 1],
+            }))
+            .filter(
+              (range) =>
+                range.start != null &&
+                range.end != null &&
+                range.end > range.start,
+            );
+
+          if (!ranges.length) {
+            $("briefPreview").textContent = brief;
+            $("briefInspectorStatus").textContent = "Not located";
+            updateOccurrenceControls(0);
+            syncActiveMarks();
+            return;
+          }
+
+          let output = "";
+          let cursor = 0;
+          ranges.forEach((range, index) => {
+            if (range.start < cursor) return;
+            output += esc(brief.slice(cursor, range.start));
+            const cls =
+              index === selectedOccurrenceIndex ? "active-highlight" : "";
+            output += `<mark class="${cls}" data-item-index="${selectedIssueIndex}" data-occurrence="${index}">${esc(brief.slice(range.start, range.end))}</mark>`;
+            cursor = range.end;
+          });
+          output += esc(brief.slice(cursor));
+          $("briefPreview").innerHTML = output;
+          $("briefInspectorStatus").textContent =
+            `${ranges.length} occurrence(s)`;
+          scrollToActiveOccurrence();
+        }
+
+        function updateOccurrenceControls(count) {
+          const safeCount = Math.max(0, count);
+          if (safeCount && selectedOccurrenceIndex >= safeCount)
+            selectedOccurrenceIndex = 0;
+          $("occurrenceCounter").textContent = safeCount
+            ? `${selectedOccurrenceIndex + 1} / ${safeCount}`
+            : "0 / 0";
+          $("prevOccurrenceBtn").disabled = safeCount < 2;
+          $("nextOccurrenceBtn").disabled = safeCount < 2;
+        }
+
+        function syncActiveMarks() {
+          ["briefPreview", "sourceCode"].forEach((id) => {
+            $(id)
+              .querySelectorAll("mark[data-occurrence]")
+              .forEach((mark) => {
+                mark.classList.toggle(
+                  "active-highlight",
+                  Number(mark.dataset.occurrence) === selectedOccurrenceIndex,
+                );
+              });
+          });
+        }
+
+        function scrollToActiveOccurrence() {
+          const briefMark = $("briefPreview").querySelector(
+            `[data-occurrence="${selectedOccurrenceIndex}"]`,
+          );
+          const sourceMark = $("sourceCode").querySelector(
+            `[data-occurrence="${selectedOccurrenceIndex}"]`,
+          );
+          [briefMark, sourceMark].forEach((mark) => {
+            if (mark)
+              mark.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+        }
+
+        function setSelectedOccurrence(index) {
+          selectedOccurrenceIndex = Math.max(0, index);
+          const item = results[selectedIssueIndex];
+          if (!item) return;
+          renderBriefHighlight(item);
+          renderSourceHighlight(item);
+        }
+
+        function selectIssue(index) {
+          sourceOverviewMode = false;
+          const item = results[index];
+          if (!item) return;
+
+          const changedItem = selectedIssueIndex !== index;
+          selectedIssueIndex = index;
+          if (changedItem) selectedOccurrenceIndex = 0;
+
+          $("sourceInspector").style.display = "block";
+          renderList();
+          renderBriefHighlight(item);
+          renderSourceHighlight(item);
+
+          const issueIndexes = results
+            .map((r, i) => ({ r, i }))
+            .filter((x) => x.r.status !== "passed")
+            .map((x) => x.i);
+          const currentIssuePosition = issueIndexes.indexOf(index);
+
+          $("issueCounter").textContent =
+            currentIssuePosition >= 0
+              ? `Issue ${currentIssuePosition + 1} of ${issueIndexes.length}`
+              : `Result ${index + 1} of ${results.length}`;
+          $("prevIssueBtn").disabled = issueIndexes.length < 2;
+          $("nextIssueBtn").disabled = issueIndexes.length < 2;
+        }
+
+        function makeReport() {
+          const passed = results.filter((r) => r.status === "passed").length;
+          const failed = results.filter((r) => r.status === "failed").length;
+          const review = results.filter((r) => r.status === "review").length;
+          const textItems = results.filter((r) => r.type === "text").length;
+          const linkItems = results.filter((r) => r.type === "link").length;
+          const lines = [
+            "HTML TEXT & LINK QC — V3.5 REPORT",
+            "================================",
+            `Generated: ${new Date().toLocaleString()}`,
+            `Total: ${results.length} | Passed: ${passed} | Failed: ${failed} | Review: ${review}`,
+            `Text items: ${textItems} | URL items: ${linkItems}`,
+            "",
+            "ISSUES (FAILED + REVIEW)",
+            "------------------------",
+          ];
+          const issues = results.filter((r) => r.status !== "passed");
+          if (!issues.length) lines.push("No issues found.");
+          issues.forEach((r, i) => {
+            lines.push(
+              `${i + 1}. [${r.type.toUpperCase()}] ${r.status.toUpperCase()} — ${r.value}`,
+              `   Result: ${r.label}`,
+              `   Details: ${r.detail}`,
+            );
+            if (r.issueType === "link-mismatch")
+              lines.push(
+                `   Expected URL (Brief): ${r.value}`,
+                `   Possible actual URL(s): ${(r.actualUrls || []).join(" | ")}`,
+              );
+            if (r.issueType === "mismatch") {
+              lines.push(
+                `   Expected (Brief): ${r.expected || r.value}`,
+                `   Possible actual (HTML): ${r.actualDisplay || r.actual || ""}`,
+                `   Similarity: ${Math.round((r.similarity || 0) * 100)}%`,
+              );
+            }
+            if (r.linkAudit)
+              lines.push(
+                `   Link attributes: target=${r.linkAudit.target}; rel=${r.linkAudit.rel}`,
+              );
+            if (r.snippet) lines.push(`   HTML: ${r.snippet}`);
+            lines.push("");
+          });
+          lines.push("ALL QC ITEMS", "------------");
+          results.forEach((r, i) => {
+            lines.push(
+              `${i + 1}. [${r.type.toUpperCase()}] ${r.status.toUpperCase()} — ${r.value} — ${r.detail}`,
+            );
+          });
+          return lines.join("\n");
+        }
+
+        function makeCsv() {
+          const headers = [
+            "Type",
+            "Brief item",
+            "Status",
+            "Issue type",
+            "Result",
+            "Details",
+            "Expected",
+            "Possible actual",
+            "Similarity",
+            "HTML snippet",
+            "Target",
+            "Rel",
+            "Sequence",
+          ];
+          const rows = results.map((r) => [
+            r.type,
+            r.value,
+            r.status,
+            r.issueType || "",
+            r.label,
+            r.detail,
+            r.expected || "",
+            r.actualDisplay || r.actual || "",
+            r.similarity == null ? "" : Math.round(r.similarity * 100) + "%",
+            r.snippet || "",
+            r.linkAudit?.target || "",
+            r.linkAudit?.rel || "",
+            r.sequence || "",
+          ]);
+          const csvCell = (value) => {
+            let text = String(value ?? "");
+            if (/^[\s]*[=+\-@]/.test(text)) text = "'" + text;
+            return `"${text.replace(/"/g, '""')}"`;
+          };
+          return [headers, ...rows]
+            .map((row) => row.map(csvCell).join(","))
+            .join("\r\n");
+        }
+
+        function exportCsv() {
+          const blob = new Blob(["\ufeff", makeCsv()], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `html-text-link-qc-${new Date().toISOString().slice(0, 10)}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(url);
+          setStatus("CSV report exported.");
+        }
+        function setStatus(s, err = false) {
+          $("status").textContent = s;
+          $("status").className = "status" + (err ? " error" : "");
+        }
+
+        function invalidateResultsIfPresent() {
+          if (!results.length) return;
+          results = [];
+          selectedIssueIndex = -1;
+          selectedOccurrenceIndex = 0;
+          sourceOverviewMode = false;
+          $("results").style.display = "none";
+          $("sourceInspector").style.display = "none";
+          $("copyBtn").disabled = true;
+          $("exportCsvBtn").disabled = true;
+          $("issueCounter").textContent = "No issue selected";
+          $("prevIssueBtn").disabled = true;
+          $("nextIssueBtn").disabled = true;
+          setStatus(
+            "Inputs or QC settings changed. Run QC again to refresh the results.",
+          );
+        }
+
+        function updateCounters() {
+          $("htmlCount").textContent =
+            `${htmlSource.value.length.toLocaleString()} characters`;
+          $("briefCount").textContent =
+            `${originalBrief.value.length.toLocaleString()} characters`;
+          const a = parseBrief(originalBrief.value);
+          $("detectedInfo").textContent =
+            `Auto-detected: ${a.filter((x) => x.type === "text").length} text segment(s) · ${a.filter((x) => x.type === "link").length} URL(s). Brief order will be retained.`;
+        }
+
+        // ========================================
+        // V3.3 - RULE PROFILES
+        // Profiles configure existing checks; they do not create new Brief items.
+        // ========================================
+        const profileDescriptions = {
+          standard: "Balanced text, link, duplicate and sequence checks.",
+          localization:
+            "Smart Unicode normalization and locale-aware text matching for mixed-language briefs.",
+          strict:
+            "Case-sensitive text matching with content-order checks enabled.",
+          "link-audit":
+            "Checks Brief URLs and anchor context, plus advisory review of external new-tab link attributes.",
+        };
+        $("qcProfile").addEventListener("change", () => {
+          const profile = $("qcProfile").value;
+          $("profileDescription").textContent =
+            profileDescriptions[profile] || profileDescriptions.standard;
+          if (profile === "strict") {
+            document.querySelector(
+              'input[name="matchMode"][value="strict"]',
+            ).checked = true;
+            $("checkSequence").checked = true;
+          } else {
+            document.querySelector(
+              'input[name="matchMode"][value="smart"]',
+            ).checked = true;
+            if (profile === "localization" || profile === "link-audit")
+              $("checkSequence").checked = true;
+          }
+          $("checkAnchor").checked = [
+            "standard",
+            "localization",
+            "link-audit",
+          ].includes(profile);
+          invalidateResultsIfPresent();
+        });
+
+        // ========================================
+        // V3.5 - OFFLINE MULTILINGUAL REGRESSION TEST LAB
+        // Tests normalization, locale hints and segmentation support locally.
+        // ========================================
+        function runMultilingualTestLab() {
+          const cases = [
+            [
+              "Vietnamese accents",
+              () =>
+                norm("Tiếng Việt có dấu", "smart") ===
+                norm("Tiếng Việt có dấu", "smart"),
+            ],
+            [
+              "French accents",
+              () =>
+                norm("ÉTÉ À PARIS", "smart") === norm("été à paris", "smart"),
+            ],
+            [
+              "German sharp s",
+              () => norm("Straße", "smart") === norm("straße", "smart"),
+            ],
+            [
+              "Turkish dotted I",
+              () => norm("İSTANBUL", "smart") === "istanbul",
+            ],
+            [
+              "Japanese script",
+              () => detectLocale("商品を購入できます") === "ja",
+            ],
+            ["Chinese script", () => detectLocale("欢迎来到商店") === "zh"],
+            ["Korean script", () => detectLocale("제품을 구매하세요") === "ko"],
+            ["Thai script", () => detectLocale("ยินดีต้อนรับ") === "th"],
+            ["Arabic script", () => detectLocale("مرحبا بكم") === "ar"],
+            ["Russian script", () => detectLocale("Добро пожаловать") === "ru"],
+            ["Greek script", () => detectLocale("Καλώς ήρθατε") === "el"],
+            ["Hindi script", () => detectLocale("आपका स्वागत है") === "hi"],
+            [
+              "Full-width normalization",
+              () => space("ＨＴＭＬ　ＱＣ") === "HTML QC",
+            ],
+            [
+              "Non-breaking spaces",
+              () => space("one\u00a0two\u202fthree") === "one two three",
+            ],
+            [
+              "Zero-width characters",
+              () => space("hello\u200bworld") === "helloworld",
+            ],
+            [
+              "Strict case sensitivity",
+              () => norm("Hello", "strict") !== norm("hello", "strict"),
+            ],
+            [
+              "Smart case folding",
+              () => norm("HELLO", "smart") === norm("hello", "smart"),
+            ],
+            [
+              "Diff engine detects edit",
+              () =>
+                editDistance(
+                  "available in all countries",
+                  "available in selected countries",
+                ) > 0,
+            ],
+            [
+              "URL host normalization",
+              () =>
+                canonicalUrl("HTTPS://EXAMPLE.COM:443/path") ===
+                canonicalUrl("https://example.com/path"),
+            ],
+            ["CJK segmentation API", () => !!getWordSegmenter("ja")],
+            ["Thai segmentation API", () => !!getWordSegmenter("th")],
+            [
+              "Unicode property boundary",
+              () => hasLanguageAwareBoundary("xin chào bạn", 4, 8, "chào"),
+            ],
+            [
+              "UTF-16 source map after emoji",
+              () => {
+                const mapped = normalizeMappedText("🙂Title", "smart");
+                const at = mapped.text.indexOf("title");
+                return (
+                  mapped.starts[at] === 2 &&
+                  mapped.ends[at + 4] === 7 &&
+                  mapped.text.length === mapped.starts.length
+                );
+              },
+            ],
+            [
+              "Inline strong does not create a block break",
+              () => {
+                const ranges = getVisibleSourceRanges(
+                  "<html><body><p>most <strong>often</strong> shown</p></body></html>",
+                );
+                return (
+                  ranges.length >= 3 &&
+                  ranges.slice(1).every((x) => !x.breakBefore)
+                );
+              },
+            ],
+            [
+              "Paragraphs retain their block separation",
+              () => {
+                const html = [
+                  "<html><body>",
+                  "<p>First paragraph</p>",
+                  "<p>Second paragraph</p>",
+                  "</body></html>",
+                ].join("");
+                const ranges = getVisibleSourceRanges(html).filter((range) =>
+                  /\S/.test(html.slice(range.start, range.end)),
+                );
+                return ranges.length === 2 && ranges[1].breakBefore;
+              },
+            ],
+            [
+              "BR retains an explicit line break",
+              () => {
+                const html = [
+                  "<html><body><p>",
+                  "First line<br>Second line",
+                  "</p></body></html>",
+                ].join("");
+                const ranges = getVisibleSourceRanges(html).filter((range) =>
+                  /\S/.test(html.slice(range.start, range.end)),
+                );
+                return ranges.length === 2 && ranges[1].breakBefore;
+              },
+            ],
+            [
+              "Text-only output trims block indentation but preserves inline spaces",
+              () => {
+                const nl = String.fromCharCode(10);
+                const html = [
+                  "<html><body><p>",
+                  nl,
+                  "  most <strong>often</strong> shown",
+                  nl,
+                  "</p><p>",
+                  nl,
+                  "  next paragraph",
+                  nl,
+                  "</p></body></html>",
+                ].join("");
+                const ranges = getRenderableVisibleRanges(html);
+                const visible = ranges
+                  .map((range) => html.slice(range.start, range.end))
+                  .join("");
+                return (
+                  visible.startsWith("most ") &&
+                  visible.includes("most often shown") &&
+                  visible.endsWith("next paragraph") &&
+                  ranges[ranges.length - 1].breakBefore
+                );
+              },
+            ],
+            [
+              "Highlight ranges never include inline HTML tags",
+              () => {
+                const html =
+                  "<html><body><p>The title <strong>attribute</strong> specifies extra information.</p></body></html>";
+                const ranges = findMappedSourceRanges(
+                  "The title attribute specifies",
+                  html,
+                  "smart",
+                );
+                return (
+                  ranges.length === 3 &&
+                  new Set(ranges.map((range) => range.matchIndex)).size === 1 &&
+                  ranges.every(
+                    (range) =>
+                      !html.slice(range.start, range.end).includes("<"),
+                  )
+                );
+              },
+            ],
+            [
+              "Script strings cannot interrupt visible-source scanning",
+              () => {
+                const html =
+                  "<html><body><p>visible</p><scr" +
+                  'ipt>const fake = "<div>not visible</div>";</scr' +
+                  "ipt><p>after</p></body></html>";
+                const ranges = getVisibleSourceRanges(html);
+                const visible = ranges
+                  .map((range) => html.slice(range.start, range.end))
+                  .join(" ");
+                return (
+                  visible.includes("visible") &&
+                  visible.includes("after") &&
+                  !visible.includes("not visible")
+                );
+              },
+            ],
+            [
+              "Hidden markup is excluded from visible text",
+              () => {
+                const html =
+                  '<html><body><p>visible</p><div hidden>hidden text<div>nested hidden</div>still hidden</div><span aria-hidden="true">secret text</span><p style="display:none">also hidden</p><p>after</p></body></html>';
+                const ranges = getVisibleSourceRanges(html);
+                const visible = ranges
+                  .map((range) => html.slice(range.start, range.end))
+                  .join(" ");
+                return (
+                  visible.includes("visible") &&
+                  visible.includes("after") &&
+                  !visible.includes("hidden text") &&
+                  !visible.includes("nested hidden") &&
+                  !visible.includes("still hidden") &&
+                  !visible.includes("secret text") &&
+                  !visible.includes("also hidden")
+                );
+              },
+            ],
+            [
+              "Text matching continues across an explicit BR inside a paragraph",
+              () => {
+                const html =
+                  "<html><body><p>The title specifies <br> extra information about an element. The information is most often shown as a tooltip text when the mouse moves over the element.</p></body></html>";
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const extracted = extractDocument(doc);
+                const expected =
+                  "The title attribute specifies extra information about an element. The information is most often shown as a tooltip text when the mouse moves over the element.";
+                const candidate = findBestTextCandidate(
+                  expected,
+                  extracted.full,
+                  "smart",
+                );
+                return (
+                  !!candidate &&
+                  candidate.alignment.missing.some(
+                    (x) => x.word.toLowerCase() === "attribute",
+                  ) &&
+                  candidate.originalText.toLowerCase().includes("specifies")
+                );
+              },
+            ],
+            [
+              "Exact text matching treats BR as whitespace",
+              () => {
+                const html =
+                  "<html><body><p>The title specifies <br> extra information.</p></body></html>";
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const extracted = extractDocument(doc);
+                return locateText(
+                  "The title specifies extra information.",
+                  extracted,
+                  "smart",
+                ).found;
+              },
+            ],
+            [
+              "Missing heading word is detected in its own block",
+              () => {
+                const candidate = findBestTextCandidate(
+                  "Link Titles",
+                  "Link\nThe title attribute specifies extra information.",
+                  "smart",
+                );
+                return (
+                  !!candidate &&
+                  candidate.originalText.trim() === "Link" &&
+                  candidate.alignment.missing.some((x) => x.word === "Titles")
+                );
+              },
+            ],
+            [
+              "Strict case mismatch retains its actual HTML source location",
+              () => {
+                const html =
+                  "<html><body><p>The title is here.</p></body></html>";
+                const candidate = findBestTextCandidate(
+                  "The TITLE is here.",
+                  "The title is here.",
+                  "strict",
+                );
+                return (
+                  !!candidate &&
+                  findMappedSourceRanges(candidate.originalText, html, "strict")
+                    .length > 0
+                );
+              },
+            ],
+            [
+              "Long text mismatch remains detectable",
+              () => {
+                const expected =
+                  "The title attribute specifies extra information about this element and explains how its content is presented. "
+                    .repeat(3)
+                    .trim();
+                const actual = expected.replace("title ", "");
+                const candidate = findBestTextCandidate(
+                  expected,
+                  actual,
+                  "smart",
+                );
+                return (
+                  !!candidate &&
+                  candidate.alignment.missing.some((x) => x.word === "title")
+                );
+              },
+            ],
+            [
+              "CJK text uses locale-aware word tokens",
+              () => wordTokens("商品を購入できます").length > 1,
+            ],
+            [
+              "Missing-word insertion maps to the exact HTML position",
+              () => {
+                const html =
+                  "<html><body><p>The attribute specifies extra information.</p></body></html>";
+                const points = findMappedInsertionPoints(
+                  "The attribute specifies extra information.",
+                  [{ word: "title", beforeWordIndex: 1 }],
+                  html,
+                  "smart",
+                );
+                return (
+                  points.length === 1 &&
+                  points[0].position === html.indexOf("attribute") &&
+                  points[0].text === "title "
+                );
+              },
+            ],
+            [
+              "Substring inside a longer word is not an exact match",
+              () => {
+                const source = "hyperlink";
+                const mapped = normalizeMappedText(source, "smart");
+                return !hasLanguageAwareBoundary(mapped.text, 4, 8, "link");
+              },
+            ],
+            [
+              "A one-word anchor cannot validate a longer context",
+              () => {
+                const result = checkAnchor(
+                  { prefix: "Shop now for more details", independent: false },
+                  [{ anchor: "Shop", url: "https://example.com" }],
+                  "smart",
+                );
+                return result.status === "review";
+              },
+            ],
+            [
+              "Possible URL mismatch maps the actual href",
+              () => {
+                const previous = htmlSource.value;
+                htmlSource.value =
+                  '<html><body><a href="https://example.com/path?x=1">Link</a></body></html>';
+                const result = findSourceRanges({
+                  type: "link",
+                  value: "https://example.com/path",
+                  issueType: "link-mismatch",
+                  actualUrls: ["https://example.com/path?x=1"],
+                });
+                htmlSource.value = previous;
+                return (
+                  result.approximate &&
+                  result.ranges.length === 1 &&
+                  htmlSource.value === previous
+                );
+              },
+            ],
+          ];
+          const results = cases.map(([name, test]) => {
+            try {
+              return { name, passed: !!test() };
+            } catch (error) {
+              return { name, passed: false, error: error.message };
+            }
+          });
+          const passed = results.filter((x) => x.passed).length;
+          $("testLabSummary").textContent =
+            `${passed}/${results.length} tests passed`;
+          $("testLabResults").hidden = false;
+          $("testLabResults").innerHTML = `
+            <strong>Multilingual regression tests</strong>
+            <div class="test-lab-grid">
+              ${results.map((x) => `<div class="${x.passed ? "test-pass" : "test-fail"}">${x.passed ? "✓" : "✕"} ${esc(x.name)}${x.error ? ` — ${esc(x.error)}` : ""}</div>`).join("")}
+            </div>
+            <p class="hint" style="margin:9px 0 0">${passed === results.length ? "All built-in checks passed." : "Some checks need attention. Segmentation tests can vary by browser Intl support."} These are regression checks for normalization and script handling, not a certification of translation quality.</p>`;
+        }
+        $("runTestLabBtn").addEventListener("click", runMultilingualTestLab);
+
+        $("runBtn").addEventListener("click", runQC);
+        $("copyBtn").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(makeReport());
+            setStatus("QC report copied to clipboard.");
+          } catch {
+            setStatus(
+              "Clipboard unavailable. Select and copy results manually.",
+              true,
+            );
+          }
+        });
+
+        $("exportCsvBtn").addEventListener("click", exportCsv);
+
+        $("toggleSourceViewBtn").addEventListener("click", () => {
+          sourceViewMode = sourceViewMode === "raw" ? "text" : "raw";
+          $("toggleSourceViewBtn").textContent =
+            sourceViewMode === "raw" ? "Text / Link only" : "Raw HTML";
+          const item = results[selectedIssueIndex];
+          if (sourceOverviewMode) renderAllSourceOverview();
+          else if (item) renderSourceHighlight(item);
+        });
+
+        $("prevOccurrenceBtn").addEventListener("click", () => {
+          const count =
+            Number($("occurrenceCounter").textContent.split("/")[1]) || 0;
+          if (count > 1)
+            setSelectedOccurrence(
+              (selectedOccurrenceIndex - 1 + count) % count,
+            );
+        });
+        $("nextOccurrenceBtn").addEventListener("click", () => {
+          const count =
+            Number($("occurrenceCounter").textContent.split("/")[1]) || 0;
+          if (count > 1)
+            setSelectedOccurrence((selectedOccurrenceIndex + 1) % count);
+        });
+
+        // Clicking a highlight in either pane keeps both panes on the same item/occurrence.
+        ["briefPreview", "sourceCode"].forEach((id) => {
+          $(id).addEventListener("click", (event) => {
+            const mark = event.target.closest("mark[data-item-index]");
+            if (!mark) return;
+            const itemIndex = Number(mark.dataset.itemIndex);
+            const occurrence = Number(
+              mark.dataset.localOccurrence ?? mark.dataset.occurrence ?? 0,
+            );
+            if (itemIndex !== selectedIssueIndex) selectIssue(itemIndex);
+            setSelectedOccurrence(occurrence);
+          });
+        });
+
+        $("clearBtn").addEventListener("click", () => {
+          htmlSource.value = "";
+          originalBrief.value = "";
+
+          results = [];
+          activeFilter = "all";
+          document
+            .querySelectorAll(".tab")
+            .forEach((tab) =>
+              tab.classList.toggle("active", tab.dataset.filter === "all"),
+            );
+          selectedIssueIndex = -1;
+          selectedOccurrenceIndex = 0;
+          sourceViewMode = "raw";
+          sourceOverviewMode = false;
+          $("toggleSourceViewBtn").textContent = "Text / Link only";
+          $("sourceCode").classList.remove("text-only-view");
+
+          $("results").style.display = "none";
+          $("sourceInspector").style.display = "none";
+          $("briefPreview").innerHTML = `
+  <div class="inspector-placeholder">
+    Run QC to inspect the Original Brief.
+  </div>
+`;
+
+          $("sourceCode").innerHTML = `
+  <div class="inspector-placeholder">
+    Run QC to inspect the HTML Source.
+  </div>
+`;
+
+          $("briefInspectorStatus").textContent = "Waiting";
+          $("htmlInspectorStatus").textContent = "Waiting";
+          $("sourceStatus").textContent = "Waiting";
+          $("sourceMessage").textContent =
+            "Select a QC result to inspect both sources.";
+          $("copyBtn").disabled = true;
+          $("exportCsvBtn").disabled = true;
+          $("occurrenceCounter").textContent = "0 / 0";
+          $("issueCounter").textContent = "No issue selected";
+          $("prevIssueBtn").disabled = true;
+          $("nextIssueBtn").disabled = true;
+          $("prevOccurrenceBtn").disabled = true;
+          $("nextOccurrenceBtn").disabled = true;
+
+          setStatus("Cleared. Ready for a new scan.");
+
+          updateCounters();
+        });
+
+        document.querySelectorAll(".tab").forEach((t) =>
+          t.addEventListener("click", () => {
+            document
+              .querySelectorAll(".tab")
+              .forEach((x) => x.classList.toggle("active", x === t));
+            activeFilter = t.dataset.filter;
+            renderList();
+          }),
+        );
+
+        // Click a result to inspect its HTML source.
+        $("resultList").addEventListener("click", (event) => {
+          const card = event.target.closest(".result[data-index]");
+
+          if (!card) return;
+
+          selectIssue(Number(card.dataset.index));
+        });
+
+        // Navigate between failed/review items.
+        function navigateIssue(direction) {
+          const issues = results
+            .map((r, i) => ({ r, i }))
+            .filter((x) => x.r.status !== "passed")
+            .map((x) => x.i);
+
+          if (!issues.length) return;
+
+          let current = issues.indexOf(selectedIssueIndex);
+
+          if (current < 0) {
+            current = direction > 0 ? -1 : 0;
+          }
+
+          const next = (current + direction + issues.length) % issues.length;
+
+          selectIssue(issues[next]);
+        }
+
+        $("prevIssueBtn").addEventListener("click", () => {
+          navigateIssue(-1);
+        });
+
+        $("nextIssueBtn").addEventListener("click", () => {
+          navigateIssue(1);
+        });
+
+        [htmlSource, originalBrief].forEach((x) =>
+          x.addEventListener("input", () => {
+            updateCounters();
+            invalidateResultsIfPresent();
+          }),
+        );
+        document
+          .querySelectorAll(
+            'input[name="matchMode"], #checkSequence, #checkAnchor',
+          )
+          .forEach((control) => {
+            control.addEventListener("change", invalidateResultsIfPresent);
+          });
+        $("profileDescription").textContent =
+          profileDescriptions[$("qcProfile").value];
+        updateCounters();
+      })();
+    </script>
+  </body>
+</html>
