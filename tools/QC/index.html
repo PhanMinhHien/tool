@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>HTML Text & Link QC — V3.5</title>
+    <title>HTML Text & Link QC — V3.6</title>
     <style>
       :root {
         color-scheme: dark;
@@ -460,6 +460,13 @@
         font-weight: 700;
       }
 
+      #sourceCode mark.diff-replacement-highlight {
+        background: #715819;
+        color: #fff1b5;
+        outline: 1px solid #e9bb50;
+        border-radius: 3px;
+        font-weight: 700;
+      }
       #sourceCode mark.mismatch-highlight {
         background: #7f1d1d;
         color: #fff1f1;
@@ -652,6 +659,14 @@
         outline: 1px solid #e9bb50;
       }
 
+      .inspector-content mark.diff-replacement-highlight,
+      #sourceCode mark.diff-replacement-highlight {
+        background: #715819;
+        color: #fff1b5;
+        outline: 1px solid #e9bb50;
+        border-radius: 3px;
+        font-weight: 700;
+      }
       .inspector-content mark.mismatch-highlight {
         background: #7f1d1d;
         color: #fff1f1;
@@ -698,6 +713,135 @@
           margin-left: 0;
         }
       }
+
+      /* V3.6 · Diff, validation, issue queue and layout improvements */
+      .fieldhead-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .panel-collapse-btn {
+        padding: 5px 9px;
+        font-size: 10px;
+      }
+      #htmlInputPanel.is-collapsed #htmlSource,
+      #htmlInputPanel.is-collapsed > .hint,
+      #briefInputPanel.is-collapsed #originalBrief,
+      #briefInputPanel.is-collapsed > .hint,
+      #briefInputPanel.is-collapsed #detectedInfo {
+        display: none;
+      }
+      #htmlInputPanel.is-collapsed,
+      #briefInputPanel.is-collapsed {
+        padding-bottom: 13px;
+      }
+      .preqc-validation {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #0b1426;
+        font-size: 11px;
+      }
+      .preqc-validation[hidden] {
+        display: none;
+      }
+      .preqc-validation .validation-title {
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .preqc-validation .validation-block {
+        color: #ff9da6;
+        margin: 4px 0;
+      }
+      .preqc-validation .validation-warning {
+        color: #ffda83;
+        margin: 4px 0;
+      }
+      .preqc-validation .validation-ok {
+        color: #75e8b9;
+      }
+      .tabs-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .only-issues-toggle {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .only-issues-toggle input {
+        accent-color: #8b9aff;
+      }
+      .summary {
+        position: sticky;
+        top: 8px;
+        z-index: 5;
+        backdrop-filter: blur(12px);
+      }
+      .inspector-grid {
+        grid-template-columns: minmax(
+            0,
+            calc(var(--inspector-left, 50%) - 4px)
+          ) 8px minmax(0, calc(var(--inspector-right, 50%) - 4px));
+        align-items: stretch;
+      }
+      .inspector-splitter {
+        width: 8px;
+        cursor: col-resize;
+        border-radius: 8px;
+        background: linear-gradient(180deg, transparent, #405477, transparent);
+        touch-action: none;
+      }
+      .inspector-splitter:hover,
+      .inspector-splitter:focus {
+        background: #7186ff;
+        outline: none;
+      }
+      .diff-token-missing {
+        color: #fff1f1;
+        background: rgba(127, 29, 29, 0.85);
+        border-bottom: 2px solid #ef4444;
+        border-radius: 3px;
+        padding: 0 2px;
+        font-weight: 800;
+      }
+      .diff-token-replacement {
+        color: #fff1b5;
+        background: rgba(113, 88, 25, 0.65);
+        border-bottom: 2px solid #e9bb50;
+        border-radius: 3px;
+        padding: 0 2px;
+        font-weight: 800;
+      }
+      .diff-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        margin-top: 8px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .diff-summary b {
+        color: var(--text);
+      }
+      @media (max-width: 900px) {
+        .inspector-grid {
+          grid-template-columns: 1fr;
+        }
+        .inspector-splitter {
+          display: none;
+        }
+        .summary {
+          position: static;
+        }
+      }
     </style>
   </head>
   <body>
@@ -709,13 +853,23 @@
             Full QC · Text, URLs, anchor text, sequence and HTML locations.
           </p>
         </div>
-        <span class="pill">VERSION 3.5 · LOCAL ONLY</span>
+        <span class="pill">VERSION 3.6 · LOCAL ONLY</span>
       </header>
       <div class="grid">
-        <section class="panel">
+        <section class="panel" id="htmlInputPanel">
           <div class="fieldhead">
             <h2>01 · HTML Source</h2>
-            <span class="counter" id="htmlCount">0 characters</span>
+            <div class="fieldhead-actions">
+              <span class="counter" id="htmlCount">0 characters</span
+              ><button
+                class="panel-collapse-btn"
+                id="toggleHtmlPanelBtn"
+                type="button"
+                aria-expanded="true"
+              >
+                Collapse
+              </button>
+            </div>
           </div>
           <p class="hint">
             Paste the complete source copied from View Page Source. HTML is
@@ -728,10 +882,20 @@
           ></textarea>
         </section>
         <div class="side">
-          <section class="panel" style="flex: 1">
+          <section class="panel" id="briefInputPanel" style="flex: 1">
             <div class="fieldhead">
               <h2>02 · Original Brief</h2>
-              <span class="counter" id="briefCount">0 characters</span>
+              <div class="fieldhead-actions">
+                <span class="counter" id="briefCount">0 characters</span
+                ><button
+                  class="panel-collapse-btn"
+                  id="toggleBriefPanelBtn"
+                  type="button"
+                  aria-expanded="true"
+                >
+                  Collapse
+                </button>
+              </div>
             </div>
             <p class="hint">
               Paste the entire brief as-is, including text and URLs. Keep the
@@ -793,6 +957,12 @@
             </div>
             <div id="testLabResults" class="test-lab-results" hidden></div>
             <div class="status" id="status" style="margin: 10px 0 0">Ready</div>
+            <div
+              class="preqc-validation"
+              id="preQcValidation"
+              hidden
+              aria-live="polite"
+            ></div>
           </section>
         </div>
       </div>
@@ -824,13 +994,19 @@
             <strong id="linkTotal">0</strong><span>URL ITEMS</span>
           </div>
         </div>
-        <div class="tabs">
-          <button class="tab active" data-filter="all">All</button
-          ><button class="tab" data-filter="text">Text</button
-          ><button class="tab" data-filter="link">Links</button
-          ><button class="tab" data-filter="failed">Failed</button
-          ><button class="tab" data-filter="mismatch">Mismatch</button
-          ><button class="tab" data-filter="review">Review</button>
+        <div class="tabs-row">
+          <div class="tabs">
+            <button class="tab active" data-filter="all">All</button
+            ><button class="tab" data-filter="text">Text</button
+            ><button class="tab" data-filter="link">Links</button
+            ><button class="tab" data-filter="failed">Failed</button
+            ><button class="tab" data-filter="mismatch">Mismatch</button
+            ><button class="tab" data-filter="review">Review</button>
+          </div>
+          <label class="only-issues-toggle"
+            ><input type="checkbox" id="onlyIssuesToggle" /> Only show
+            issues</label
+          >
         </div>
         <div class="result-list" id="resultList"></div>
         <div class="legend">
@@ -900,6 +1076,16 @@
             </div>
           </div>
 
+          <div
+            class="inspector-splitter"
+            id="inspectorSplitter"
+            role="separator"
+            aria-label="Resize inspector columns"
+            aria-orientation="vertical"
+            tabindex="0"
+            title="Drag to resize columns"
+          ></div>
+
           <!-- HTML SOURCE -->
 
           <div class="inspector-panel">
@@ -939,6 +1125,7 @@
         let selectedOccurrenceIndex = 0;
         let sourceViewMode = "raw";
         let sourceOverviewMode = false;
+        let onlyIssues = false;
         const URL_RE = /https?:\/\/[^\s<>"'`]+/gi;
         function cleanUrl(s) {
           return s.replace(/[.,!?;:)\]}]+$/g, "");
@@ -1544,29 +1731,96 @@
                   : Math.max(dp[i + 1][j], dp[i][j + 1]);
             }
           }
-          const missing = [];
+
+          const missing = [],
+            replacements = [],
+            extra = [],
+            operations = [];
+          const addGap = (
+            expectedStart,
+            expectedEnd,
+            actualStart,
+            actualEnd,
+          ) => {
+            const expectedCount = expectedEnd - expectedStart;
+            const actualCount = actualEnd - actualStart;
+            const paired = Math.min(expectedCount, actualCount);
+            for (let offset = 0; offset < paired; offset++) {
+              const ei = expectedStart + offset;
+              const ai = actualStart + offset;
+              const entry = {
+                expectedWord: originalWords[ei]?.word || ew[ei].word,
+                actualWord: aw[ai].word,
+                expectedIndex: ei,
+                actualIndex: ai,
+                beforeWordIndex: ai,
+              };
+              replacements.push(entry);
+              operations.push({ type: "replacement", ...entry });
+            }
+            for (let ei = expectedStart + paired; ei < expectedEnd; ei++) {
+              const entry = {
+                word: originalWords[ei]?.word || ew[ei].word,
+                expectedIndex: ei,
+                beforeWordIndex: actualEnd,
+              };
+              missing.push(entry);
+              operations.push({ type: "missing", ...entry });
+            }
+            for (let ai = actualStart + paired; ai < actualEnd; ai++) {
+              const entry = { word: aw[ai].word, actualIndex: ai };
+              extra.push(entry);
+              operations.push({ type: "extra", ...entry });
+            }
+          };
+
           let i = 0,
-            j = 0;
-          while (i < ew.length) {
-            if (j < aw.length && ew[i].word === aw[j].word) {
-              i++;
-              j++;
-            } else if (j < aw.length && dp[i][j + 1] > dp[i + 1][j]) {
-              j++; // extra word in HTML; leave it visible for review
-            } else {
-              missing.push({
-                word: originalWords[i]?.word || ew[i].word,
-                beforeWordIndex: j,
+            j = 0,
+            gapExpected = 0,
+            gapActual = 0;
+          while (i < ew.length && j < aw.length) {
+            if (ew[i].word === aw[j].word) {
+              addGap(gapExpected, i, gapActual, j);
+              operations.push({
+                type: "match",
+                expectedIndex: i,
+                actualIndex: j,
+                word: ew[i].word,
               });
               i++;
+              j++;
+              gapExpected = i;
+              gapActual = j;
+            } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+              i++;
+            } else {
+              j++;
             }
           }
+          addGap(gapExpected, ew.length, gapActual, aw.length);
           return {
             expectedWords: ew,
             actualWords: aw,
             missing,
+            replacements,
+            extra,
+            operations,
             matched: dp[0][0],
           };
+        }
+
+        function renderWordDiffSide(value, markedIndexes, className) {
+          const tokens = wordTokens(value);
+          if (!tokens.length || !markedIndexes?.size) return esc(value);
+          let output = "",
+            cursor = 0;
+          tokens.forEach((token, index) => {
+            if (!markedIndexes.has(index)) return;
+            output += esc(value.slice(cursor, token.index));
+            output += `<mark class="${className}">${esc(value.slice(token.index, token.end))}</mark>`;
+            cursor = token.end;
+          });
+          return output + esc(value.slice(cursor));
         }
 
         function findBestTextCandidate(expected, visibleText, mode) {
@@ -1845,15 +2099,112 @@
               };
         }
 
+        function validatePreQC(html, brief, items) {
+          const blocking = [],
+            warnings = [];
+          if (!String(html || "").trim())
+            blocking.push("HTML source is empty.");
+          if (!String(brief || "").trim())
+            blocking.push("Original Brief is empty.");
+    const markupWithoutCommentsOrRawText = String(html || "")
+  .replace(new RegExp("<!--[\\s\\S]*?-->", "g"), "")
+  .replace(
+    new RegExp("<(script|style|textarea|title)\\b[^>]*>[\\s\\S]*?<\\/\\1\\s*>", "gi"),
+    ""
+  );
+          if (
+            html.trim() &&
+            !/<\s*body\b/i.test(markupWithoutCommentsOrRawText)
+          ) {
+            blocking.push(
+              "No explicit <body> element was found. Paste the complete HTML source so QC can enforce body-only checking.",
+            );
+          }
+          if (String(html || "").length > 1500000)
+            warnings.push(
+              "HTML source is larger than 1.5 MB; scanning and Inspector rendering may be slower.",
+            );
+          if (items.length) {
+            const seen = new Set();
+            items.forEach((item) => {
+              const key = `${item.type}:${norm(item.value, "smart")}`;
+              if (seen.has(key))
+                warnings.push(
+                  `Repeated Brief item: “${item.value.slice(0, 90)}”. Duplicate checks may be intentional.`,
+                );
+              seen.add(key);
+              if (item.type === "text" && wordTokens(item.value).length <= 2) {
+                warnings.push(
+                  `Very short Brief text may be ambiguous: “${item.value}”. It will still be checked.`,
+                );
+              }
+              if (item.type === "link") {
+                try {
+                  new URL(item.value);
+                } catch {
+                  warnings.push(`URL could not be parsed: “${item.value}”.`);
+                }
+              }
+            });
+          }
+          if (
+            html.trim() &&
+            /<\s*body\b/i.test(markupWithoutCommentsOrRawText)
+          ) {
+            try {
+              const doc = new DOMParser().parseFromString(html, "text/html");
+              if (
+                !doc.body ||
+                (!doc.body.textContent.trim() &&
+                  !doc.body.querySelector("[href]"))
+              ) {
+                warnings.push(
+                  "The parsed body contains no visible text or href links. Check whether the pasted source is complete or content is dynamically rendered.",
+                );
+              }
+            } catch {
+              warnings.push(
+                "The browser could not fully parse the supplied HTML.",
+              );
+            }
+          }
+          return {
+            blocking: [...new Set(blocking)],
+            warnings: [...new Set(warnings)],
+          };
+        }
+
+        function renderPreQCValidation(validation) {
+          const panel = $("preQcValidation");
+          const { blocking, warnings } = validation;
+          if (!blocking.length && !warnings.length) {
+            panel.hidden = false;
+            panel.innerHTML =
+              '<div class="validation-title validation-ok">✓ Pre-QC validation passed</div><div>Input looks ready for scanning.</div>';
+            return;
+          }
+          panel.hidden = false;
+          panel.innerHTML = `<div class="validation-title">Pre-QC validation · ${blocking.length ? "Action required" : "Warnings"}</div>${blocking.map((message) => `<div class="validation-block">✕ ${esc(message)}</div>`).join("")}${warnings.map((message) => `<div class="validation-warning">⚠ ${esc(message)}</div>`).join("")}`;
+        }
+
         function runQC() {
-          if (!htmlSource.value.trim())
-            return setStatus("Paste HTML source first.", true);
           const items = parseBrief(originalBrief.value);
-          if (!items.length)
-            return setStatus(
-              "Paste an original brief containing text or URLs.",
+          const validation = validatePreQC(
+            htmlSource.value,
+            originalBrief.value,
+            items,
+          );
+          renderPreQCValidation(validation);
+          if (validation.blocking.length) {
+            results = [];
+            $("results").style.display = "none";
+            $("sourceInspector").style.display = "none";
+            setStatus(
+              "Pre-QC validation blocked the scan. Fix the required input first.",
               true,
             );
+            return;
+          }
           setStatus("Scanning HTML…");
           try {
             const doc = new DOMParser().parseFromString(
@@ -1908,6 +2259,7 @@
                     ? candidate.originalText || candidate.text
                     : m.snippet || "",
                   missingWords: mismatch ? candidate.alignment.missing : [],
+                  alignment: mismatch ? candidate.alignment : null,
                   similarity: mismatch ? candidate.similarity : null,
                   snippet: m.snippet || (mismatch ? candidate.text : ""),
                   position: m.position ?? null,
@@ -2057,14 +2409,15 @@
         function renderList() {
           const shown = results.filter(
             (r) =>
-              activeFilter === "all" ||
-              r.type === activeFilter ||
-              (activeFilter === "failed" && r.status === "failed") ||
-              (activeFilter === "mismatch" &&
-                ["mismatch", "link-mismatch"].includes(r.issueType)) ||
-              (activeFilter === "review" &&
-                r.status === "review" &&
-                r.issueType !== "mismatch"),
+              (!onlyIssues || r.status !== "passed") &&
+              (activeFilter === "all" ||
+                r.type === activeFilter ||
+                (activeFilter === "failed" && r.status === "failed") ||
+                (activeFilter === "mismatch" &&
+                  ["mismatch", "link-mismatch"].includes(r.issueType)) ||
+                (activeFilter === "review" &&
+                  r.status === "review" &&
+                  r.issueType !== "mismatch")),
           );
 
           $("resultList").innerHTML = shown.length
@@ -2095,9 +2448,14 @@
                 ? `
               <div class="diff-box">
                 <div class="diff-label">Expected · from Brief</div>
-                <div class="expected">${esc(r.expected || r.value)}</div>
-                <div class="diff-label" style="margin-top:7px">Possible actual · HTML candidate</div>
-                <div class="actual">${esc(r.actualDisplay || r.actual || "")}</div>
+                <div class="expected">${renderWordDiffSide(r.expected || r.value, new Set([...(r.alignment?.missing || []).map((x) => x.expectedIndex), ...(r.alignment?.replacements || []).map((x) => x.expectedIndex)]), "diff-token-missing")}</div>
+                <div class="diff-label" style="margin-top:7px">Actual · HTML</div>
+                <div class="actual">${renderWordDiffSide(r.actualDisplay || r.actual || "", new Set((r.alignment?.replacements || []).map((x) => x.actualIndex)), "diff-token-replacement")}</div>
+                <div class="diff-summary">
+                  ${(r.alignment?.missing || []).length ? `<span><b>Missing:</b> ${esc(r.alignment.missing.map((x) => x.word).join(", "))}</span>` : ""}
+                  ${(r.alignment?.replacements || []).length ? `<span><b>Changed:</b> ${esc(r.alignment.replacements.map((x) => `${x.expectedWord} → ${x.actualWord}`).join("; "))}</span>` : ""}
+                  ${(r.alignment?.extra || []).length ? `<span><b>Extra HTML wording:</b> ${esc(r.alignment.extra.map((x) => x.word).join(", "))} (ignored)</span>` : ""}
+                </div>
               </div>`
                 : ""
             }
@@ -2721,6 +3079,7 @@
                 start: Math.max(r.start, part.start),
                 end: Math.min(r.end, part.end),
                 matchIndex: r.matchIndex,
+                diffKind: r.diffKind,
               }));
             const localInsertions = insertions
               .filter((x) => x.position >= part.start && x.position <= part.end)
@@ -2749,7 +3108,7 @@
                 chunk += `<mark class="missing-highlight" title="Suggested missing word" data-item-index="${selectedIssueIndex}" data-occurrence="${occurrenceId}" data-local-occurrence="${occurrenceId}">${esc(event.text)}</mark>`;
                 cursor = start;
               } else {
-                chunk += `<mark class="${occurrenceId === selectedOccurrenceIndex ? "active-highlight" : ""} ${approximate ? "mismatch-highlight" : ""}" data-item-index="${selectedIssueIndex}" data-occurrence="${occurrenceId}" data-local-occurrence="${occurrenceId}">${esc(source.slice(start, event.end))}</mark>`;
+                chunk += `<mark class="${event.diffKind === "replacement" ? "diff-replacement-highlight" : occurrenceId === selectedOccurrenceIndex ? "active-highlight" : approximate ? "mismatch-highlight" : ""}" data-item-index="${selectedIssueIndex}" data-occurrence="${occurrenceId}" data-local-occurrence="${occurrenceId}">${esc(source.slice(start, event.end))}</mark>`;
                 cursor = event.end;
               }
             });
@@ -2824,25 +3183,60 @@
           if (!candidateText || !missingWords?.length) return [];
           const mapped = buildVisibleSourceMap(source, mode, candidateText);
           const needle = norm(candidateText, mode, detectLocale(candidateText));
-          const at = mapped.text.indexOf(needle);
-          if (at < 0) return [];
+          if (!needle) return [];
+          const positions = findAll(mapped.text, needle);
           const actualWords = wordTokens(needle);
-          return missingWords
-            .map((missing) => {
+          const insertions = [];
+          positions.forEach((at, matchIndex) => {
+            missingWords.forEach((missing) => {
               const next = actualWords[missing.beforeWordIndex];
               const previous = actualWords[missing.beforeWordIndex - 1];
               let rawPosition = null;
               if (next) rawPosition = mapped.starts[at + next.index];
               else if (previous)
                 rawPosition = mapped.ends[at + previous.end - 1];
-              if (rawPosition == null) return null;
-              return {
-                position: rawPosition,
-                text: next ? `${missing.word} ` : ` ${missing.word}`,
-                matchIndex: 0,
-              };
-            })
-            .filter(Boolean);
+              if (rawPosition != null) {
+                insertions.push({
+                  position: rawPosition,
+                  text: next ? `${missing.word} ` : ` ${missing.word}`,
+                  matchIndex,
+                });
+              }
+            });
+          });
+          return insertions;
+        }
+
+        function findMappedWordDiffRanges(
+          candidateText,
+          alignment,
+          source,
+          mode,
+        ) {
+          if (!candidateText || !alignment?.replacements?.length) return [];
+          const mapped = buildVisibleSourceMap(source, mode, candidateText);
+          const needle = norm(candidateText, mode, detectLocale(candidateText));
+          if (!needle) return [];
+          const positions = findAll(mapped.text, needle);
+          const ranges = [];
+          positions.forEach((at, matchIndex) => {
+            const actualWords = wordTokens(needle);
+            alignment.replacements.forEach((replacement) => {
+              const token = actualWords[replacement.actualIndex];
+              if (!token) return;
+              const start = mapped.starts[at + token.index];
+              const end = mapped.ends[at + token.end - 1];
+              if (start != null && end != null && end > start) {
+                ranges.push({
+                  start,
+                  end,
+                  matchIndex,
+                  diffKind: "replacement",
+                });
+              }
+            });
+          });
+          return ranges;
         }
 
         function renderAllSourceOverview() {
@@ -2865,6 +3259,22 @@
                   source,
                   mode,
                 );
+                const replacements = findMappedWordDiffRanges(
+                  item.actual,
+                  item.alignment,
+                  source,
+                  mode,
+                );
+                replacements.forEach((range) =>
+                  events.push({
+                    type: "range",
+                    ...range,
+                    kind: "replacement",
+                    itemIndex: item.index,
+                    occurrence: occurrence++,
+                    localOccurrence: range.matchIndex ?? 0,
+                  }),
+                );
                 if (insertions.length) {
                   const itemOccurrence = occurrence++;
                   insertions.forEach((entry) =>
@@ -2877,7 +3287,7 @@
                       localOccurrence: entry.matchIndex ?? 0,
                     }),
                   );
-                } else {
+                } else if (!replacements.length) {
                   const groupOccurrences = new Map();
                   findMappedSourceRanges(item.actual, source, mode).forEach(
                     (range) => {
@@ -2994,7 +3404,9 @@
                       ? "all-match-highlight"
                       : event.kind === "review"
                         ? "approximate-highlight"
-                        : "mismatch-highlight";
+                        : event.kind === "replacement"
+                          ? "diff-replacement-highlight"
+                          : "mismatch-highlight";
                   chunk += `<mark class="${cls}" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(source.slice(start, end))}</mark>`;
                   localCursor = end;
                 }
@@ -3084,7 +3496,9 @@
                   ? "all-match-highlight"
                   : event.kind === "review"
                     ? "approximate-highlight"
-                    : "mismatch-highlight";
+                    : event.kind === "replacement"
+                      ? "diff-replacement-highlight"
+                      : "mismatch-highlight";
               output += `<mark class="${cls}" data-item-index="${event.itemIndex}" data-occurrence="${event.occurrence}" data-local-occurrence="${event.localOccurrence ?? 0}">${esc(source.slice(start, end))}</mark>`;
               cursor = end;
             }
@@ -3118,23 +3532,21 @@
             item.type === "text" &&
             item.issueType === "mismatch" &&
             item.actual;
+          const mode = document.querySelector(
+            'input[name="matchMode"]:checked',
+          ).value;
           const result = isMismatch
             ? {
-                ranges: item.missingWords?.length
-                  ? []
-                  : findMappedSourceRanges(
-                      item.actual,
-                      source,
-                      document.querySelector('input[name="matchMode"]:checked')
-                        .value,
-                    ),
+                ranges: findMappedWordDiffRanges(
+                  item.actual,
+                  item.alignment,
+                  source,
+                  mode,
+                ),
                 approximate: true,
               }
             : findSourceRanges(item);
           let ranges = result.ranges.sort((a, b) => a.start - b.start);
-          const mode = document.querySelector(
-            'input[name="matchMode"]:checked',
-          ).value;
           const insertions = isMismatch
             ? findMappedInsertionPoints(
                 item.actual,
@@ -3143,10 +3555,10 @@
                 mode,
               )
             : [];
-          if (isMismatch && item.missingWords?.length && !insertions.length) {
-            ranges = findMappedSourceRanges(item.actual, source, mode).sort(
-              (a, b) => a.start - b.start,
-            );
+          if (isMismatch && !ranges.length && !insertions.length) {
+            ranges = findMappedSourceRanges(item.actual, source, mode)
+              .map((range) => ({ ...range, diffKind: "replacement" }))
+              .sort((a, b) => a.start - b.start);
           }
           const merged = [];
 
@@ -3275,13 +3687,15 @@
               cursor = position;
             } else {
               const highlightClass =
-                isMismatch || item.status === "failed"
-                  ? "mismatch-highlight"
-                  : item.issueType === "link-mismatch" ||
-                      item.issueType === "duplicate" ||
-                      (item.status === "review" && item.type === "text")
-                    ? "approximate-highlight"
-                    : "all-match-highlight";
+                event.diffKind === "replacement"
+                  ? "diff-replacement-highlight"
+                  : isMismatch || item.status === "failed"
+                    ? "mismatch-highlight"
+                    : item.issueType === "link-mismatch" ||
+                        item.issueType === "duplicate" ||
+                        (item.status === "review" && item.type === "text")
+                      ? "approximate-highlight"
+                      : "all-match-highlight";
               output += `<mark class="${event.index === selectedOccurrenceIndex ? "active-highlight" : ""} ${highlightClass}" data-item-index="${selectedIssueIndex}" data-occurrence="${event.index}" data-local-occurrence="${event.index}">${esc(source.slice(event.start, event.end))}</mark>`;
               cursor = event.end;
             }
@@ -3326,6 +3740,39 @@
           ).value;
           const query = item.value;
           if (!query) return;
+
+          if (item.issueType === "mismatch" && item.alignment) {
+            const mappedDiff = normalizeMappedText(
+              brief,
+              mode,
+              detectLocale(query),
+            );
+            const needleDiff = norm(query, mode, detectLocale(query));
+            const positionsDiff = findAll(mappedDiff.text, needleDiff);
+            if (positionsDiff.length) {
+              const start = mappedDiff.starts[positionsDiff[0]];
+              const end =
+                mappedDiff.ends[positionsDiff[0] + needleDiff.length - 1];
+              const expectedText = brief.slice(start, end);
+              const missingIndexes = new Set([
+                ...(item.alignment.missing || []).map((x) => x.expectedIndex),
+                ...(item.alignment.replacements || []).map(
+                  (x) => x.expectedIndex,
+                ),
+              ]);
+              const diffText = renderWordDiffSide(
+                expectedText,
+                missingIndexes,
+                "diff-token-missing",
+              );
+              $("briefPreview").innerHTML =
+                esc(brief.slice(0, start)) + diffText + esc(brief.slice(end));
+              $("briefInspectorStatus").textContent =
+                "Missing / changed words highlighted";
+              updateOccurrenceControls(1);
+              return;
+            }
+          }
 
           const locale = detectLocale(query);
           const mapped = normalizeMappedText(brief, mode, locale);
@@ -3448,7 +3895,7 @@
           const textItems = results.filter((r) => r.type === "text").length;
           const linkItems = results.filter((r) => r.type === "link").length;
           const lines = [
-            "HTML TEXT & LINK QC — V3.5 REPORT",
+            "HTML TEXT & LINK QC — V3.6 REPORT",
             "================================",
             `Generated: ${new Date().toLocaleString()}`,
             `Total: ${results.length} | Passed: ${passed} | Failed: ${failed} | Review: ${review}`,
@@ -3561,6 +4008,7 @@
           sourceOverviewMode = false;
           $("results").style.display = "none";
           $("sourceInspector").style.display = "none";
+          $("preQcValidation").hidden = true;
           $("copyBtn").disabled = true;
           $("exportCsvBtn").disabled = true;
           $("issueCounter").textContent = "No issue selected";
@@ -3619,7 +4067,7 @@
         });
 
         // ========================================
-        // V3.5 - OFFLINE MULTILINGUAL REGRESSION TEST LAB
+        // V3.6 - OFFLINE MULTILINGUAL REGRESSION TEST LAB
         // Tests normalization, locale hints and segmentation support locally.
         // ========================================
         function runMultilingualTestLab() {
@@ -3981,6 +4429,75 @@
                 );
               },
             ],
+            [
+              "Word diff identifies a replacement separately from missing words",
+              () => {
+                const diff = alignExpectedToActual(
+                  "The title attribute is here",
+                  "The name attribute is here",
+                  "The title attribute is here",
+                );
+                return (
+                  diff.replacements.length === 1 &&
+                  diff.replacements[0].expectedWord === "title" &&
+                  diff.replacements[0].actualWord === "name" &&
+                  diff.missing.length === 0
+                );
+              },
+            ],
+            [
+              "Word diff keeps extra HTML wording informational",
+              () => {
+                const diff = alignExpectedToActual(
+                  "The title is here",
+                  "The title is really here",
+                  "The title is here",
+                );
+                return (
+                  diff.extra.some((x) => x.word === "really") &&
+                  diff.missing.length === 0
+                );
+              },
+            ],
+            [
+              "Word diff identifies multiple missing words in order",
+              () => {
+                const diff = alignExpectedToActual(
+                  "The title attribute is here",
+                  "The attribute is here",
+                  "The title attribute is here",
+                );
+                return (
+                  diff.missing.length === 1 &&
+                  diff.missing[0].word === "title" &&
+                  diff.missing[0].beforeWordIndex === 1
+                );
+              },
+            ],
+            [
+              "Pre-QC validation requires an explicit body element",
+              () => {
+                const check = validatePreQC(
+                  "<html><head></head></html>",
+                  "Hello world",
+                  [{ type: "text", value: "Hello world" }],
+                );
+                return check.blocking.some((x) => x.includes("body"));
+              },
+            ],
+            [
+              "Pre-QC validation ignores fake body tags inside script text",
+              () => {
+                const check = validatePreQC(
+                  "<html><head><scr" +
+                    'ipt>const x = "<body>";</scr' +
+                    "ipt></head></html>",
+                  "Hello world",
+                  [{ type: "text", value: "Hello world" }],
+                );
+                return check.blocking.some((x) => x.includes("body"));
+              },
+            ],
           ];
           const results = cases.map(([name, test]) => {
             try {
@@ -4055,12 +4572,93 @@
           });
         });
 
+        $("onlyIssuesToggle").addEventListener("change", (event) => {
+          onlyIssues = event.target.checked;
+          renderList();
+          if (
+            onlyIssues &&
+            selectedIssueIndex >= 0 &&
+            results[selectedIssueIndex]?.status === "passed"
+          ) {
+            const firstIssue = results.findIndex(
+              (item) => item.status !== "passed",
+            );
+            if (firstIssue >= 0) selectIssue(firstIssue);
+          }
+        });
+
+        function toggleInputPanel(panelId, buttonId) {
+          const panel = $(panelId),
+            button = $(buttonId);
+          const collapsed = panel.classList.toggle("is-collapsed");
+          button.textContent = collapsed ? "Expand" : "Collapse";
+          button.setAttribute("aria-expanded", String(!collapsed));
+        }
+        $("toggleHtmlPanelBtn").addEventListener("click", () =>
+          toggleInputPanel("htmlInputPanel", "toggleHtmlPanelBtn"),
+        );
+        $("toggleBriefPanelBtn").addEventListener("click", () =>
+          toggleInputPanel("briefInputPanel", "toggleBriefPanelBtn"),
+        );
+
+        (function enableInspectorResize() {
+          const grid = document.querySelector(".inspector-grid");
+          const splitter = $("inspectorSplitter");
+          if (!grid || !splitter) return;
+          let dragging = false;
+          const setRatio = (clientX) => {
+            const rect = grid.getBoundingClientRect();
+            const ratio = Math.min(
+              0.78,
+              Math.max(0.22, (clientX - rect.left) / rect.width),
+            );
+            grid.style.setProperty("--inspector-left", `${ratio * 100}%`);
+            grid.style.setProperty(
+              "--inspector-right",
+              `${(1 - ratio) * 100}%`,
+            );
+          };
+          splitter.addEventListener("pointerdown", (event) => {
+            if (window.matchMedia("(max-width: 900px)").matches) return;
+            dragging = true;
+            splitter.setPointerCapture(event.pointerId);
+            setRatio(event.clientX);
+            event.preventDefault();
+          });
+          splitter.addEventListener("pointermove", (event) => {
+            if (dragging) setRatio(event.clientX);
+          });
+          const stop = () => {
+            dragging = false;
+          };
+          splitter.addEventListener("pointerup", stop);
+          splitter.addEventListener("pointercancel", stop);
+          splitter.addEventListener("keydown", (event) => {
+            if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+            event.preventDefault();
+            const rect = grid.getBoundingClientRect();
+            const current =
+              parseFloat(
+                getComputedStyle(grid).getPropertyValue("--inspector-left"),
+              ) || 50;
+            const next = Math.min(
+              78,
+              Math.max(22, current + (event.key === "ArrowRight" ? 3 : -3)),
+            );
+            grid.style.setProperty("--inspector-left", `${next}%`);
+            grid.style.setProperty("--inspector-right", `${100 - next}%`);
+          });
+        })();
+
         $("clearBtn").addEventListener("click", () => {
           htmlSource.value = "";
           originalBrief.value = "";
 
           results = [];
           activeFilter = "all";
+          onlyIssues = false;
+          $("onlyIssuesToggle").checked = false;
+          $("preQcValidation").hidden = true;
           document
             .querySelectorAll(".tab")
             .forEach((tab) =>
