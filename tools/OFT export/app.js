@@ -458,35 +458,66 @@ doc.querySelectorAll(
 
   
 // Force CTA button border-radius to 0px.
-doc.querySelectorAll(
-  'tr.mktoModule[id^="Module-CTA"] div.mktoText table[style]'
-).forEach((table) => {
-  let style = table.getAttribute("style") || "";
+// doc.querySelectorAll(
+//   'tr.mktoModule[id^="Module-CTA"] div.mktoText table[style]'
+// ).forEach((table) => {
+//   let style = table.getAttribute("style") || "";
 
-  const border = style.match(
-    /(?:^|;)\s*border\s*:\s*([^;]+)/i
-  );
+//   const border = style.match(
+//     /(?:^|;)\s*border\s*:\s*([^;]+)/i
+//   );
 
-  const td = table.querySelector("td:has(a)");
-  if (!td) return;
+//   const td = table.querySelector("td:has(a)");
+//   if (!td) return;
 
-  // Always force button corner radius to 0px.
-  addStyle(td, "border-radius", "0px");
+//   // Always force button corner radius to 0px.
+//   addStyle(td, "border-radius", "0px");
 
-  // Preserve existing border if available.
-  if (border) {
-    addStyle(td, "border", border[1].trim());
+//   // Preserve existing border if available.
+//   if (border) {
+//     addStyle(td, "border", border[1].trim());
+//   }
+
+//   // Remove border-radius and border from the table.
+//   style = style
+//     .replace(/(^|;)\s*border-radius\s*:\s*[^;]*/gi, "$1")
+//     .replace(/(^|;)\s*border\s*:\s*[^;]*/gi, "$1")
+//     .replace(/;{2,}/g, ";")
+//     .trim();
+
+//   table.setAttribute("style", style);
+// });
+
+// Force all inline border-radius properties to 0px.
+let borderRadiusChanges = 0;
+
+doc.querySelectorAll("[style]").forEach((el) => {
+  const style = el.style;
+  const radiusProperties = [];
+
+  // Collect all border-radius properties, including individual corners.
+  for (let i = 0; i < style.length; i++) {
+    const property = style[i];
+
+    if (
+      property.toLowerCase().startsWith("border") &&
+      property.toLowerCase().includes("radius")
+    ) {
+      radiusProperties.push(property);
+    }
   }
 
-  // Remove border-radius and border from the table.
-  style = style
-    .replace(/(^|;)\s*border-radius\s*:\s*[^;]*/gi, "$1")
-    .replace(/(^|;)\s*border\s*:\s*[^;]*/gi, "$1")
-    .replace(/;{2,}/g, ";")
-    .trim();
+  if (!radiusProperties.length) return;
 
-  table.setAttribute("style", style);
+  radiusProperties.forEach((property) => {
+    const priority = style.getPropertyPriority(property);
+    style.setProperty(property, "0px", priority);
+  });
+
+  borderRadiusChanges++;
 });
+
+changes.borderRadius = borderRadiusChanges;
 
   if ($("#ruleSpacer").checked) {
     const rows = [...doc.querySelectorAll("tr")];
@@ -757,6 +788,15 @@ if (changes.contactModuleLayout) {
       Updated ${changes.contactModuleLayout} module(s):
       container width 550px → 620px,
       added 30px spacer TH cells at both ends.
+    </div>`
+  );
+}
+if (changes.borderRadius) {
+  items.push(
+    `<div class="log-item">
+      <b>✓ Border Radius</b>
+      Set all border-radius properties to 0px
+      on ${changes.borderRadius} element(s).
     </div>`
   );
 }
