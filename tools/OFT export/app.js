@@ -101,6 +101,8 @@ function convertHTML(source) {
     imageSources: 0,
     salutation: 0,
     templateContainer: 0,
+    productModuleLayout: 0,
+    contactModuleLayout: 0,
     emptyTables: 0,
     ctaSpacer: 0,
     ctaLineHeight: 0,
@@ -173,6 +175,192 @@ function convertHTML(source) {
       }
     });
   }
+
+// Adjust 2-product SBC Label module layout.
+doc.querySelectorAll(
+  'tr.mktoModule[id^="module-15-2prodsbclabel"]'
+).forEach((module) => {
+  let changed = false;
+
+  // Find the main product container table.
+  const productTable = module.querySelector(
+    'table.deviceWidth1[width="500"]'
+  );
+
+  if (productTable) {
+    // Update width attribute.
+    productTable.setAttribute("width", "620");
+
+    // Update inline CSS width.
+    addStyle(productTable, "width", "620px");
+
+    changed = true;
+  }
+
+  // Find the main row containing 3 product layout TH cells.
+  const productRow = [...module.querySelectorAll("tr")].find((row) => {
+    const ths = [...row.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    return ths.length >= 3;
+  });
+
+  if (productRow) {
+    const ths = [...productRow.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    // Check whether a spacer TH already exists.
+    const isSpacer = (th) => {
+      return (
+        th.getAttribute("width") === "60" &&
+        th.getAttribute("bgcolor") === "#ffffff" &&
+        !(th.textContent || "")
+          .replace(/\u00a0/g, "")
+          .trim() &&
+        !th.querySelector("img, a, svg, video, iframe")
+      );
+    };
+
+    // Create a 60px spacer TH.
+    const createSpacerTH = () => {
+      const th = doc.createElement("th");
+
+      th.className = "block center-align";
+      th.setAttribute("width", "60");
+      th.setAttribute("valign", "top");
+      th.setAttribute("bgcolor", "#ffffff");
+
+      th.setAttribute(
+        "style",
+        [
+          "font-family: Verdana, sans-serif",
+          "font-weight: normal",
+          "background-color: #ffffff"
+        ].join("; ") + ";"
+      );
+
+      th.innerHTML = "&nbsp;";
+
+      return th;
+    };
+
+    // Add spacer at the beginning.
+    if (!isSpacer(ths[0])) {
+      productRow.insertBefore(
+        createSpacerTH(),
+        ths[0]
+      );
+
+      changed = true;
+    }
+
+    // Add spacer at the end.
+    const updatedTHs = [...productRow.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    if (!isSpacer(updatedTHs[updatedTHs.length - 1])) {
+      productRow.appendChild(createSpacerTH());
+
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    changes.productModuleLayout++;
+  }
+});
+// Adjust 2-Contact module layout.
+doc.querySelectorAll(
+  'tr.mktoModule[id^="module22-2contact"]'
+).forEach((module) => {
+  let changed = false;
+
+  // Update main container table: 550px -> 620px.
+  const contactTable = module.querySelector(
+    'table.deviceWidth[width="550"]'
+  );
+
+  if (contactTable) {
+    contactTable.setAttribute("width", "620");
+    addStyle(contactTable, "width", "620px");
+    changed = true;
+  }
+
+  // Find the main row containing the contact TH cells.
+  const contactRow = [...module.querySelectorAll("tr")].find((row) => {
+    const ths = [...row.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    return ths.length >= 3;
+  });
+
+  if (contactRow) {
+    const ths = [...contactRow.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    const isSpacer = (th) => {
+      return (
+        th.getAttribute("width") === "30" &&
+        th.getAttribute("bgcolor") === "#ffffff" &&
+        !(th.textContent || "")
+          .replace(/\u00a0/g, "")
+          .trim() &&
+        !th.querySelector("img, a, svg, video, iframe")
+      );
+    };
+
+    const createSpacerTH = () => {
+      const th = doc.createElement("th");
+
+      th.className = "block center-align";
+      th.setAttribute("width", "30");
+      th.setAttribute("valign", "top");
+      th.setAttribute("bgcolor", "#ffffff");
+
+      th.setAttribute(
+        "style",
+        [
+          "font-family: Verdana, sans-serif",
+          "font-weight: normal",
+          "background-color: #ffffff"
+        ].join("; ") + ";"
+      );
+
+      th.innerHTML = "&nbsp;";
+
+      return th;
+    };
+
+    // Add 30px spacer at the beginning.
+    if (!isSpacer(ths[0])) {
+      contactRow.insertBefore(
+        createSpacerTH(),
+        ths[0]
+      );
+
+      changed = true;
+    }
+
+    // Add 30px spacer at the end.
+    const updatedTHs = [...contactRow.children].filter(
+      (cell) => cell.tagName === "TH"
+    );
+
+    if (!isSpacer(updatedTHs[updatedTHs.length - 1])) {
+      contactRow.appendChild(createSpacerTH());
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    changes.contactModuleLayout++;
+  }
+});
 
   // Rewrite local image paths to the Marketo image host.
   if ($("#ruleImages")?.checked) {
@@ -445,6 +633,8 @@ function showResults(changes) {
     changes.ctaLineHeight +
     changes.emailPreHeader +
     changes.width550 +
+    changes.productModuleLayout +
+    changes.contactModuleLayout +
     changes.width550Css +
     changes.width560Css +
     changes.emToPx +
@@ -550,6 +740,26 @@ function showResults(changes) {
       `<div class="log-item"><b>✓ Spacer ${i + 1}</b> ${x.height}px → <code>padding-${x.direction}</code> on <code>${x.target}</code></div>`,
     );
   });
+  if (changes.productModuleLayout) {
+  items.push(
+    `<div class="log-item">
+      <b>✓ 2-Product SBC Label</b>
+      Updated ${changes.productModuleLayout} module(s):
+      container width 500px → 620px,
+      added 60px spacer TH cells at both ends.
+    </div>`
+  );
+}
+if (changes.contactModuleLayout) {
+  items.push(
+    `<div class="log-item">
+      <b>✓ 2-Contact Module</b>
+      Updated ${changes.contactModuleLayout} module(s):
+      container width 550px → 620px,
+      added 30px spacer TH cells at both ends.
+    </div>`
+  );
+}
   if (!items.length)
     items.push(
       `<div class="log-item">No enabled rule found anything to change.</div>`,
