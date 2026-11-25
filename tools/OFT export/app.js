@@ -164,6 +164,11 @@ const hiddenRowSelectors = [
   '[id^="mod18-limg3-"]',
     '[id^="mod18-rimg2-"]',
   '[id^="mod18-Rightimg3-"]',
+
+      '[id^="mod18_left_price_"]',
+      '[id^="mod18-Righttext2-"]',
+  '[id^="module-2productBCpoints"]',
+
   '[id^="mod18-Rightlogo-"]'
 ];
 
