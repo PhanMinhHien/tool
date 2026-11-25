@@ -516,7 +516,30 @@ if (alsoProductId) {
       changes.ctaLineHeight++;
     }
   });
+// Update line-height for all CTA buttons.
+doc.querySelectorAll("a[href]").forEach((a) => {
+  const parentTd = a.closest("td");
+  if (!parentTd) return;
 
+  const aStyle = a.getAttribute("style") || "";
+  const tdStyle = parentTd.getAttribute("style") || "";
+
+  const hasLineHeight =
+    /line-height\s*:\s*[^;]+/i.test(aStyle) ||
+    /line-height\s*:\s*[^;]+/i.test(tdStyle);
+
+  if (hasLineHeight) {
+    if (/line-height\s*:/i.test(aStyle)) {
+      addStyle(a, "line-height", "1.25rem");
+    }
+
+    if (/line-height\s*:/i.test(tdStyle)) {
+      addStyle(parentTd, "line-height", "1.25rem");
+    }
+
+    changes.ctaLineHeight++;
+  }
+});
   
 // Force CTA button border-radius to 0px.
 // doc.querySelectorAll(
