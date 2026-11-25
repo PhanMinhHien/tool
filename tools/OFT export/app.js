@@ -157,21 +157,38 @@ templateContainer: 0,
 // Remove table rows containing hidden elements (display: none).
 let removedHiddenRows = 0;
 
-doc.querySelectorAll("tr").forEach((row) => {
-  const hasHiddenElement = Array.from(
-    row.querySelectorAll('[style*="display"]')
-  ).some((element) => {
-    const display = element.style.display?.toLowerCase().trim();
-    return display === "none";
-  });
+// Remove specific hidden rows in module 18 only.
+const hiddenRowSelectors = [
+  '[id^="mod18_left_logo_"]',
+  '[id^="mod18-limg2-"]',
+  '[id^="mod18-limg3-"]',
+  '[id^="mod18-Rightlogo-"]'
+];
 
-  if (hasHiddenElement) {
-    row.remove();
-    removedHiddenRows++;
+const rowsToRemove = new Set();
+
+// Find rows by their specific module 18 element IDs.
+hiddenRowSelectors.forEach((selector) => {
+  doc.querySelectorAll(selector).forEach((element) => {
+    const row = element.closest("tr");
+
+    if (row) {
+      rowsToRemove.add(row);
+    }
+  });
+});
+
+// Find the specific hidden 15px spacer row.
+doc.querySelectorAll('tr > td[height="15"]').forEach((cell) => {
+  if (cell.style.display === "none") {
+    rowsToRemove.add(cell.closest("tr"));
   }
 });
 
-    changes.hiddenRows = removedHiddenRows;
+// Remove matched rows.
+rowsToRemove.forEach((row) => row.remove());
+
+    changes.hiddenRows = rowsToRemove.size;
     
     doc.querySelectorAll("[style]").forEach((el) => {
       let style = el.getAttribute("style") || "";
