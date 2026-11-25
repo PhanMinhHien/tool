@@ -100,7 +100,8 @@ function convertHTML(source) {
     emToPx: 0,
     imageSources: 0,
     salutation: 0,
-    templateContainer: 0,
+alsoProductId: 0,
+templateContainer: 0,
     productModuleLayout: 0,
     contactModuleLayout: 0,
     emptyTables: 0,
@@ -397,7 +398,24 @@ doc.querySelectorAll(
     }
   }
 }
+// Insert ALSO Product ID into ProductDetailData URLs.
+const alsoProductId = ($("#alsoProductIdInput")?.value || "").trim();
 
+if (alsoProductId) {
+  doc.querySelectorAll("a[href], area[href]").forEach((link) => {
+    const originalHref = link.getAttribute("href") || "";
+
+    const updatedHref = originalHref.replace(
+      /\/cms5\/\/(ProductDetailData\.do\?)/gi,
+      `/cms5/${alsoProductId}/$1`
+    );
+
+    if (updatedHref !== originalHref) {
+      link.setAttribute("href", updatedHref);
+      changes.alsoProductId++;
+    }
+  });
+}
   // Convert CSS em values to px.
   // Formula: px = em × font-size.
   // Example: font-size:12px + line-height:1.5em = line-height:18px.
@@ -670,8 +688,9 @@ function showResults(changes) {
     changes.width560Css +
     changes.emToPx +
     changes.imageSources +
-    changes.salutation +
-    changes.templateContainer +
+changes.salutation +
+changes.alsoProductId +
+changes.templateContainer +
     changes.spacer;
   $("#resultSummary").textContent =
     `${totalChanges} transformation${totalChanges === 1 ? "" : "s"} applied.`;
@@ -730,6 +749,15 @@ function showResults(changes) {
     items.push(
       `<div class="log-item"><b>✓ Salutation</b> Replaced <code>Dear ALSO Partner,</code> (${changes.salutation} occurrence${changes.salutation === 1 ? "" : "s"}).</div>`,
     );
+  if (changes.alsoProductId) {
+  items.push(
+    `<div class="log-item">
+      <b>✓ ALSO Product ID</b>
+      Inserted product ID <code>${escapePreview($("#alsoProductIdInput").value.trim())}</code>
+      into ${changes.alsoProductId} ProductDetailData URL(s).
+    </div>`
+  );
+}
   if (changes.templateContainer) {
   items.push(
     `<div class="log-item">
