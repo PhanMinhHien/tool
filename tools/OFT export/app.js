@@ -162,6 +162,8 @@ const hiddenRowSelectors = [
   '[id^="mod18_left_logo_"]',
   '[id^="mod18-limg2-"]',
   '[id^="mod18-limg3-"]',
+    '[id^="mod18-rimg2-"]',
+  '[id^="mod18-Rightimg3-"]',
   '[id^="mod18-Rightlogo-"]'
 ];
 
