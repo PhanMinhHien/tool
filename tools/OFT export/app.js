@@ -100,7 +100,8 @@ function convertHTML(source) {
     emToPx: 0,
     imageSources: 0,
     salutation: 0,
-alsoProductId: 0,
+    alsoProductId: 0,
+hiddenRows: 0,
 templateContainer: 0,
     productModuleLayout: 0,
     contactModuleLayout: 0,
@@ -153,7 +154,25 @@ templateContainer: 0,
         changes.width550++;
       }
     });
+// Remove table rows containing hidden elements (display: none).
+let removedHiddenRows = 0;
 
+doc.querySelectorAll("tr").forEach((row) => {
+  const hasHiddenElement = Array.from(
+    row.querySelectorAll('[style*="display"]')
+  ).some((element) => {
+    const display = element.style.display?.toLowerCase().trim();
+    return display === "none";
+  });
+
+  if (hasHiddenElement) {
+    row.remove();
+    removedHiddenRows++;
+  }
+});
+
+    changes.hiddenRows = removedHiddenRows;
+    
     doc.querySelectorAll("[style]").forEach((el) => {
       let style = el.getAttribute("style") || "";
 
@@ -689,7 +708,8 @@ function showResults(changes) {
     changes.emToPx +
     changes.imageSources +
 changes.salutation +
-changes.alsoProductId +
+    changes.alsoProductId +
+     changes.hiddenRows +
 changes.templateContainer +
     changes.spacer;
   $("#resultSummary").textContent =
@@ -825,6 +845,14 @@ if (changes.borderRadius) {
       <b>✓ Border Radius</b>
       Set all border-radius properties to 0px
       on ${changes.borderRadius} element(s).
+    </div>`
+  );
+}
+  if (changes.hiddenRows) {
+  items.push(
+    `<div class="log-item">
+      <b>✓ Hidden rows removed</b>
+      Removed ${changes.hiddenRows} table row(s) containing hidden elements.
     </div>`
   );
 }
