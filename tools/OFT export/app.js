@@ -178,8 +178,14 @@ const rowsToRemove = new Set();
 hiddenRowSelectors.forEach((selector) => {
   doc.querySelectorAll(selector).forEach((element) => {
     const row = element.closest("tr");
+    if (!row) return;
 
-    if (row) {
+    // Check whether the matched element or its parent cell is hidden.
+    const isHidden =
+      element.style.display === "none" ||
+      element.closest("td, th")?.style.display === "none";
+
+    if (isHidden) {
       rowsToRemove.add(row);
     }
   });
