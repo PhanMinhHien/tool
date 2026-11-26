@@ -280,14 +280,14 @@ doc.querySelectorAll(
       th.className = "block center-align";
       th.setAttribute("width", "60");
       th.setAttribute("valign", "top");
-      th.setAttribute("bgcolor", "#ffffff");
+      //th.setAttribute("bgcolor", "#ffffff");
 
       th.setAttribute(
         "style",
         [
           "font-family: Verdana, sans-serif",
           "font-weight: normal",
-          "background-color: #ffffff"
+          //"background-color: #ffffff"
         ].join("; ") + ";"
       );
 
@@ -370,14 +370,14 @@ doc.querySelectorAll(
       th.className = "block center-align";
       th.setAttribute("width", "30");
       th.setAttribute("valign", "top");
-      th.setAttribute("bgcolor", "#ffffff");
+      //th.setAttribute("bgcolor", "#ffffff");
 
       th.setAttribute(
         "style",
         [
           "font-family: Verdana, sans-serif",
           "font-weight: normal",
-          "background-color: #ffffff"
+         // "background-color: #ffffff"
         ].join("; ") + ";"
       );
 
